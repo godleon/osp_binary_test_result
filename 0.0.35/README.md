@@ -31,3 +31,25 @@
 - [2017-03-06 15:28:51 NovaServers.boot_and_delete_server rps(250-3.8)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_152851)NovaServers.boot_and_delete_server-rps(250-3.8).html)
 
 - [2017-03-06 15:32:15 NovaServers.boot_and_delete_server rps(250-3.7)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_153215)NovaServers.boot_and_delete_server-rps(250-3.7)_PassRetry(1).html)
+
+### NovaServers.boot_and_get_console_output
+
+- [2017-03-06 15:41:59 NovaServers.boot_and_get_console_output constant(250-10)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_154159)NovaServers.boot_and_get_console_output-constant(250-10).html)
+
+- [2017-03-06 15:47:45 NovaServers.boot_and_get_console_output constant(250-20)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_154745)NovaServers.boot_and_get_console_output-constant(250-20).html)
+
+- [2017-03-06 15:51:58 NovaServers.boot_and_get_console_output constant(250-40)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_155158)NovaServers.boot_and_get_console_output-constant(250-40).html)
+
+- [2017-03-06 15:55:34 NovaServers.boot_and_get_console_output constant(250-30)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_155534)NovaServers.boot_and_get_console_output-constant(250-30).html)
+
+- [2017-03-06 15:58:57 NovaServers.boot_and_get_console_output constant(250-35)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_155857)NovaServers.boot_and_get_console_output-constant(250-35).html)
+
+- [2017-03-06 16:01:27 NovaServers.boot_and_get_console_output constant(250-32)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_160127)NovaServers.boot_and_get_console_output-constant(250-32).html)
+
+- [2017-03-06 16:04:59 NovaServers.boot_and_get_console_output constant(250-33)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_160459)NovaServers.boot_and_get_console_output-constant(250-33).html)
+
+- [2017-03-06 16:08:32 NovaServers.boot_and_get_console_output constant(250-34)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_160832)NovaServers.boot_and_get_console_output-constant(250-34).html)
+
+- [2017-03-06 16:12:04 NovaServers.boot_and_get_console_output constant(250-34)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_161204)NovaServers.boot_and_get_console_output-constant(250-34)_PassRetry(1).html)
+
+- [2017-03-06 16:15:39 NovaServers.boot_and_get_console_output constant(250-32)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_161539)NovaServers.boot_and_get_console_output-constant(250-32)_PassRetry(1).html)
