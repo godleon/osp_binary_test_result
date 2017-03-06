@@ -73,3 +73,15 @@
 - [2017-03-06 17:00:30 NovaServers.boot_and_list_server rps(250-0.9)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_170030)NovaServers.boot_and_list_server-rps(250-0.9)_PassRetry(1).html)
 
 - [2017-03-06 17:04:22 NovaServers.boot_and_list_server rps(250-0.8)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_170422)NovaServers.boot_and_list_server-rps(250-0.8)_PassRetry(1).html)
+
+### NovaServers.boot_and_migrate_server
+
+- [2017-03-06 17:17:08 NovaServers.boot_and_migrate_server rps(250-1.0)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_171708)NovaServers.boot_and_migrate_server-rps(250-1.0).html)
+
+- [2017-03-06 17:21:48 NovaServers.boot_and_migrate_server rps(250-0.5)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_172148)NovaServers.boot_and_migrate_server-rps(250-0.5).html)
+
+- [2017-03-06 17:29:20 NovaServers.boot_and_migrate_server rps(250-0.3)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_172920)NovaServers.boot_and_migrate_server-rps(250-0.3).html)
+
+- [2017-03-06 17:43:51 NovaServers.boot_and_migrate_server rps(250-0.4)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_174351)NovaServers.boot_and_migrate_server-rps(250-0.4).html)
+
+- [2017-03-06 17:54:58 NovaServers.boot_and_migrate_server rps(250-0.4)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.35/nova/(20170306_175458)NovaServers.boot_and_migrate_server-rps(250-0.4)_PassRetry(1).html)
