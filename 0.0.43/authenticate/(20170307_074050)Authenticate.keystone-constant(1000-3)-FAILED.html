@@ -1,0 +1,1043 @@
+<!doctype html>
+<html ng-app="App">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Rally version 0.7.0">
+  <title>Rally | Rally Task Report</title>
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.js"></script>
+  
+
+  <script type="text/javascript">
+    "use strict";
+    var widgetDirective = function($compile) {
+  var Chart = {
+    _render: function(node, data, chart, do_after){
+      nv.addGraph(function() {
+        d3.select(node)
+          .datum(data).transition().duration(0)
+          .call(chart);
+        if (typeof do_after === "function") {
+          do_after(node, chart)
+        }
+        nv.utils.windowResize(chart.update);
+      })
+    },
+    _widgets: {
+      Pie: "pie",
+      StackedArea: "stack",
+      Lines: "lines",
+      Histogram: "histogram"
+    },
+    get_chart: function(widget) {
+      if (widget in this._widgets) {
+        var name = this._widgets[widget];
+        return Chart[name]
+      }
+      return function() { console.log("Error: unexpected widget:", widget) }
+    },
+    pie: function(node, data, opts, do_after) {
+      var chart = nv.models.pieChart()
+        .x(function(d) { return d.key })
+        .y(function(d) { return d.values })
+        .showLabels(true)
+        .labelType("percent")
+        .donut(true)
+        .donutRatio(0.25)
+        .donutLabelsOutside(true)
+        .color(function(d){
+          if (d.data && d.data.color) { return d.data.color }
+        });
+      var colorizer = new Chart.colorizer("errors"), data_ = [];
+      for (var i in data) {
+        data_.push({key:data[i][0], values:data[i][1], color:colorizer.get_color(data[i][0])})
+      }
+      Chart._render(node, data_, chart)
+    },
+    colorizer: function(failure_key, failure_color) {
+      this.failure_key = failure_key || "failed_duration";
+      this.failure_color = failure_color || "#d62728";  // red
+      this.color_idx = -1;
+      /* NOTE(amaretskiy): this is actually a result of
+         d3.scale.category20().range(), excluding red color (#d62728)
+         which is reserved for errors */
+      this.colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c",
+                     "#98df8a", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b",
+                     "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7",
+                     "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"];
+      this.get_color = function(key) {
+        if (key === this.failure_key) {
+          return this.failure_color
+        }
+        if (this.color_idx > (this.colors.length - 2)) {
+          this.color_idx = 0
+        } else {
+          this.color_idx++
+        }
+        return this.colors[this.color_idx]
+      }
+    },
+    stack: function(node, data, opts, do_after) {
+      var chart = nv.models.stackedAreaChart()
+        .x(function(d) { return d[0] })
+        .y(function(d) { return d[1] })
+        .useInteractiveGuideline(opts.guide)
+        .showControls(opts.controls)
+        .clipEdge(true);
+      chart.xAxis
+        .axisLabel(opts.xname)
+        .tickFormat(opts.xformat)
+        .showMaxMin(opts.showmaxmin);
+      chart.yAxis
+        .orient("left")
+        .tickFormat(d3.format(opts.yformat || ",.3f"));
+      var colorizer = new Chart.colorizer(), data_ = [];
+      for (var i in data) {
+        data_.push({key:data[i][0], values:data[i][1], color:colorizer.get_color(data[i][0])})
+      }
+      Chart._render(node, data_, chart, do_after);
+    },
+    lines: function(node, data, opts, do_after) {
+      var chart = nv.models.lineChart()
+        .x(function(d) { return d[0] })
+        .y(function(d) { return d[1] })
+        .useInteractiveGuideline(opts.guide)
+        .clipEdge(true);
+      chart.xAxis
+        .axisLabel(opts.xname)
+        .tickFormat(opts.xformat)
+        .rotateLabels(opts.xrotate)
+        .showMaxMin(opts.showmaxmin);
+      chart.yAxis
+        .orient("left")
+        .tickFormat(d3.format(opts.yformat || ",.3f"));
+      var colorizer = new Chart.colorizer(), data_ = [];
+      for (var i in data) {
+        data_.push({key:data[i][0], values:data[i][1], color:colorizer.get_color(data[i][0])})
+      }
+      Chart._render(node, data_, chart, do_after)
+    },
+    histogram: function(node, data, opts) {
+      var chart = nv.models.multiBarChart()
+        .reduceXTicks(true)
+        .showControls(false)
+        .transitionDuration(0)
+        .groupSpacing(0.05);
+      chart
+        .legend.radioButtonMode(true);
+      chart.xAxis
+        .axisLabel("Duration (seconds)")
+        .tickFormat(d3.format(",.2f"));
+      chart.yAxis
+        .axisLabel("Iterations (frequency)")
+        .tickFormat(d3.format("d"));
+      Chart._render(node, data, chart)
+    }
+  };
+
+  return {
+    restrict: "A",
+    scope: { data: "=" },
+    link: function(scope, element, attrs) {
+      scope.$watch("data", function(data) {
+        if (! data) { return console.log("Chart has no data to render!") }
+        if (attrs.widget === "Table") {
+          var ng_class = attrs.lastrowClass ? " ng-class='{"+attrs.lastrowClass+":$last}'" : "";
+          var template = "<table class='striped'><thead>" +
+            "<tr><th ng-repeat='i in data.cols track by $index'>{{i}}<tr>" +
+            "</thead><tbody>" +
+            "<tr" + ng_class + " ng-repeat='row in data.rows track by $index'>" +
+            "<td ng-repeat='i in row track by $index'>{{i}}" +
+            "<tr>" +
+            "</tbody></table>";
+          var el = element.empty().append($compile(template)(scope)).children()[0]
+        } else if (attrs.widget === "TextArea") {
+          var template = "<div style='padding:0 0 5px' ng-repeat='str in data track by $index'>{{str}}</div><div style='height:10px'></div>";
+          var el = element.empty().append($compile(template)(scope)).children()[0]
+        } else {
+
+          var el_chart = element.addClass("chart").css({display:"block"});
+          var el = el_chart.html("<svg></svg>").children()[0];
+
+          var do_after = null;
+
+          if (attrs.widget in {StackedArea:0, Lines:0}) {
+
+            /* Hide widget if not enough data */
+            if ((! data.length) || (data[0].length < 1) || (data[0][1].length < 2)) {
+              return element.empty().css({display:"none"})
+            }
+
+            /* NOTE(amaretskiy): Dirty fix for changing chart width in case
+               if there are too long Y values that overlaps chart box. */
+            var do_after = function(node, chart){
+              var g_box = angular.element(el_chart[0].querySelector(".nv-y.nv-axis"));
+
+              if (g_box && g_box[0] && g_box[0].getBBox) {
+
+                try {
+                  // 30 is padding aroung graphs
+                  var width = g_box[0].getBBox().width + 30;
+                } catch (err) {
+                  // This happens sometimes, just skip silently
+                  return
+                }
+
+                // 890 is chart width (set by CSS)
+                if (typeof width === "number" && width > 890) {
+                  width = (890 * 2) - width;
+                  if (width > 0) {
+                    angular.element(node).css({width:width+"px"});
+                    chart.update()
+                  }
+                }
+              }
+            }
+          }
+          else if (attrs.widget === "Pie") {
+            if (! data.length) {
+              return element.empty().css({display:"none"})
+            }
+          }
+
+          var opts = {
+            xname: attrs.nameX || "",
+            xrotate: attrs.rotateX || 0,
+            yformat: attrs.formatY || ",.3f",
+            controls: attrs.controls === "true",
+            guide: attrs.guide === "true",
+            showmaxmin: attrs.showmaxmin === "true"
+          };
+          if (attrs.formatDateX) {
+            opts.xformat = function(d) { return d3.time.format(attrs.formatDateX)(new Date(d)) }
+          } else {
+            opts.xformat = d3.format(attrs.formatX || "d")
+          }
+          Chart.get_chart(attrs.widget)(el, data, opts, do_after);
+        }
+
+        if (attrs.nameY) {
+          /* NOTE(amaretskiy): Dirty fix for displaying Y-axis label correctly.
+             I believe sometimes NVD3 will allow doing this in normal way */
+          var label_y = angular.element("<div>").addClass("chart-label-y").text(attrs.nameY);
+          angular.element(el).parent().prepend(label_y)
+        }
+
+        if (attrs.description) {
+          var desc_el = angular.element("<div>").addClass(attrs.descriptionClass || "h3").text(attrs.description);
+          angular.element(el).parent().prepend(desc_el)
+        }
+
+        if (attrs.title) {
+          var title_el = angular.element("<div>").addClass(attrs.titleClass || "h2").text(attrs.title);
+          angular.element(el).parent().prepend(title_el)
+        }
+
+        angular.element(el).parent().append(angular.element("<div style='clear:both'>"))
+      });
+    }
+  }
+};
+
+    var controllerFunction = function($scope, $location) {
+        $scope.source = "{\n  \"Authenticate.keystone\": [\n    {\n      \"context\": {\n        \"quotas\": {\n          \"cinder\": {\n            \"gigabytes\": -1, \n            \"snapshots\": -1, \n            \"volumes\": -1\n          }, \n          \"neutron\": {\n            \"floatingip\": -1, \n            \"network\": -1, \n            \"port\": -1, \n            \"router\": -1, \n            \"security_group\": -1, \n            \"security_group_rule\": -1, \n            \"subnet\": -1\n          }, \n          \"nova\": {\n            \"cores\": -1, \n            \"fixed_ips\": -1, \n            \"floating_ips\": -1, \n            \"injected_file_content_bytes\": -1, \n            \"injected_file_path_bytes\": -1, \n            \"injected_files\": -1, \n            \"instances\": -1, \n            \"key_pairs\": -1, \n            \"metadata_items\": -1, \n            \"ram\": -1, \n            \"security_group_rules\": -1, \n            \"security_groups\": -1, \n            \"server_group_members\": -1, \n            \"server_groups\": -1\n          }\n        }, \n        \"users\": {\n          \"project_domain\": \"default\", \n          \"resource_management_workers\": 20, \n          \"tenants\": 3, \n          \"user_choice_method\": \"random\", \n          \"user_domain\": \"default\", \n          \"users_per_tenant\": 50\n        }\n      }, \n      \"runner\": {\n        \"concurrency\": 3, \n        \"times\": 1000, \n        \"type\": \"constant\"\n      }, \n      \"sla\": {\n        \"failure_rate\": {\n          \"max\": 0\n        }, \n        \"max_avg_duration\": 1.5, \n        \"max_seconds_per_iteration\": 3\n      }\n    }\n  ]\n}";
+        $scope.scenarios = [{"load_profile": [["parallel iterations", [[0.0, 0], [0.558699196100235, 2.852998326386648], [1.11739839220047, 2.7888949162745735], [1.676097588300705, 2.8977854083952246], [2.23479678440094, 2.8515354267988653], [2.793495980501175, 2.7918842602592684], [3.35219517660141, 2.819063636734197], [3.910894372701645, 2.862720287876847], [4.46959356880188, 2.849681713064647], [5.028292764902115, 2.8496239083180246], [5.58699196100235, 2.8472640065038926], [6.1456911571025845, 2.8495344882066815], [6.70439035320282, 2.7844026377824624], [7.263089549303055, 2.8305057819996153], [7.82178874540329, 2.854488497992465], [8.380487941503524, 2.6859002057517722], [8.93918713760376, 2.705932525465817], [9.497886333703995, 2.760639422530887], [10.05658552980423, 2.735372919432232], [10.615284725904464, 2.7882940681585895], [11.1739839220047, 2.7222332075436912], [11.732683118104935, 2.760250079779553], [12.291382314205169, 2.713448364279823], [12.850081510305404, 2.698349068194865], [13.40878070640564, 2.7012077908716643], [13.967479902505875, 2.7181156056466267], [14.52617909860611, 2.7269845164380766], [15.084878294706344, 2.7504502935224693], [15.64357749080658, 2.7603014467458653], [16.202276686906814, 2.763121177879186], [16.76097588300705, 2.713083848333677], [17.319675079107284, 2.6871031062403956], [17.87837427520752, 2.7360346746853175], [18.437073471307755, 2.8256434083793383], [18.99577266740799, 2.813777624225241], [19.554471863508226, 2.7670732051533915], [20.11317105960846, 2.732046064380981], [20.671870255708694, 2.7170146197522738], [21.23056945180893, 2.7463315697293225], [21.789268647909164, 2.6463340364071386], [22.3479678440094, 2.4677794273917733], [22.906667040109635, 2.7639225931929783], [23.46536623620987, 2.708580128976514], [24.024065432310106, 2.7504367962035445], [24.582764628410338, 2.7947757974365692], [25.141463824510573, 2.733626709716035], [25.70016302061081, 2.7518012685058517], [26.258862216711044, 2.731939689940345], [26.81756141281128, 2.7664735651347274], [27.376260608911515, 2.7295231850758257], [27.93495980501175, 2.76662512949872], [28.493659001111986, 2.7879492961327395], [29.05235819721222, 2.735285405136014], [29.611057393312453, 2.7343845925596253], [30.16975658941269, 2.7155018309943806], [30.728455785512924, 2.8168394681310764], [31.28715498161316, 2.7429441241810926], [31.845854177713395, 2.69108640194073], [32.40455337381363, 2.76445182004282], [32.96325256991386, 2.719756771920247], [33.5219517660141, 2.79066673543476], [34.08065096211433, 2.775354923467863], [34.63935015821457, 2.7966611342168175], [35.198049354314804, 2.775457340760359], [35.75674855041504, 2.7978656161991275], [36.315447746515275, 2.7849999554890195], [36.87414694261551, 2.800737660378512], [37.432846138715746, 2.764341650614775], [37.99154533481598, 2.7764128087516053], [38.55024453091622, 2.793672256230804], [39.10894372701645, 2.8066852267198805], [39.66764292311669, 2.7096043019014755], [40.22634211921692, 2.7833025053655662], [40.78504131531715, 2.775800011951465], [41.34374051141739, 2.7457021301191893], [41.90243970751762, 2.766197964041268], [42.46113890361786, 2.8444955574158737], [43.01983809971809, 2.75784412688333], [43.57853729581833, 2.8288039479893037], [44.137236491918564, 2.8070193631366487], [44.6959356880188, 2.7566146926346575], [45.254634884119035, 2.7816198745975975], [45.81333408021927, 2.801081293865465], [46.372033276319506, 2.7873181167088537], [46.93073247241974, 2.8656703326394584], [47.48943166851998, 2.7674972959583704], [48.04813086462021, 2.734773012275135], [48.60683006072045, 2.7409798394576788], [49.165529256820676, 2.6838105067862763], [49.72422845292091, 2.7352056378544884], [50.28292764902115, 2.779935963613473], [50.84162684512138, 2.7845357802627078], [51.40032604122162, 2.781496120369165], [51.95902523732185, 2.7513421697633365], [52.51772443342209, 2.8057508349272133], [53.076423629522324, 2.7720664749012984], [53.63512282562256, 2.727221783165693], [54.193822021722795, 2.7185662417336096], [54.75252121782303, 2.1914886580190553], [55.311220413923266, 0.03921568627450634], [55.8699196100235, 0]]]], "errors": [{"type": "Unauthorized", "message": "The request you have made requires authentication. (HTTP 401) (Request-ID: req-8f65b92e-5c3e-407b-8db2-42344433dad1)", "traceback": "Traceback (most recent call last):\n  File \"/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 73, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/authenticate/authenticate.py\", line 31, in run\n    self.clients(\"keystone\")\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenario.py\", line 71, in clients\n    return client(version) if version is not None else client()\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 208, in __call__\n    self.cache[key] = self.create_client(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 323, in create_client\n    return client.Client(**kw)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/client.py\", line 62, in Client\n    d = discover.Discover(session=session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/discover.py\", line 185, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 147, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 41, in get_version_data\n    resp = session.get(url, headers=headers, authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 673, in get\n    return self.request(url, 'GET', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 462, in request\n    auth_headers = self.get_auth_headers(auth)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 733, in get_auth_headers\n    return auth.get_headers(self, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/plugin.py\", line 90, in get_headers\n    token = self.get_token(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 90, in get_token\n    return self.get_access(session).auth_token\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 136, in get_access\n    self.auth_ref = self.get_auth_ref(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/generic/base.py\", line 181, in get_auth_ref\n    return self._plugin.get_auth_ref(session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/v2.py\", line 65, in get_auth_ref\n    authenticated=False, log=False)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 681, in post\n    return self.request(url, 'POST', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 570, in request\n    raise exceptions.from_response(resp, method, url)\nUnauthorized: The request you have made requires authentication. (HTTP 401) (Request-ID: req-8f65b92e-5c3e-407b-8db2-42344433dad1)\n", "iteration": 538}, {"type": "Unauthorized", "message": "The request you have made requires authentication. (HTTP 401) (Request-ID: req-9edf6a49-1c01-4cc6-b22d-9cc4c2f0d0ee)", "traceback": "Traceback (most recent call last):\n  File \"/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 73, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/authenticate/authenticate.py\", line 31, in run\n    self.clients(\"keystone\")\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenario.py\", line 71, in clients\n    return client(version) if version is not None else client()\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 208, in __call__\n    self.cache[key] = self.create_client(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 323, in create_client\n    return client.Client(**kw)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/client.py\", line 62, in Client\n    d = discover.Discover(session=session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/discover.py\", line 185, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 147, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 41, in get_version_data\n    resp = session.get(url, headers=headers, authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 673, in get\n    return self.request(url, 'GET', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 462, in request\n    auth_headers = self.get_auth_headers(auth)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 733, in get_auth_headers\n    return auth.get_headers(self, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/plugin.py\", line 90, in get_headers\n    token = self.get_token(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 90, in get_token\n    return self.get_access(session).auth_token\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 136, in get_access\n    self.auth_ref = self.get_auth_ref(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/generic/base.py\", line 181, in get_auth_ref\n    return self._plugin.get_auth_ref(session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/v2.py\", line 65, in get_auth_ref\n    authenticated=False, log=False)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 681, in post\n    return self.request(url, 'POST', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 570, in request\n    raise exceptions.from_response(resp, method, url)\nUnauthorized: The request you have made requires authentication. (HTTP 401) (Request-ID: req-9edf6a49-1c01-4cc6-b22d-9cc4c2f0d0ee)\n", "iteration": 540}], "name": "keystone", "has_output": false, "runner": "constant", "hooks": [], "iterations_count": 540, "output_errors": [], "pos": "0", "load_duration": 54.774430990219116, "sla_success": false, "met": "keystone", "atomic": {"pie": [["authenticate.keystone", 0.2798015413460908]], "iter": [["authenticate.keystone", [[1, 0.30916404724121094], [2, 0.31936001777648926], [3, 0.34147000312805176], [4, 0.3443441390991211], [5, 0.32054901123046875], [6, 0.3069632053375244], [7, 0.3062148094177246], [8, 0.37547898292541504], [9, 0.3453941345214844], [10, 0.34686779975891113], [11, 0.4179408550262451], [12, 0.34292006492614746], [13, 0.4795811176300049], [14, 0.3081929683685303], [15, 0.3735189437866211], [16, 0.3262801170349121], [17, 0.3842320442199707], [18, 0.33724308013916016], [19, 0.38472604751586914], [20, 0.32265782356262207], [21, 0.32140111923217773], [22, 0.3234119415283203], [23, 0.34027910232543945], [24, 0.29583096504211426], [25, 0.41065096855163574], [26, 0.30591797828674316], [27, 0.408174991607666], [28, 0.3431711196899414], [29, 0.27440905570983887], [30, 0.4724440574645996], [31, 0.315000057220459], [32, 0.35958409309387207], [33, 0.3050220012664795], [34, 0.27640295028686523], [35, 0.3226299285888672], [36, 0.3196389675140381], [37, 0.4399399757385254], [38, 0.38599419593811035], [39, 0.3135719299316406], [40, 0.3172740936279297], [41, 0.28462910652160645], [42, 0.26479506492614746], [43, 0.3645181655883789], [44, 0.31442809104919434], [45, 0.33497095108032227], [46, 0.27037596702575684], [47, 0.408397912979126], [48, 0.39950084686279297], [49, 0.29976415634155273], [50, 0.3517031669616699], [51, 0.26775097846984863], [52, 0.3463411331176758], [53, 0.33020997047424316], [54, 0.29125189781188965], [55, 0.268172025680542], [56, 0.29013586044311523], [57, 0.411884069442749], [58, 0.4391820430755615], [59, 0.3762168884277344], [60, 0.3452630043029785], [61, 0.41327619552612305], [62, 0.31853699684143066], [63, 0.27541685104370117], [64, 0.3222360610961914], [65, 0.2358551025390625], [66, 0.23680377006530762], [67, 0.23319411277770996], [68, 0.22765398025512695], [69, 0.26997995376586914], [70, 0.2500488758087158], [71, 0.2452068328857422], [72, 0.29390597343444824], [73, 0.23845601081848145], [74, 0.23544597625732422], [75, 0.2389390468597412], [76, 0.24746489524841309], [77, 0.2599978446960449], [78, 0.31990981101989746], [79, 0.2407689094543457], [80, 0.3113119602203369], [81, 0.2890350818634033], [82, 0.24128007888793945], [83, 0.2644021511077881], [84, 0.2562708854675293], [85, 0.26460909843444824], [86, 0.3035290241241455], [87, 0.24750685691833496], [88, 0.2433030605316162], [89, 0.28374409675598145], [90, 0.24807500839233398], [91, 0.2338700294494629], [92, 0.23528099060058594], [93, 0.24121785163879395], [94, 0.23722410202026367], [95, 0.24776101112365723], [96, 0.29596495628356934], [97, 0.23711895942687988], [98, 0.2376999855041504], [99, 0.24344301223754883], [100, 0.26366090774536133], [101, 0.2325878143310547], [102, 0.24217009544372559], [103, 0.2390749454498291], [104, 0.23900413513183594], [105, 0.23828792572021484], [106, 0.24713993072509766], [107, 0.23484301567077637], [108, 0.24640798568725586], [109, 0.2985658645629883], [110, 0.24570202827453613], [111, 0.29356813430786133], [112, 0.2509429454803467], [113, 0.2949697971343994], [114, 0.23877596855163574], [115, 0.2477121353149414], [116, 0.29853010177612305], [117, 0.25174713134765625], [118, 0.24204683303833008], [119, 0.23514413833618164], [120, 0.23398113250732422], [121, 0.2516288757324219], [122, 0.24591803550720215], [123, 0.24454092979431152], [124, 0.23455595970153809], [125, 0.2416830062866211], [126, 0.23569512367248535], [127, 0.24213600158691406], [128, 0.24143195152282715], [129, 0.2847259044647217], [130, 0.23853397369384766], [131, 0.24416208267211914], [132, 0.26981401443481445], [133, 0.27261900901794434], [134, 0.24125099182128906], [135, 0.2872340679168701], [136, 0.2895069122314453], [137, 0.2421560287475586], [138, 0.2440500259399414], [139, 0.25704002380371094], [140, 0.2497708797454834], [141, 0.2441871166229248], [142, 0.29973411560058594], [143, 0.23969578742980957], [144, 0.24030399322509766], [145, 0.23946881294250488], [146, 0.2509129047393799], [147, 0.23764491081237793], [148, 0.3288540840148926], [149, 0.29396796226501465], [150, 0.24088096618652344], [151, 0.24708890914916992], [152, 0.2335960865020752], [153, 0.23559093475341797], [154, 0.24957585334777832], [155, 0.24242901802062988], [156, 0.3489038944244385], [157, 0.24688100814819336], [158, 0.2875699996948242], [159, 0.28240108489990234], [160, 0.24215006828308105], [161, 0.2374708652496338], [162, 0.24813199043273926], [163, 0.24272608757019043], [164, 0.24456787109375], [165, 0.2477419376373291], [166, 0.2432560920715332], [167, 0.24269700050354004], [168, 0.2455761432647705], [169, 0.25049614906311035], [170, 0.263657808303833], [171, 0.24530816078186035], [172, 0.2482891082763672], [173, 0.2411658763885498], [174, 0.2580301761627197], [175, 0.2753109931945801], [176, 0.2915220260620117], [177, 0.30779385566711426], [178, 0.27945613861083984], [179, 0.2702150344848633], [180, 0.28288793563842773], [181, 0.42592310905456543], [182, 0.2596149444580078], [183, 0.35170412063598633], [184, 0.2518010139465332], [185, 0.31673407554626465], [186, 0.3122410774230957], [187, 0.30132603645324707], [188, 0.36817312240600586], [189, 0.3365020751953125], [190, 0.27428197860717773], [191, 0.2544128894805908], [192, 0.2590811252593994], [193, 0.2520909309387207], [194, 0.3081088066101074], [195, 0.3043200969696045], [196, 0.2755720615386963], [197, 0.2634861469268799], [198, 0.2577850818634033], [199, 0.2626979351043701], [200, 0.26772212982177734], [201, 0.27051401138305664], [202, 0.26654696464538574], [203, 0.2635619640350342], [204, 0.3121960163116455], [205, 0.2560000419616699], [206, 0.3078939914703369], [207, 0.2598578929901123], [208, 0.2670021057128906], [209, 0.3146090507507324], [210, 0.35787105560302734], [211, 0.2635231018066406], [212, 0.27200984954833984], [213, 0.3224360942840576], [214, 0.2796590328216553], [215, 0.2788691520690918], [216, 0.25908398628234863], [217, 0.25977301597595215], [218, 0.2646770477294922], [219, 0.2609879970550537], [220, 0.259052038192749], [221, 0.27483296394348145], [222, 0.30147790908813477], [223, 0.2511298656463623], [224, 0.2605259418487549], [225, 0.25505805015563965], [226, 0.26019811630249023], [227, 0.25609397888183594], [228, 0.2591221332550049], [229, 0.37064385414123535], [230, 0.26781201362609863], [231, 0.2608001232147217], [232, 0.26137304306030273], [233, 0.26230287551879883], [234, 0.26232099533081055], [235, 0.2549290657043457], [236, 0.3394920825958252], [237, 0.2609241008758545], [238, 0.29917192459106445], [239, 0.2576181888580322], [240, 0.255706787109375], [241, 0.2628459930419922], [242, 0.27671194076538086], [243, 0.3103489875793457], [244, 0.25184106826782227], [245, 0.2665088176727295], [246, 0.2952260971069336], [247, 0.2649500370025635], [248, 0.26047396659851074], [249, 0.2909839153289795], [250, 0.31011199951171875], [251, 0.2649409770965576], [252, 0.31649184226989746], [253, 0.25545406341552734], [254, 0.2524251937866211], [255, 0.25432896614074707], [256, 0.2618260383605957], [257, 0.2632448673248291], [258, 0.27759313583374023], [259, 0.2605099678039551], [260, 0.2678349018096924], [261, 0.26407599449157715], [262, 0.26599597930908203], [263, 0.30896806716918945], [264, 0.25599002838134766], [265, 0.2561919689178467], [266, 0.2636840343475342], [267, 0.257612943649292], [268, 0.2580680847167969], [269, 0.26715779304504395], [270, 0.32235217094421387], [271, 0.2637441158294678], [272, 0.266218900680542], [273, 0.27117204666137695], [274, 0.264362096786499], [275, 0.40247297286987305], [276, 0.26110219955444336], [277, 0.34248995780944824], [278, 0.25618505477905273], [279, 0.2598278522491455], [280, 0.2725381851196289], [281, 0.2696518898010254], [282, 0.2696859836578369], [283, 0.26465511322021484], [284, 0.2578010559082031], [285, 0.34044408798217773], [286, 0.26714086532592773], [287, 0.26181721687316895], [288, 0.33922386169433594], [289, 0.3197758197784424], [290, 0.25231385231018066], [291, 0.2633180618286133], [292, 0.26255106925964355], [293, 0.2568812370300293], [294, 0.3117809295654297], [295, 0.3112220764160156], [296, 0.3091850280761719], [297, 0.2587289810180664], [298, 0.36067986488342285], [299, 0.34250593185424805], [300, 0.25042200088500977], [301, 0.258497953414917], [302, 0.2590160369873047], [303, 0.33393192291259766], [304, 0.25632691383361816], [305, 0.28223299980163574], [306, 0.2543308734893799], [307, 0.2571079730987549], [308, 0.2608678340911865], [309, 0.26524996757507324], [310, 0.25438714027404785], [311, 0.34174299240112305], [312, 0.2768239974975586], [313, 0.28629589080810547], [314, 0.2630600929260254], [315, 0.2619361877441406], [316, 0.29727697372436523], [317, 0.26401305198669434], [318, 0.30616188049316406], [319, 0.26277899742126465], [320, 0.3234519958496094], [321, 0.3129079341888428], [322, 0.274982213973999], [323, 0.26833605766296387], [324, 0.32060909271240234], [325, 0.26729607582092285], [326, 0.2680189609527588], [327, 0.26638293266296387], [328, 0.32758402824401855], [329, 0.30782318115234375], [330, 0.28335094451904297], [331, 0.27428293228149414], [332, 0.2642388343811035], [333, 0.31645798683166504], [334, 0.2581040859222412], [335, 0.3369758129119873], [336, 0.27826595306396484], [337, 0.25457310676574707], [338, 0.264132022857666], [339, 0.2547290325164795], [340, 0.3006749153137207], [341, 0.26072096824645996], [342, 0.3144049644470215], [343, 0.27483582496643066], [344, 0.2643911838531494], [345, 0.2585618495941162], [346, 0.26914286613464355], [347, 0.2602550983428955], [348, 0.25717592239379883], [349, 0.24933910369873047], [350, 0.260591983795166], [351, 0.25988101959228516], [352, 0.2610039710998535], [353, 0.26195192337036133], [354, 0.26134800910949707], [355, 0.26465392112731934], [356, 0.2645759582519531], [357, 0.2910640239715576], [358, 0.2895660400390625], [359, 0.29149699211120605], [360, 0.2869541645050049], [361, 0.2635211944580078], [362, 0.317335844039917], [363, 0.25543808937072754], [364, 0.3062119483947754], [365, 0.262890100479126], [366, 0.30979394912719727], [367, 0.25589799880981445], [368, 0.2626919746398926], [369, 0.2606329917907715], [370, 0.264664888381958], [371, 0.28791308403015137], [372, 0.2589690685272217], [373, 0.25913405418395996], [374, 0.2762620449066162], [375, 0.3252859115600586], [376, 0.25937581062316895], [377, 0.3106260299682617], [378, 0.26537084579467773], [379, 0.2642991542816162], [380, 0.28066420555114746], [381, 0.31076788902282715], [382, 0.26418399810791016], [383, 0.2589421272277832], [384, 0.31632304191589355], [385, 0.26008105278015137], [386, 0.25441408157348633], [387, 0.2649719715118408], [388, 0.2990601062774658], [389, 0.27453112602233887], [390, 0.25905489921569824], [391, 0.2616589069366455], [392, 0.31885504722595215], [393, 0.26552891731262207], [394, 0.289827823638916], [395, 0.3339400291442871], [396, 0.2660329341888428], [397, 0.2598299980163574], [398, 0.2658519744873047], [399, 0.2614009380340576], [400, 0.2649068832397461], [401, 0.3025691509246826], [402, 0.2617948055267334], [403, 0.2624318599700928], [404, 0.26435303688049316], [405, 0.26503801345825195], [406, 0.2781999111175537], [407, 0.287992000579834], [408, 0.3099989891052246], [409, 0.294281005859375], [410, 0.2617931365966797], [411, 0.2909679412841797], [412, 0.29038405418395996], [413, 0.26193690299987793], [414, 0.2638728618621826], [415, 0.2630019187927246], [416, 0.2572669982910156], [417, 0.25725889205932617], [418, 0.3142561912536621], [419, 0.2644028663635254], [420, 0.25820493698120117], [421, 0.25369691848754883], [422, 0.2541830539703369], [423, 0.25428104400634766], [424, 0.26239585876464844], [425, 0.27812981605529785], [426, 0.3149740695953369], [427, 0.25612592697143555], [428, 0.2675819396972656], [429, 0.2638828754425049], [430, 0.28551197052001953], [431, 0.2775609493255615], [432, 0.2520480155944824], [433, 0.2666280269622803], [434, 0.2762789726257324], [435, 0.26078200340270996], [436, 0.31092405319213867], [437, 0.27519893646240234], [438, 0.25292086601257324], [439, 0.26808595657348633], [440, 0.2600419521331787], [441, 0.27718496322631836], [442, 0.3613431453704834], [443, 0.2547609806060791], [444, 0.25530385971069336], [445, 0.2604258060455322], [446, 0.2574350833892822], [447, 0.25618600845336914], [448, 0.25972795486450195], [449, 0.25716400146484375], [450, 0.29948902130126953], [451, 0.25755786895751953], [452, 0.26394104957580566], [453, 0.2637600898742676], [454, 0.2602519989013672], [455, 0.2626190185546875], [456, 0.2651810646057129], [457, 0.26661014556884766], [458, 0.2537660598754883], [459, 0.25970983505249023], [460, 0.30417895317077637], [461, 0.29324889183044434], [462, 0.2607131004333496], [463, 0.25786590576171875], [464, 0.2964470386505127], [465, 0.26400208473205566], [466, 0.2582230567932129], [467, 0.26131200790405273], [468, 0.28006911277770996], [469, 0.33438587188720703], [470, 0.2724878787994385], [471, 0.26068592071533203], [472, 0.2679591178894043], [473, 0.283811092376709], [474, 0.26096606254577637], [475, 0.26716113090515137], [476, 0.26267123222351074], [477, 0.26276087760925293], [478, 0.2611410617828369], [479, 0.26142406463623047], [480, 0.25439906120300293], [481, 0.2536799907684326], [482, 0.2717559337615967], [483, 0.2527470588684082], [484, 0.32456207275390625], [485, 0.30643701553344727], [486, 0.2672739028930664], [487, 0.26124095916748047], [488, 0.2578001022338867], [489, 0.25750303268432617], [490, 0.28221988677978516], [491, 0.27951884269714355], [492, 0.2671990394592285], [493, 0.2624092102050781], [494, 0.25646185874938965], [495, 0.26050901412963867], [496, 0.2582418918609619], [497, 0.26039814949035645], [498, 0.32245588302612305], [499, 0.25748491287231445], [500, 0.28650617599487305], [501, 0.34429001808166504], [502, 0.26134300231933594], [503, 0.2702670097351074], [504, 0.26325392723083496], [505, 0.26030993461608887], [506, 0.33202219009399414], [507, 0.32864999771118164], [508, 0.2710859775543213], [509, 0.2679941654205322], [510, 0.29216599464416504], [511, 0.2931089401245117], [512, 0.25937604904174805], [513, 0.26778507232666016], [514, 0.31244492530822754], [515, 0.27173495292663574], [516, 0.32228708267211914], [517, 0.269442081451416], [518, 0.2726919651031494], [519, 0.3371298313140869], [520, 0.26630711555480957], [521, 0.3085639476776123], [522, 0.3011319637298584], [523, 0.2510099411010742], [524, 0.2501859664916992], [525, 0.26936888694763184], [526, 0.25600504875183105], [527, 0.27014803886413574], [528, 0.26206421852111816], [529, 0.26680707931518555], [530, 0.2595081329345703], [531, 0.27272510528564453], [532, 0.2576899528503418], [533, 0.25921201705932617], [534, 0.3230719566345215], [535, 0.27049803733825684], [536, 0.266754150390625], [537, 0.31229305267333984], [538, 0.025192975997924805], [539, 0.3648998737335205], [540, 0.025333881378173828]]], ["failed_duration", [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0], [9, 0], [10, 0], [11, 0], [12, 0], [13, 0], [14, 0], [15, 0], [16, 0], [17, 0], [18, 0], [19, 0], [20, 0], [21, 0], [22, 0], [23, 0], [24, 0], [25, 0], [26, 0], [27, 0], [28, 0], [29, 0], [30, 0], [31, 0], [32, 0], [33, 0], [34, 0], [35, 0], [36, 0], [37, 0], [38, 0], [39, 0], [40, 0], [41, 0], [42, 0], [43, 0], [44, 0], [45, 0], [46, 0], [47, 0], [48, 0], [49, 0], [50, 0], [51, 0], [52, 0], [53, 0], [54, 0], [55, 0], [56, 0], [57, 0], [58, 0], [59, 0], [60, 0], [61, 0], [62, 0], [63, 0], [64, 0], [65, 0], [66, 0], [67, 0], [68, 0], [69, 0], [70, 0], [71, 0], [72, 0], [73, 0], [74, 0], [75, 0], [76, 0], [77, 0], [78, 0], [79, 0], [80, 0], [81, 0], [82, 0], [83, 0], [84, 0], [85, 0], [86, 0], [87, 0], [88, 0], [89, 0], [90, 0], [91, 0], [92, 0], [93, 0], [94, 0], [95, 0], [96, 0], [97, 0], [98, 0], [99, 0], [100, 0], [101, 0], [102, 0], [103, 0], [104, 0], [105, 0], [106, 0], [107, 0], [108, 0], [109, 0], [110, 0], [111, 0], [112, 0], [113, 0], [114, 0], [115, 0], [116, 0], [117, 0], [118, 0], [119, 0], [120, 0], [121, 0], [122, 0], [123, 0], [124, 0], [125, 0], [126, 0], [127, 0], [128, 0], [129, 0], [130, 0], [131, 0], [132, 0], [133, 0], [134, 0], [135, 0], [136, 0], [137, 0], [138, 0], [139, 0], [140, 0], [141, 0], [142, 0], [143, 0], [144, 0], [145, 0], [146, 0], [147, 0], [148, 0], [149, 0], [150, 0], [151, 0], [152, 0], [153, 0], [154, 0], [155, 0], [156, 0], [157, 0], [158, 0], [159, 0], [160, 0], [161, 0], [162, 0], [163, 0], [164, 0], [165, 0], [166, 0], [167, 0], [168, 0], [169, 0], [170, 0], [171, 0], [172, 0], [173, 0], [174, 0], [175, 0], [176, 0], [177, 0], [178, 0], [179, 0], [180, 0], [181, 0], [182, 0], [183, 0], [184, 0], [185, 0], [186, 0], [187, 0], [188, 0], [189, 0], [190, 0], [191, 0], [192, 0], [193, 0], [194, 0], [195, 0], [196, 0], [197, 0], [198, 0], [199, 0], [200, 0], [201, 0], [202, 0], [203, 0], [204, 0], [205, 0], [206, 0], [207, 0], [208, 0], [209, 0], [210, 0], [211, 0], [212, 0], [213, 0], [214, 0], [215, 0], [216, 0], [217, 0], [218, 0], [219, 0], [220, 0], [221, 0], [222, 0], [223, 0], [224, 0], [225, 0], [226, 0], [227, 0], [228, 0], [229, 0], [230, 0], [231, 0], [232, 0], [233, 0], [234, 0], [235, 0], [236, 0], [237, 0], [238, 0], [239, 0], [240, 0], [241, 0], [242, 0], [243, 0], [244, 0], [245, 0], [246, 0], [247, 0], [248, 0], [249, 0], [250, 0], [251, 0], [252, 0], [253, 0], [254, 0], [255, 0], [256, 0], [257, 0], [258, 0], [259, 0], [260, 0], [261, 0], [262, 0], [263, 0], [264, 0], [265, 0], [266, 0], [267, 0], [268, 0], [269, 0], [270, 0], [271, 0], [272, 0], [273, 0], [274, 0], [275, 0], [276, 0], [277, 0], [278, 0], [279, 0], [280, 0], [281, 0], [282, 0], [283, 0], [284, 0], [285, 0], [286, 0], [287, 0], [288, 0], [289, 0], [290, 0], [291, 0], [292, 0], [293, 0], [294, 0], [295, 0], [296, 0], [297, 0], [298, 0], [299, 0], [300, 0], [301, 0], [302, 0], [303, 0], [304, 0], [305, 0], [306, 0], [307, 0], [308, 0], [309, 0], [310, 0], [311, 0], [312, 0], [313, 0], [314, 0], [315, 0], [316, 0], [317, 0], [318, 0], [319, 0], [320, 0], [321, 0], [322, 0], [323, 0], [324, 0], [325, 0], [326, 0], [327, 0], [328, 0], [329, 0], [330, 0], [331, 0], [332, 0], [333, 0], [334, 0], [335, 0], [336, 0], [337, 0], [338, 0], [339, 0], [340, 0], [341, 0], [342, 0], [343, 0], [344, 0], [345, 0], [346, 0], [347, 0], [348, 0], [349, 0], [350, 0], [351, 0], [352, 0], [353, 0], [354, 0], [355, 0], [356, 0], [357, 0], [358, 0], [359, 0], [360, 0], [361, 0], [362, 0], [363, 0], [364, 0], [365, 0], [366, 0], [367, 0], [368, 0], [369, 0], [370, 0], [371, 0], [372, 0], [373, 0], [374, 0], [375, 0], [376, 0], [377, 0], [378, 0], [379, 0], [380, 0], [381, 0], [382, 0], [383, 0], [384, 0], [385, 0], [386, 0], [387, 0], [388, 0], [389, 0], [390, 0], [391, 0], [392, 0], [393, 0], [394, 0], [395, 0], [396, 0], [397, 0], [398, 0], [399, 0], [400, 0], [401, 0], [402, 0], [403, 0], [404, 0], [405, 0], [406, 0], [407, 0], [408, 0], [409, 0], [410, 0], [411, 0], [412, 0], [413, 0], [414, 0], [415, 0], [416, 0], [417, 0], [418, 0], [419, 0], [420, 0], [421, 0], [422, 0], [423, 0], [424, 0], [425, 0], [426, 0], [427, 0], [428, 0], [429, 0], [430, 0], [431, 0], [432, 0], [433, 0], [434, 0], [435, 0], [436, 0], [437, 0], [438, 0], [439, 0], [440, 0], [441, 0], [442, 0], [443, 0], [444, 0], [445, 0], [446, 0], [447, 0], [448, 0], [449, 0], [450, 0], [451, 0], [452, 0], [453, 0], [454, 0], [455, 0], [456, 0], [457, 0], [458, 0], [459, 0], [460, 0], [461, 0], [462, 0], [463, 0], [464, 0], [465, 0], [466, 0], [467, 0], [468, 0], [469, 0], [470, 0], [471, 0], [472, 0], [473, 0], [474, 0], [475, 0], [476, 0], [477, 0], [478, 0], [479, 0], [480, 0], [481, 0], [482, 0], [483, 0], [484, 0], [485, 0], [486, 0], [487, 0], [488, 0], [489, 0], [490, 0], [491, 0], [492, 0], [493, 0], [494, 0], [495, 0], [496, 0], [497, 0], [498, 0], [499, 0], [500, 0], [501, 0], [502, 0], [503, 0], [504, 0], [505, 0], [506, 0], [507, 0], [508, 0], [509, 0], [510, 0], [511, 0], [512, 0], [513, 0], [514, 0], [515, 0], [516, 0], [517, 0], [518, 0], [519, 0], [520, 0], [521, 0], [522, 0], [523, 0], [524, 0], [525, 0], [526, 0], [527, 0], [528, 0], [529, 0], [530, 0], [531, 0], [532, 0], [533, 0], [534, 0], [535, 0], [536, 0], [537, 0], [538, 3.910064697265625e-05], [539, 0], [540, 3.504753112792969e-05]]]], "histogram": {"data": [[{"disabled": 0, "values": [{"y": 2, "x": 0.0441258152325948}, {"y": 0, "x": 0.0630586544672648}, {"y": 0, "x": 0.08199149370193481}, {"y": 0, "x": 0.10092433293660481}, {"y": 0, "x": 0.11985717217127481}, {"y": 0, "x": 0.13879001140594482}, {"y": 0, "x": 0.1577228506406148}, {"y": 0, "x": 0.17665568987528482}, {"y": 0, "x": 0.19558852910995483}, {"y": 0, "x": 0.21452136834462482}, {"y": 3, "x": 0.23345420757929483}, {"y": 86, "x": 0.25238704681396484}, {"y": 231, "x": 0.27131988604863483}, {"y": 58, "x": 0.2902527252833048}, {"y": 51, "x": 0.30918556451797485}, {"y": 51, "x": 0.32811840375264484}, {"y": 28, "x": 0.3470512429873148}, {"y": 9, "x": 0.36598408222198486}, {"y": 7, "x": 0.38491692145665485}, {"y": 3, "x": 0.40384976069132483}, {"y": 6, "x": 0.4227825999259949}, {"y": 3, "x": 0.44171543916066486}, {"y": 0, "x": 0.46064827839533484}, {"y": 2, "x": 0.4795811176300049}], "key": "authenticate.keystone", "view": "Square Root Choice"}], [{"disabled": 0, "values": [{"y": 2, "x": 0.06650098887356845}, {"y": 0, "x": 0.1078090017492121}, {"y": 0, "x": 0.14911701462485574}, {"y": 0, "x": 0.1904250275004994}, {"y": 1, "x": 0.23173304037614303}, {"y": 327, "x": 0.2730410532517867}, {"y": 118, "x": 0.3143490661274303}, {"y": 65, "x": 0.355657079003074}, {"y": 14, "x": 0.39696509187871765}, {"y": 9, "x": 0.43827310475436126}, {"y": 4, "x": 0.4795811176300049}], "key": "authenticate.keystone", "view": "Sturges Formula"}], [{"disabled": 0, "values": [{"y": 2, "x": 0.051921690211576575}, {"y": 0, "x": 0.07865040442522835}, {"y": 0, "x": 0.10537911863888011}, {"y": 0, "x": 0.1321078328525319}, {"y": 0, "x": 0.15883654706618366}, {"y": 0, "x": 0.18556526127983541}, {"y": 0, "x": 0.2122939754934872}, {"y": 26, "x": 0.23902268970713897}, {"y": 248, "x": 0.2657514039207908}, {"y": 112, "x": 0.2924801181344425}, {"y": 73, "x": 0.3192088323480943}, {"y": 47, "x": 0.345937546561746}, {"y": 13, "x": 0.37266626077539783}, {"y": 6, "x": 0.3993949749890496}, {"y": 9, "x": 0.4261236892027014}, {"y": 2, "x": 0.45285240341635313}, {"y": 2, "x": 0.4795811176300049}], "key": "authenticate.keystone", "view": "Rice Rule"}]], "views": [{"id": 0, "name": "Square Root Choice"}, {"id": 1, "name": "Sturges Formula"}, {"id": 2, "name": "Rice Rule"}]}}, "iterations": {"pie": [["success", 538], ["errors", 2]], "iter": [["duration", [[1, 0.30924105644226074], [2, 0.31940412521362305], [3, 0.3415210247039795], [4, 0.34436798095703125], [5, 0.3205709457397461], [6, 0.3069939613342285], [7, 0.3062469959259033], [8, 0.3755159378051758], [9, 0.34541893005371094], [10, 0.3468918800354004], [11, 0.41796207427978516], [12, 0.3429558277130127], [13, 0.47960400581359863], [14, 0.3082249164581299], [15, 0.37355494499206543], [16, 0.3263099193572998], [17, 0.3842639923095703], [18, 0.33727192878723145], [19, 0.3847510814666748], [20, 0.3226890563964844], [21, 0.321429967880249], [22, 0.32343411445617676], [23, 0.3403029441833496], [24, 0.29585695266723633], [25, 0.41068601608276367], [26, 0.3059499263763428], [27, 0.40821099281311035], [28, 0.3432040214538574], [29, 0.27443504333496094], [30, 0.4724700450897217], [31, 0.3150310516357422], [32, 0.35961294174194336], [33, 0.3050558567047119], [34, 0.2764251232147217], [35, 0.3226630687713623], [36, 0.31966495513916016], [37, 0.43996214866638184], [38, 0.386016845703125], [39, 0.31359410285949707], [40, 0.31729793548583984], [41, 0.284653902053833], [42, 0.26482391357421875], [43, 0.36454296112060547], [44, 0.31445789337158203], [45, 0.3350050449371338], [46, 0.2704010009765625], [47, 0.4084300994873047], [48, 0.39952993392944336], [49, 0.2998039722442627], [50, 0.3517279624938965], [51, 0.2677769660949707], [52, 0.34636998176574707], [53, 0.3302321434020996], [54, 0.2912750244140625], [55, 0.26819586753845215], [56, 0.29016900062561035], [57, 0.41192078590393066], [58, 0.43921709060668945], [59, 0.3762497901916504], [60, 0.345289945602417], [61, 0.4133000373840332], [62, 0.3185698986053467], [63, 0.27544093132019043], [64, 0.322268009185791], [65, 0.23587608337402344], [66, 0.23683691024780273], [67, 0.23321795463562012], [68, 0.2276768684387207], [69, 0.270021915435791], [70, 0.2500779628753662], [71, 0.24522900581359863], [72, 0.29393506050109863], [73, 0.23848891258239746], [74, 0.23547101020812988], [75, 0.23897099494934082], [76, 0.2474958896636963], [77, 0.2600259780883789], [78, 0.31995201110839844], [79, 0.2407979965209961], [80, 0.3113431930541992], [81, 0.28907203674316406], [82, 0.2413160800933838], [83, 0.2644360065460205], [84, 0.2563040256500244], [85, 0.26464104652404785], [86, 0.3035609722137451], [87, 0.24753999710083008], [88, 0.24333500862121582], [89, 0.28377485275268555], [90, 0.24810409545898438], [91, 0.23389291763305664], [92, 0.2353060245513916], [93, 0.2412431240081787], [94, 0.2372450828552246], [95, 0.2477860450744629], [96, 0.295989990234375], [97, 0.2371540069580078], [98, 0.2377309799194336], [99, 0.24347996711730957], [100, 0.26369595527648926], [101, 0.23266196250915527], [102, 0.24219512939453125], [103, 0.23910808563232422], [104, 0.2390308380126953], [105, 0.23832082748413086], [106, 0.24716997146606445], [107, 0.23486900329589844], [108, 0.24644899368286133], [109, 0.29859495162963867], [110, 0.24573802947998047], [111, 0.29360389709472656], [112, 0.2509779930114746], [113, 0.29500508308410645], [114, 0.23880505561828613], [115, 0.2477860450744629], [116, 0.2986137866973877], [117, 0.2518301010131836], [118, 0.2420809268951416], [119, 0.23517704010009766], [120, 0.23401093482971191], [121, 0.25165796279907227], [122, 0.24595284461975098], [123, 0.24457502365112305], [124, 0.23458600044250488], [125, 0.2417151927947998], [126, 0.23572897911071777], [127, 0.24216604232788086], [128, 0.24146103858947754], [129, 0.2847559452056885], [130, 0.23856019973754883], [131, 0.24419713020324707], [132, 0.26984500885009766], [133, 0.2726471424102783], [134, 0.24127912521362305], [135, 0.28727006912231445], [136, 0.2895350456237793], [137, 0.24219012260437012], [138, 0.2440810203552246], [139, 0.2570669651031494], [140, 0.24981999397277832], [141, 0.24421310424804688], [142, 0.29976892471313477], [143, 0.239732027053833], [144, 0.24033617973327637], [145, 0.23949313163757324], [146, 0.25093698501586914], [147, 0.2376699447631836], [148, 0.32888102531433105], [149, 0.29399704933166504], [150, 0.24091601371765137], [151, 0.24712085723876953], [152, 0.23361802101135254], [153, 0.23562002182006836], [154, 0.2496020793914795], [155, 0.24245309829711914], [156, 0.34893298149108887], [157, 0.2469170093536377], [158, 0.2875950336456299], [159, 0.2824258804321289], [160, 0.24218106269836426], [161, 0.23749709129333496], [162, 0.24815797805786133], [163, 0.24276304244995117], [164, 0.24460387229919434], [165, 0.24776005744934082], [166, 0.2432880401611328], [167, 0.24271893501281738], [168, 0.24560308456420898], [169, 0.25052404403686523], [170, 0.26367998123168945], [171, 0.24534106254577637], [172, 0.24831891059875488], [173, 0.2411949634552002], [174, 0.2580599784851074], [175, 0.2753419876098633], [176, 0.2915468215942383], [177, 0.30782198905944824], [178, 0.2794790267944336], [179, 0.2702369689941406], [180, 0.2829298973083496], [181, 0.4259498119354248], [182, 0.25964784622192383], [183, 0.35173702239990234], [184, 0.25183701515197754], [185, 0.31678199768066406], [186, 0.3122742176055908], [187, 0.3013598918914795], [188, 0.3682072162628174], [189, 0.33653688430786133], [190, 0.27431392669677734], [191, 0.25444912910461426], [192, 0.25911998748779297], [193, 0.2521200180053711], [194, 0.30814099311828613], [195, 0.3043551445007324], [196, 0.2756171226501465], [197, 0.26351284980773926], [198, 0.25781702995300293], [199, 0.26273322105407715], [200, 0.2677597999572754], [201, 0.27054500579833984], [202, 0.26658010482788086], [203, 0.263592004776001], [204, 0.3122599124908447], [205, 0.2560288906097412], [206, 0.3079209327697754], [207, 0.25989294052124023], [208, 0.2670259475708008], [209, 0.3146359920501709], [210, 0.3579061031341553], [211, 0.26355600357055664], [212, 0.27203798294067383], [213, 0.32247304916381836], [214, 0.2796919345855713], [215, 0.27890491485595703], [216, 0.25911808013916016], [217, 0.25980496406555176], [218, 0.2647078037261963], [219, 0.26102209091186523], [220, 0.25907397270202637], [221, 0.27486419677734375], [222, 0.3015158176422119], [223, 0.2511589527130127], [224, 0.2605619430541992], [225, 0.25509095191955566], [226, 0.260235071182251], [227, 0.25612401962280273], [228, 0.2591559886932373], [229, 0.37067198753356934], [230, 0.26784515380859375], [231, 0.2608299255371094], [232, 0.2613952159881592], [233, 0.2623310089111328], [234, 0.26235294342041016], [235, 0.25494813919067383], [236, 0.3395118713378906], [237, 0.2609591484069824], [238, 0.2991948127746582], [239, 0.257645845413208], [240, 0.25573301315307617], [241, 0.2628819942474365], [242, 0.27674388885498047], [243, 0.3103790283203125], [244, 0.2518599033355713], [245, 0.2665400505065918], [246, 0.29526591300964355], [247, 0.2649879455566406], [248, 0.26050496101379395], [249, 0.29102087020874023], [250, 0.3101370334625244], [251, 0.26497387886047363], [252, 0.31653404235839844], [253, 0.25548720359802246], [254, 0.2524569034576416], [255, 0.2543621063232422], [256, 0.26186203956604004], [257, 0.2632758617401123], [258, 0.27762508392333984], [259, 0.26053881645202637], [260, 0.2678699493408203], [261, 0.2641110420227051], [262, 0.26602697372436523], [263, 0.30899906158447266], [264, 0.25601887702941895], [265, 0.25621986389160156], [266, 0.2637178897857666], [267, 0.2576439380645752], [268, 0.25809407234191895], [269, 0.26718688011169434], [270, 0.3223860263824463], [271, 0.26377296447753906], [272, 0.266251802444458], [273, 0.2712059020996094], [274, 0.26439499855041504], [275, 0.40250182151794434], [276, 0.26112890243530273], [277, 0.34251999855041504], [278, 0.25621795654296875], [279, 0.2598550319671631], [280, 0.27257704734802246], [281, 0.2696850299835205], [282, 0.26971983909606934], [283, 0.26468896865844727], [284, 0.2578279972076416], [285, 0.34047698974609375], [286, 0.26717209815979004], [287, 0.2618520259857178], [288, 0.3392598628997803], [289, 0.3198089599609375], [290, 0.25234508514404297], [291, 0.26335716247558594], [292, 0.2625870704650879], [293, 0.25690793991088867], [294, 0.31180691719055176], [295, 0.3112499713897705], [296, 0.3092210292816162], [297, 0.2587611675262451], [298, 0.3607161045074463], [299, 0.34253692626953125], [300, 0.250446081161499], [301, 0.2585320472717285], [302, 0.25904297828674316], [303, 0.33398890495300293], [304, 0.2563490867614746], [305, 0.2822611331939697], [306, 0.25435805320739746], [307, 0.2571539878845215], [308, 0.26094603538513184], [309, 0.26528215408325195], [310, 0.25442004203796387], [311, 0.34177494049072266], [312, 0.2768540382385254], [313, 0.2863278388977051], [314, 0.263092041015625], [315, 0.26197099685668945], [316, 0.29730987548828125], [317, 0.2640509605407715], [318, 0.3061978816986084], [319, 0.2628140449523926], [320, 0.3234870433807373], [321, 0.3129420280456543], [322, 0.27501392364501953], [323, 0.26836681365966797], [324, 0.3206360340118408], [325, 0.26732301712036133], [326, 0.2680490016937256], [327, 0.26641201972961426], [328, 0.32761192321777344], [329, 0.30785202980041504], [330, 0.2833888530731201], [331, 0.27431702613830566], [332, 0.2642650604248047], [333, 0.31648898124694824], [334, 0.25813984870910645], [335, 0.33699703216552734], [336, 0.2782900333404541], [337, 0.25459790229797363], [338, 0.26415491104125977], [339, 0.2547571659088135], [340, 0.30069899559020996], [341, 0.260753870010376], [342, 0.31443119049072266], [343, 0.27486515045166016], [344, 0.26442503929138184], [345, 0.2585921287536621], [346, 0.26917099952697754], [347, 0.26027798652648926], [348, 0.2572019100189209], [349, 0.24936604499816895], [350, 0.26062703132629395], [351, 0.259915828704834], [352, 0.26102614402770996], [353, 0.2619760036468506], [354, 0.2613809108734131], [355, 0.26468396186828613], [356, 0.2646031379699707], [357, 0.2910950183868408], [358, 0.28959012031555176], [359, 0.291517972946167], [360, 0.28698301315307617], [361, 0.2635471820831299], [362, 0.3173699378967285], [363, 0.2554619312286377], [364, 0.30623793601989746], [365, 0.262908935546875], [366, 0.3098170757293701], [367, 0.2559220790863037], [368, 0.2627220153808594], [369, 0.2606680393218994], [370, 0.26473307609558105], [371, 0.28793907165527344], [372, 0.2589988708496094], [373, 0.2591688632965088], [374, 0.2762918472290039], [375, 0.32531309127807617], [376, 0.25940704345703125], [377, 0.31065797805786133], [378, 0.26540422439575195], [379, 0.2643308639526367], [380, 0.28069615364074707], [381, 0.310805082321167], [382, 0.2642068862915039], [383, 0.25897789001464844], [384, 0.3163909912109375], [385, 0.2601180076599121], [386, 0.2544541358947754], [387, 0.26501011848449707], [388, 0.2990868091583252], [389, 0.2745671272277832], [390, 0.25908803939819336], [391, 0.26169514656066895], [392, 0.31888914108276367], [393, 0.26555395126342773], [394, 0.28984808921813965], [395, 0.3339719772338867], [396, 0.26606178283691406], [397, 0.2598550319671631], [398, 0.2658848762512207], [399, 0.2614247798919678], [400, 0.26493000984191895], [401, 0.3025979995727539], [402, 0.26181507110595703], [403, 0.26245689392089844], [404, 0.2643880844116211], [405, 0.26508307456970215], [406, 0.2782261371612549], [407, 0.2880258560180664], [408, 0.31003308296203613], [409, 0.29431891441345215], [410, 0.2618229389190674], [411, 0.2909979820251465], [412, 0.2904050350189209], [413, 0.2619600296020508], [414, 0.263901948928833], [415, 0.26304006576538086], [416, 0.25733089447021484], [417, 0.25728583335876465], [418, 0.314288854598999], [419, 0.2644381523132324], [420, 0.2582569122314453], [421, 0.2537379264831543], [422, 0.25420594215393066], [423, 0.2543020248413086], [424, 0.2624320983886719], [425, 0.27816200256347656], [426, 0.31499791145324707], [427, 0.2561509609222412], [428, 0.26761388778686523], [429, 0.2639131546020508], [430, 0.28554296493530273], [431, 0.27759695053100586], [432, 0.25207090377807617], [433, 0.2666628360748291], [434, 0.27629995346069336], [435, 0.2608060836791992], [436, 0.3109560012817383], [437, 0.275223970413208], [438, 0.2529439926147461], [439, 0.26810598373413086], [440, 0.2600669860839844], [441, 0.2772049903869629], [442, 0.36136317253112793], [443, 0.2547919750213623], [444, 0.2553229331970215], [445, 0.26045799255371094], [446, 0.2574591636657715], [447, 0.2562100887298584], [448, 0.25976014137268066], [449, 0.2571890354156494], [450, 0.2995128631591797], [451, 0.25758910179138184], [452, 0.2639589309692383], [453, 0.26378607749938965], [454, 0.260282039642334], [455, 0.2626500129699707], [456, 0.26520395278930664], [457, 0.26663780212402344], [458, 0.25378894805908203], [459, 0.2597510814666748], [460, 0.3042128086090088], [461, 0.29328012466430664], [462, 0.260761022567749], [463, 0.25789308547973633], [464, 0.29648494720458984], [465, 0.2640268802642822], [466, 0.258253812789917], [467, 0.2613401412963867], [468, 0.2801039218902588], [469, 0.3344118595123291], [470, 0.2725200653076172], [471, 0.2607119083404541], [472, 0.2679920196533203], [473, 0.2838430404663086], [474, 0.26099109649658203], [475, 0.26719188690185547], [476, 0.2627110481262207], [477, 0.26279497146606445], [478, 0.2611689567565918], [479, 0.26145410537719727], [480, 0.2544260025024414], [481, 0.25369882583618164], [482, 0.2717881202697754], [483, 0.25277209281921387], [484, 0.32460498809814453], [485, 0.30646419525146484], [486, 0.26729583740234375], [487, 0.2612621784210205], [488, 0.2578291893005371], [489, 0.257526159286499], [490, 0.28226208686828613], [491, 0.2795560359954834], [492, 0.2672309875488281], [493, 0.2624330520629883], [494, 0.2564840316772461], [495, 0.2605421543121338], [496, 0.2582700252532959], [497, 0.2604188919067383], [498, 0.3224780559539795], [499, 0.25750207901000977], [500, 0.2865431308746338], [501, 0.3443260192871094], [502, 0.2613680362701416], [503, 0.27028918266296387], [504, 0.26328206062316895], [505, 0.2603449821472168], [506, 0.3320620059967041], [507, 0.3286881446838379], [508, 0.2711169719696045], [509, 0.2680230140686035], [510, 0.29219603538513184], [511, 0.293179988861084], [512, 0.25940704345703125], [513, 0.26781702041625977], [514, 0.3124730587005615], [515, 0.2717628479003906], [516, 0.32232213020324707], [517, 0.26947689056396484], [518, 0.2727189064025879], [519, 0.3371579647064209], [520, 0.26633715629577637], [521, 0.3085818290710449], [522, 0.30115795135498047], [523, 0.25103116035461426], [524, 0.2502169609069824], [525, 0.2694089412689209], [526, 0.2560391426086426], [527, 0.27019500732421875], [528, 0.2620868682861328], [529, 0.26683497428894043], [530, 0.2595388889312744], [531, 0.27275800704956055], [532, 0.2577199935913086], [533, 0.25924110412597656], [534, 0.32310986518859863], [535, 0.2705271244049072], [536, 0.2667829990386963], [537, 0.31232500076293945], [538, 0], [539, 0.3649270534515381], [540, 0]]], ["idle_duration", [[1, 0.0], [2, 0.0], [3, 0.0], [4, 0.0], [5, 0.0], [6, 0.0], [7, 0.0], [8, 0.0], [9, 0.0], [10, 0.0], [11, 0.0], [12, 0.0], [13, 0.0], [14, 0.0], [15, 0.0], [16, 0.0], [17, 0.0], [18, 0.0], [19, 0.0], [20, 0.0], [21, 0.0], [22, 0.0], [23, 0.0], [24, 0.0], [25, 0.0], [26, 0.0], [27, 0.0], [28, 0.0], [29, 0.0], [30, 0.0], [31, 0.0], [32, 0.0], [33, 0.0], [34, 0.0], [35, 0.0], [36, 0.0], [37, 0.0], [38, 0.0], [39, 0.0], [40, 0.0], [41, 0.0], [42, 0.0], [43, 0.0], [44, 0.0], [45, 0.0], [46, 0.0], [47, 0.0], [48, 0.0], [49, 0.0], [50, 0.0], [51, 0.0], [52, 0.0], [53, 0.0], [54, 0.0], [55, 0.0], [56, 0.0], [57, 0.0], [58, 0.0], [59, 0.0], [60, 0.0], [61, 0.0], [62, 0.0], [63, 0.0], [64, 0.0], [65, 0.0], [66, 0.0], [67, 0.0], [68, 0.0], [69, 0.0], [70, 0.0], [71, 0.0], [72, 0.0], [73, 0.0], [74, 0.0], [75, 0.0], [76, 0.0], [77, 0.0], [78, 0.0], [79, 0.0], [80, 0.0], [81, 0.0], [82, 0.0], [83, 0.0], [84, 0.0], [85, 0.0], [86, 0.0], [87, 0.0], [88, 0.0], [89, 0.0], [90, 0.0], [91, 0.0], [92, 0.0], [93, 0.0], [94, 0.0], [95, 0.0], [96, 0.0], [97, 0.0], [98, 0.0], [99, 0.0], [100, 0.0], [101, 0.0], [102, 0.0], [103, 0.0], [104, 0.0], [105, 0.0], [106, 0.0], [107, 0.0], [108, 0.0], [109, 0.0], [110, 0.0], [111, 0.0], [112, 0.0], [113, 0.0], [114, 0.0], [115, 0.0], [116, 0.0], [117, 0.0], [118, 0.0], [119, 0.0], [120, 0.0], [121, 0.0], [122, 0.0], [123, 0.0], [124, 0.0], [125, 0.0], [126, 0.0], [127, 0.0], [128, 0.0], [129, 0.0], [130, 0.0], [131, 0.0], [132, 0.0], [133, 0.0], [134, 0.0], [135, 0.0], [136, 0.0], [137, 0.0], [138, 0.0], [139, 0.0], [140, 0.0], [141, 0.0], [142, 0.0], [143, 0.0], [144, 0.0], [145, 0.0], [146, 0.0], [147, 0.0], [148, 0.0], [149, 0.0], [150, 0.0], [151, 0.0], [152, 0.0], [153, 0.0], [154, 0.0], [155, 0.0], [156, 0.0], [157, 0.0], [158, 0.0], [159, 0.0], [160, 0.0], [161, 0.0], [162, 0.0], [163, 0.0], [164, 0.0], [165, 0.0], [166, 0.0], [167, 0.0], [168, 0.0], [169, 0.0], [170, 0.0], [171, 0.0], [172, 0.0], [173, 0.0], [174, 0.0], [175, 0.0], [176, 0.0], [177, 0.0], [178, 0.0], [179, 0.0], [180, 0.0], [181, 0.0], [182, 0.0], [183, 0.0], [184, 0.0], [185, 0.0], [186, 0.0], [187, 0.0], [188, 0.0], [189, 0.0], [190, 0.0], [191, 0.0], [192, 0.0], [193, 0.0], [194, 0.0], [195, 0.0], [196, 0.0], [197, 0.0], [198, 0.0], [199, 0.0], [200, 0.0], [201, 0.0], [202, 0.0], [203, 0.0], [204, 0.0], [205, 0.0], [206, 0.0], [207, 0.0], [208, 0.0], [209, 0.0], [210, 0.0], [211, 0.0], [212, 0.0], [213, 0.0], [214, 0.0], [215, 0.0], [216, 0.0], [217, 0.0], [218, 0.0], [219, 0.0], [220, 0.0], [221, 0.0], [222, 0.0], [223, 0.0], [224, 0.0], [225, 0.0], [226, 0.0], [227, 0.0], [228, 0.0], [229, 0.0], [230, 0.0], [231, 0.0], [232, 0.0], [233, 0.0], [234, 0.0], [235, 0.0], [236, 0.0], [237, 0.0], [238, 0.0], [239, 0.0], [240, 0.0], [241, 0.0], [242, 0.0], [243, 0.0], [244, 0.0], [245, 0.0], [246, 0.0], [247, 0.0], [248, 0.0], [249, 0.0], [250, 0.0], [251, 0.0], [252, 0.0], [253, 0.0], [254, 0.0], [255, 0.0], [256, 0.0], [257, 0.0], [258, 0.0], [259, 0.0], [260, 0.0], [261, 0.0], [262, 0.0], [263, 0.0], [264, 0.0], [265, 0.0], [266, 0.0], [267, 0.0], [268, 0.0], [269, 0.0], [270, 0.0], [271, 0.0], [272, 0.0], [273, 0.0], [274, 0.0], [275, 0.0], [276, 0.0], [277, 0.0], [278, 0.0], [279, 0.0], [280, 0.0], [281, 0.0], [282, 0.0], [283, 0.0], [284, 0.0], [285, 0.0], [286, 0.0], [287, 0.0], [288, 0.0], [289, 0.0], [290, 0.0], [291, 0.0], [292, 0.0], [293, 0.0], [294, 0.0], [295, 0.0], [296, 0.0], [297, 0.0], [298, 0.0], [299, 0.0], [300, 0.0], [301, 0.0], [302, 0.0], [303, 0.0], [304, 0.0], [305, 0.0], [306, 0.0], [307, 0.0], [308, 0.0], [309, 0.0], [310, 0.0], [311, 0.0], [312, 0.0], [313, 0.0], [314, 0.0], [315, 0.0], [316, 0.0], [317, 0.0], [318, 0.0], [319, 0.0], [320, 0.0], [321, 0.0], [322, 0.0], [323, 0.0], [324, 0.0], [325, 0.0], [326, 0.0], [327, 0.0], [328, 0.0], [329, 0.0], [330, 0.0], [331, 0.0], [332, 0.0], [333, 0.0], [334, 0.0], [335, 0.0], [336, 0.0], [337, 0.0], [338, 0.0], [339, 0.0], [340, 0.0], [341, 0.0], [342, 0.0], [343, 0.0], [344, 0.0], [345, 0.0], [346, 0.0], [347, 0.0], [348, 0.0], [349, 0.0], [350, 0.0], [351, 0.0], [352, 0.0], [353, 0.0], [354, 0.0], [355, 0.0], [356, 0.0], [357, 0.0], [358, 0.0], [359, 0.0], [360, 0.0], [361, 0.0], [362, 0.0], [363, 0.0], [364, 0.0], [365, 0.0], [366, 0.0], [367, 0.0], [368, 0.0], [369, 0.0], [370, 0.0], [371, 0.0], [372, 0.0], [373, 0.0], [374, 0.0], [375, 0.0], [376, 0.0], [377, 0.0], [378, 0.0], [379, 0.0], [380, 0.0], [381, 0.0], [382, 0.0], [383, 0.0], [384, 0.0], [385, 0.0], [386, 0.0], [387, 0.0], [388, 0.0], [389, 0.0], [390, 0.0], [391, 0.0], [392, 0.0], [393, 0.0], [394, 0.0], [395, 0.0], [396, 0.0], [397, 0.0], [398, 0.0], [399, 0.0], [400, 0.0], [401, 0.0], [402, 0.0], [403, 0.0], [404, 0.0], [405, 0.0], [406, 0.0], [407, 0.0], [408, 0.0], [409, 0.0], [410, 0.0], [411, 0.0], [412, 0.0], [413, 0.0], [414, 0.0], [415, 0.0], [416, 0.0], [417, 0.0], [418, 0.0], [419, 0.0], [420, 0.0], [421, 0.0], [422, 0.0], [423, 0.0], [424, 0.0], [425, 0.0], [426, 0.0], [427, 0.0], [428, 0.0], [429, 0.0], [430, 0.0], [431, 0.0], [432, 0.0], [433, 0.0], [434, 0.0], [435, 0.0], [436, 0.0], [437, 0.0], [438, 0.0], [439, 0.0], [440, 0.0], [441, 0.0], [442, 0.0], [443, 0.0], [444, 0.0], [445, 0.0], [446, 0.0], [447, 0.0], [448, 0.0], [449, 0.0], [450, 0.0], [451, 0.0], [452, 0.0], [453, 0.0], [454, 0.0], [455, 0.0], [456, 0.0], [457, 0.0], [458, 0.0], [459, 0.0], [460, 0.0], [461, 0.0], [462, 0.0], [463, 0.0], [464, 0.0], [465, 0.0], [466, 0.0], [467, 0.0], [468, 0.0], [469, 0.0], [470, 0.0], [471, 0.0], [472, 0.0], [473, 0.0], [474, 0.0], [475, 0.0], [476, 0.0], [477, 0.0], [478, 0.0], [479, 0.0], [480, 0.0], [481, 0.0], [482, 0.0], [483, 0.0], [484, 0.0], [485, 0.0], [486, 0.0], [487, 0.0], [488, 0.0], [489, 0.0], [490, 0.0], [491, 0.0], [492, 0.0], [493, 0.0], [494, 0.0], [495, 0.0], [496, 0.0], [497, 0.0], [498, 0.0], [499, 0.0], [500, 0.0], [501, 0.0], [502, 0.0], [503, 0.0], [504, 0.0], [505, 0.0], [506, 0.0], [507, 0.0], [508, 0.0], [509, 0.0], [510, 0.0], [511, 0.0], [512, 0.0], [513, 0.0], [514, 0.0], [515, 0.0], [516, 0.0], [517, 0.0], [518, 0.0], [519, 0.0], [520, 0.0], [521, 0.0], [522, 0.0], [523, 0.0], [524, 0.0], [525, 0.0], [526, 0.0], [527, 0.0], [528, 0.0], [529, 0.0], [530, 0.0], [531, 0.0], [532, 0.0], [533, 0.0], [534, 0.0], [535, 0.0], [536, 0.0], [537, 0.0], [538, 0], [539, 0.0], [540, 0]]], ["failed_duration", [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0], [9, 0], [10, 0], [11, 0], [12, 0], [13, 0], [14, 0], [15, 0], [16, 0], [17, 0], [18, 0], [19, 0], [20, 0], [21, 0], [22, 0], [23, 0], [24, 0], [25, 0], [26, 0], [27, 0], [28, 0], [29, 0], [30, 0], [31, 0], [32, 0], [33, 0], [34, 0], [35, 0], [36, 0], [37, 0], [38, 0], [39, 0], [40, 0], [41, 0], [42, 0], [43, 0], [44, 0], [45, 0], [46, 0], [47, 0], [48, 0], [49, 0], [50, 0], [51, 0], [52, 0], [53, 0], [54, 0], [55, 0], [56, 0], [57, 0], [58, 0], [59, 0], [60, 0], [61, 0], [62, 0], [63, 0], [64, 0], [65, 0], [66, 0], [67, 0], [68, 0], [69, 0], [70, 0], [71, 0], [72, 0], [73, 0], [74, 0], [75, 0], [76, 0], [77, 0], [78, 0], [79, 0], [80, 0], [81, 0], [82, 0], [83, 0], [84, 0], [85, 0], [86, 0], [87, 0], [88, 0], [89, 0], [90, 0], [91, 0], [92, 0], [93, 0], [94, 0], [95, 0], [96, 0], [97, 0], [98, 0], [99, 0], [100, 0], [101, 0], [102, 0], [103, 0], [104, 0], [105, 0], [106, 0], [107, 0], [108, 0], [109, 0], [110, 0], [111, 0], [112, 0], [113, 0], [114, 0], [115, 0], [116, 0], [117, 0], [118, 0], [119, 0], [120, 0], [121, 0], [122, 0], [123, 0], [124, 0], [125, 0], [126, 0], [127, 0], [128, 0], [129, 0], [130, 0], [131, 0], [132, 0], [133, 0], [134, 0], [135, 0], [136, 0], [137, 0], [138, 0], [139, 0], [140, 0], [141, 0], [142, 0], [143, 0], [144, 0], [145, 0], [146, 0], [147, 0], [148, 0], [149, 0], [150, 0], [151, 0], [152, 0], [153, 0], [154, 0], [155, 0], [156, 0], [157, 0], [158, 0], [159, 0], [160, 0], [161, 0], [162, 0], [163, 0], [164, 0], [165, 0], [166, 0], [167, 0], [168, 0], [169, 0], [170, 0], [171, 0], [172, 0], [173, 0], [174, 0], [175, 0], [176, 0], [177, 0], [178, 0], [179, 0], [180, 0], [181, 0], [182, 0], [183, 0], [184, 0], [185, 0], [186, 0], [187, 0], [188, 0], [189, 0], [190, 0], [191, 0], [192, 0], [193, 0], [194, 0], [195, 0], [196, 0], [197, 0], [198, 0], [199, 0], [200, 0], [201, 0], [202, 0], [203, 0], [204, 0], [205, 0], [206, 0], [207, 0], [208, 0], [209, 0], [210, 0], [211, 0], [212, 0], [213, 0], [214, 0], [215, 0], [216, 0], [217, 0], [218, 0], [219, 0], [220, 0], [221, 0], [222, 0], [223, 0], [224, 0], [225, 0], [226, 0], [227, 0], [228, 0], [229, 0], [230, 0], [231, 0], [232, 0], [233, 0], [234, 0], [235, 0], [236, 0], [237, 0], [238, 0], [239, 0], [240, 0], [241, 0], [242, 0], [243, 0], [244, 0], [245, 0], [246, 0], [247, 0], [248, 0], [249, 0], [250, 0], [251, 0], [252, 0], [253, 0], [254, 0], [255, 0], [256, 0], [257, 0], [258, 0], [259, 0], [260, 0], [261, 0], [262, 0], [263, 0], [264, 0], [265, 0], [266, 0], [267, 0], [268, 0], [269, 0], [270, 0], [271, 0], [272, 0], [273, 0], [274, 0], [275, 0], [276, 0], [277, 0], [278, 0], [279, 0], [280, 0], [281, 0], [282, 0], [283, 0], [284, 0], [285, 0], [286, 0], [287, 0], [288, 0], [289, 0], [290, 0], [291, 0], [292, 0], [293, 0], [294, 0], [295, 0], [296, 0], [297, 0], [298, 0], [299, 0], [300, 0], [301, 0], [302, 0], [303, 0], [304, 0], [305, 0], [306, 0], [307, 0], [308, 0], [309, 0], [310, 0], [311, 0], [312, 0], [313, 0], [314, 0], [315, 0], [316, 0], [317, 0], [318, 0], [319, 0], [320, 0], [321, 0], [322, 0], [323, 0], [324, 0], [325, 0], [326, 0], [327, 0], [328, 0], [329, 0], [330, 0], [331, 0], [332, 0], [333, 0], [334, 0], [335, 0], [336, 0], [337, 0], [338, 0], [339, 0], [340, 0], [341, 0], [342, 0], [343, 0], [344, 0], [345, 0], [346, 0], [347, 0], [348, 0], [349, 0], [350, 0], [351, 0], [352, 0], [353, 0], [354, 0], [355, 0], [356, 0], [357, 0], [358, 0], [359, 0], [360, 0], [361, 0], [362, 0], [363, 0], [364, 0], [365, 0], [366, 0], [367, 0], [368, 0], [369, 0], [370, 0], [371, 0], [372, 0], [373, 0], [374, 0], [375, 0], [376, 0], [377, 0], [378, 0], [379, 0], [380, 0], [381, 0], [382, 0], [383, 0], [384, 0], [385, 0], [386, 0], [387, 0], [388, 0], [389, 0], [390, 0], [391, 0], [392, 0], [393, 0], [394, 0], [395, 0], [396, 0], [397, 0], [398, 0], [399, 0], [400, 0], [401, 0], [402, 0], [403, 0], [404, 0], [405, 0], [406, 0], [407, 0], [408, 0], [409, 0], [410, 0], [411, 0], [412, 0], [413, 0], [414, 0], [415, 0], [416, 0], [417, 0], [418, 0], [419, 0], [420, 0], [421, 0], [422, 0], [423, 0], [424, 0], [425, 0], [426, 0], [427, 0], [428, 0], [429, 0], [430, 0], [431, 0], [432, 0], [433, 0], [434, 0], [435, 0], [436, 0], [437, 0], [438, 0], [439, 0], [440, 0], [441, 0], [442, 0], [443, 0], [444, 0], [445, 0], [446, 0], [447, 0], [448, 0], [449, 0], [450, 0], [451, 0], [452, 0], [453, 0], [454, 0], [455, 0], [456, 0], [457, 0], [458, 0], [459, 0], [460, 0], [461, 0], [462, 0], [463, 0], [464, 0], [465, 0], [466, 0], [467, 0], [468, 0], [469, 0], [470, 0], [471, 0], [472, 0], [473, 0], [474, 0], [475, 0], [476, 0], [477, 0], [478, 0], [479, 0], [480, 0], [481, 0], [482, 0], [483, 0], [484, 0], [485, 0], [486, 0], [487, 0], [488, 0], [489, 0], [490, 0], [491, 0], [492, 0], [493, 0], [494, 0], [495, 0], [496, 0], [497, 0], [498, 0], [499, 0], [500, 0], [501, 0], [502, 0], [503, 0], [504, 0], [505, 0], [506, 0], [507, 0], [508, 0], [509, 0], [510, 0], [511, 0], [512, 0], [513, 0], [514, 0], [515, 0], [516, 0], [517, 0], [518, 0], [519, 0], [520, 0], [521, 0], [522, 0], [523, 0], [524, 0], [525, 0], [526, 0], [527, 0], [528, 0], [529, 0], [530, 0], [531, 0], [532, 0], [533, 0], [534, 0], [535, 0], [536, 0], [537, 0], [538, 0.02523207664489746], [539, 0], [540, 0.025368928909301758]]]], "histogram": {"data": [[{"disabled": null, "values": [{"y": 22, "x": 0.2381738324960073}, {"y": 51, "x": 0.24867079655329385}, {"y": 88, "x": 0.25916776061058044}, {"y": 149, "x": 0.269664724667867}, {"y": 47, "x": 0.2801616887251536}, {"y": 24, "x": 0.2906586527824402}, {"y": 27, "x": 0.3011556168397268}, {"y": 32, "x": 0.31165258089701336}, {"y": 28, "x": 0.3221495449542999}, {"y": 18, "x": 0.33264650901158654}, {"y": 17, "x": 0.3431434730688731}, {"y": 10, "x": 0.35364043712615967}, {"y": 4, "x": 0.3641374011834463}, {"y": 5, "x": 0.37463436524073285}, {"y": 4, "x": 0.3851313292980194}, {"y": 1, "x": 0.395628293355306}, {"y": 2, "x": 0.4061252574125926}, {"y": 5, "x": 0.41662222146987915}, {"y": 2, "x": 0.42711918552716577}, {"y": 0, "x": 0.43761614958445233}, {"y": 2, "x": 0.4481131136417389}, {"y": 0, "x": 0.4586100776990255}, {"y": 0, "x": 0.46910704175631207}, {"y": 2, "x": 0.47960400581359863}], "key": "task", "view": "Square Root Choice"}], [{"disabled": null, "values": [{"y": 80, "x": 0.25057933547280054}, {"y": 250, "x": 0.2734818025068803}, {"y": 68, "x": 0.29638426954096014}, {"y": 63, "x": 0.3192867365750399}, {"y": 39, "x": 0.34218920360911975}, {"y": 19, "x": 0.3650916706431996}, {"y": 8, "x": 0.3879941376772794}, {"y": 5, "x": 0.4108966047113592}, {"y": 4, "x": 0.43379907174543897}, {"y": 2, "x": 0.4567015387795188}, {"y": 2, "x": 0.47960400581359863}], "key": "task", "view": "Sturges Formula"}], [{"disabled": null, "values": [{"y": 46, "x": 0.24249611181371353}, {"y": 86, "x": 0.25731535518870635}, {"y": 193, "x": 0.27213459856369915}, {"y": 45, "x": 0.286953841938692}, {"y": 41, "x": 0.3017730853136848}, {"y": 45, "x": 0.3165923286886776}, {"y": 29, "x": 0.33141157206367045}, {"y": 23, "x": 0.34623081543866324}, {"y": 8, "x": 0.36105005881365604}, {"y": 7, "x": 0.3758693021886489}, {"y": 4, "x": 0.39068854556364174}, {"y": 2, "x": 0.40550778893863454}, {"y": 6, "x": 0.42032703231362734}, {"y": 1, "x": 0.4351462756886202}, {"y": 2, "x": 0.449965519063613}, {"y": 0, "x": 0.4647847624386058}, {"y": 2, "x": 0.47960400581359863}], "key": "task", "view": "Rice Rule"}]], "views": [{"id": 0, "name": "Square Root Choice"}, {"id": 1, "name": "Sturges Formula"}, {"id": 2, "name": "Rice Rule"}]}}, "additive_output": [], "table": {"rows": [["authenticate.keystone", 0.228, 0.265, 0.333, 0.353, 0.48, 0.281, "99.6%", 540], ["total", 0.228, 0.265, 0.333, 0.353, 0.48, 0.281, "99.6%", 540]], "cols": ["Action", "Min (sec)", "Median (sec)", "90%ile (sec)", "95%ile (sec)", "Max (sec)", "Avg (sec)", "Success", "Count"]}, "full_duration": 75.48358511924744, "config": "{\n  \"Authenticate.keystone\": [\n    {\n      \"runner\": {\n        \"type\": \"constant\", \n        \"concurrency\": 3, \n        \"times\": 1000\n      }, \n      \"sla\": {\n        \"max_seconds_per_iteration\": 3, \n        \"failure_rate\": {\n          \"max\": 0\n        }, \n        \"max_avg_duration\": 1.5\n      }, \n      \"context\": {\n        \"quotas\": {\n          \"cinder\": {\n            \"gigabytes\": -1, \n            \"volumes\": -1, \n            \"snapshots\": -1\n          }, \n          \"nova\": {\n            \"metadata_items\": -1, \n            \"server_groups\": -1, \n            \"server_group_members\": -1, \n            \"ram\": -1, \n            \"floating_ips\": -1, \n            \"security_group_rules\": -1, \n            \"injected_file_path_bytes\": -1, \n            \"instances\": -1, \n            \"key_pairs\": -1, \n            \"injected_files\": -1, \n            \"cores\": -1, \n            \"fixed_ips\": -1, \n            \"injected_file_content_bytes\": -1, \n            \"security_groups\": -1\n          }, \n          \"neutron\": {\n            \"subnet\": -1, \n            \"network\": -1, \n            \"floatingip\": -1, \n            \"security_group_rule\": -1, \n            \"security_group\": -1, \n            \"router\": -1, \n            \"port\": -1\n          }\n        }, \n        \"users\": {\n          \"users_per_tenant\": 50, \n          \"project_domain\": \"default\", \n          \"user_choice_method\": \"random\", \n          \"user_domain\": \"default\", \n          \"tenants\": 3, \n          \"resource_management_workers\": 20\n        }\n      }\n    }\n  ]\n}", "sla": [{"criterion": "max_seconds_per_iteration", "detail": "Maximum seconds per iteration 0.48s <= 3.00s - Passed", "success": true}, {"criterion": "failure_rate", "detail": "Failure rate criteria 0.00% <= 0.37% <= 0.00% - Failed", "success": false}, {"criterion": "max_avg_duration", "detail": "Average duration of one iteration 0.28s <= 1.50s - Passed", "success": true}, {"criterion": "aborted_on_sla", "detail": "Task was aborted due to SLA failure(s).", "success": false}], "complete_output": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []], "cls": "Authenticate"}];
+
+      $scope.location = {
+        /* #/path/hash/sub/div */
+        normalize: function(str) {
+          /* Remove unwanted characters from string */
+          if (typeof str !== "string") { return "" }
+          return str.replace(/[^\w\-\.]/g, "")
+        },
+        uri: function(obj) {
+          /* Getter/Setter */
+          if (! obj) {
+            var uri = {path: "", hash: "", sub: "", div: ""};
+            var arr = ["div", "sub", "hash", "path"];
+            angular.forEach($location.url().split("/"), function(value){
+              var v = $scope.location.normalize(value);
+              if (v) { var k = arr.pop(); if (k) { this[k] = v }}
+            }, uri);
+            return uri
+          }
+          var arr = [obj.path, obj.hash, obj.sub, obj.div], res = [];
+          for (var i in arr) { if (! arr[i]) { break }; res.push(arr[i]) }
+          return $location.url("/" + res.join("/"))
+        },
+        path: function(path, hash) {
+          /* Getter/Setter */
+          if (path === "") { return this.uri({}) }
+          path = this.normalize(path);
+          var uri = this.uri();
+          if (! path) { return uri.path }
+          uri.path = path;
+          var _hash = this.normalize(hash);
+          if (_hash || hash === "") { uri.hash = _hash }
+          return this.uri(uri)
+        },
+        hash: function(hash) {
+          /* Getter/Setter */
+          if (hash) { this.uri({path:this.uri().path, hash:hash}) }
+          return this.uri().hash
+        }
+      }
+
+      /* Dispatch */
+
+      $scope.route = function(uri) {
+        if (! $scope.scenarios_map) { return }
+
+        // Expand menu if there is only one menu group
+        if ($scope.nav.length === 1) {
+          $scope.nav_idx = $scope.nav[0].idx;
+        }
+
+        if (uri.path in $scope.scenarios_map) {
+          $scope.view = {is_scenario:true};
+          $scope.scenario = $scope.scenarios_map[uri.path];
+          $scope.nav_idx = $scope.nav_map[uri.path];
+          if ($scope.scenario.iterations.histogram.views.length) {
+            $scope.mainHistogram = $scope.scenario.iterations.histogram.views[0]
+          }
+          if ($scope.scenario.atomic.histogram.views.length) {
+            $scope.atomicHistogram = $scope.scenario.atomic.histogram.views[0]
+          }
+          $scope.outputIteration = 0;
+          $scope.showTab(uri);
+        } else {
+          $scope.scenario = null;
+          if (uri.path === "source") {
+            $scope.view = {is_source:true}
+          } else {
+            $scope.view = {is_main:true}
+          }
+        }
+      }
+
+      $scope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
+        $scope.route($scope.location.uri())
+      });
+
+      $scope.showNav = function(nav_idx) { $scope.nav_idx = nav_idx }
+
+      /* Tabs */
+
+      $scope.tabs = [
+        {
+          id: "overview",
+          name: "Overview",
+          visible: function(){ return !! $scope.scenario.iterations.pie.length }
+        },{
+          id: "details",
+          name: "Details",
+          visible: function(){ return !! $scope.scenario.atomic.pie.length }
+        },{
+          id: "output",
+          name: "Scenario Data",
+          visible: function(){ return $scope.scenario.has_output }
+        },{
+          id: "hooks",
+          name: "Hooks",
+          visible: function(){ return $scope.scenario.hooks.length }
+        },{
+          id: "failures",
+          name: "Failures",
+          visible: function(){ return !! $scope.scenario.errors.length }
+        },{
+          id: "task",
+          name: "Input task",
+          visible: function(){ return !! $scope.scenario.config }
+        }
+      ];
+      $scope.tabs_map = {};
+      angular.forEach($scope.tabs,
+                      function(tab){ this[tab.id] = tab }, $scope.tabs_map);
+
+      $scope.showTab = function(uri) {
+        $scope.tab = uri.hash in $scope.tabs_map ? uri.hash : "overview";
+        if (uri.hash === "output") {
+          if (typeof $scope.scenario.output === "undefined") {
+            var has_additive = !! $scope.scenario.additive_output.length;
+            var has_complete = !! ($scope.scenario.complete_output.length
+                                   && $scope.scenario.complete_output[0].length);
+            $scope.scenario.output = {
+              has_additive: has_additive,
+              has_complete: has_complete,
+              length: has_additive + has_complete,
+              active: has_additive ? "additive" : (has_complete ? "complete" : "")
+            }
+          }
+          if (uri.sub && $scope.scenario.output["has_" + uri.sub]) {
+            $scope.scenario.output.active = uri.sub
+          }
+        }
+        else if (uri.hash === "hooks") {
+          if ($scope.scenario.hooks.length) {
+            var hook_idx = parseInt(uri.sub);
+
+            if (isNaN(hook_idx) || ($scope.scenario.hooks.length - hook_idx) <= 0) {
+              hook_idx = 0
+            }
+
+            if ($scope.scenario.hook_idx === hook_idx) {
+              return
+            }
+
+            $scope.scenario.hooks.cur = $scope.scenario.hooks[hook_idx];
+            $scope.scenario.hook_idx = hook_idx;
+            if (typeof $scope.scenario.hooks.cur.active === "undefined") {
+              if ($scope.scenario.hooks.cur.additive.length) {
+                $scope.scenario.hooks.cur.active = "additive"
+              }
+              if ($scope.scenario.hooks.cur.complete.length) {
+                if (typeof $scope.scenario.hooks.cur.active === "undefined") {
+                  $scope.scenario.hooks.cur.active = "complete"
+                }
+                $scope.set_hook_run()
+              }
+            }
+          }
+        }
+      }
+
+      for (var i in $scope.tabs) {
+        if ($scope.tabs[i].id === $scope.location.hash()) {
+          $scope.tab = $scope.tabs[i].id
+        }
+        $scope.tabs[i].isVisible = function() {
+          if ($scope.scenario) {
+            if (this.visible()) { return true }
+            /* If tab should be hidden but is selected - show another one */
+            if (this.id === $scope.location.hash()) {
+              for (var i in $scope.tabs) {
+                var tab = $scope.tabs[i];
+                if (tab.id != this.id && tab.visible()) {
+                  $scope.tab = tab.id;
+                  return false
+                }
+              }
+            }
+          }
+          return false
+        }
+      }
+
+      $scope.set_hook_run = function(idx) {
+        if (typeof idx !== "undefined") {
+          $scope.scenario.hooks.cur.run_idx = idx
+        }
+        else if (typeof $scope.scenario.hooks.cur.run_idx === "undefined") {
+          $scope.scenario.hooks.cur.run_idx = 0
+        }
+        idx = $scope.scenario.hooks.cur.run_idx;
+        if (($scope.scenario.hooks.cur.complete.length - idx) > 0) {
+          $scope.scenario.hooks.cur.run = $scope.scenario.hooks.cur.complete[idx]
+        }
+      }
+
+      $scope.complete_hooks_as_dropdown = function() {
+        return $scope.scenario.hooks.cur.complete.length > 10
+      }
+
+      /* Other helpers */
+
+      $scope.showError = function(message) {
+          return (function (e) {
+            e.style.display = "block";
+            e.textContent = message
+          })(document.getElementById("page-error"))
+      }
+
+      $scope.compact_atomics = function() {
+        return ($scope.scenario && $scope.scenario.atomic.iter.length < 9)
+      }
+
+      /* Initialization */
+
+      angular.element(document).ready(function(){
+        if (! $scope.scenarios.length) {
+          return $scope.showError("No data...")
+        }
+
+        /* Compose data mapping */
+
+        $scope.nav = [];
+        $scope.nav_map = {};
+        $scope.scenarios_map = {};
+        var met = [], itr = 0, cls_idx = 0;
+        var prev_cls, prev_met;
+
+        for (var idx in $scope.scenarios) {
+          var sc = $scope.scenarios[idx];
+          if (! prev_cls) {
+            prev_cls = sc.cls
+          }
+          else if (prev_cls !== sc.cls) {
+            $scope.nav.push({cls:prev_cls, met:met, idx:cls_idx});
+            prev_cls = sc.cls;
+            met = [];
+            itr = 1;
+            cls_idx += 1
+          }
+
+          if (prev_met !== sc.met) { itr = 1 };
+          sc.ref = $scope.location.normalize(sc.cls+"."+sc.met+(itr > 1 ? "-"+itr : ""));
+          $scope.scenarios_map[sc.ref] = sc;
+          $scope.nav_map[sc.ref] = cls_idx;
+          met.push({name:sc.name, itr:itr, idx:idx, ref:sc.ref});
+          prev_met = sc.met;
+          itr += 1;
+        }
+
+        if (met.length) {
+          $scope.nav.push({cls:prev_cls, met:met, idx:cls_idx})
+        }
+
+        /* Start */
+
+        var uri = $scope.location.uri();
+        uri.path = $scope.location.path();
+        $scope.route(uri);
+        $scope.$digest()
+      })
+    };
+
+    if (typeof angular === "object") {
+      angular.module("App", [])
+        .controller("Controller", ["$scope", "$location", controllerFunction])
+        .directive("widget", widgetDirective)
+    }
+
+
+</script>
+  <style>
+    body { margin:0; padding:0 0 50px; font-size:14px; font-family:Helvetica,Arial,sans-serif }
+    a, a:active, a:focus, a:visited { text-decoration:none; outline:none }
+    p { margin:0; padding:5px 0 }
+    p.thesis { padding:10px 0 }
+    h1 { color:#666; margin:0 0 20px; font-size:30px; font-weight:normal }
+    h2, .h2 { color:#666; margin:24px 0 6px; font-size:25px; font-weight:normal }
+    h3, .h3 { color:#777; margin:12px 0 4px; font-size:18px; font-weight:normal }
+    table { border-collapse:collapse; border-spacing:0; width:100%; font-size:12px; margin:0 0 10px }
+    table th { text-align:left; padding:8px; color:#000; border:2px solid #ddd; border-width:0 0 2px 0 }
+    table th.sortable { cursor:pointer }
+    table td { text-align:left; border-top:1px solid #ddd; padding:8px; color:#333 }
+    table.compact td { padding:4px 8px }
+    table.striped tr:nth-child(odd) td { background:#f9f9f9 }
+    table.linked tbody tr:hover { background:#f9f9f9; cursor:pointer }
+    .pointer { cursor:pointer }
+    .rich, .rich td { font-weight:bold }
+    .code { padding:10px; font-size:13px; color:#333; background:#f6f6f6; border:1px solid #e5e5e5; border-radius:4px }
+
+    .header { text-align:left; background:#333; font-size:18px; padding:13px 0; margin-bottom:20px; color:#fff; background-image:linear-gradient(to bottom, #444 0px, #222 100%) }
+    .header a, .header a:visited, .header a:focus { color:#999 }
+
+    .notify-error { padding:5px 10px; background:#fee; color:red }
+    .status-skip, .status-skip td { color:grey }
+    .status-pass, .status-pass td { color:green }
+    .status-fail, .status-fail td { color:red }
+    .capitalize { text-transform:capitalize }
+    
+    .aside { margin:0 20px 0 0; display:block; width:255px; float:left }
+    .aside > div { margin-bottom: 15px }
+    .aside > div div:first-child { border-top-left-radius:4px; border-top-right-radius:4px }
+    .aside > div div:last-child { border-bottom-left-radius:4px; border-bottom-right-radius:4px }
+    .navcls { color:#678; background:#eee; border:1px solid #ddd; margin-bottom:-1px; display:block; padding:8px 9px; font-weight:bold; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer }
+    .navcls.expanded { color:#469 }
+    .navcls.active { background:#428bca; background-image:linear-gradient(to bottom, #428bca 0px, #3278b3 100%); border-color:#3278b3; color:#fff }
+    .navmet { color:#555; background:#fff; border:1px solid #ddd; font-size:12px; display:block; margin-bottom:-1px; padding:8px 10px; text-align:left; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; cursor:pointer }
+    .navmet:hover { background:#f8f8f8 }
+    .navmet.active, .navmet.active:hover { background:#428bca; background-image:linear-gradient(to bottom, #428bca 0px, #3278b3 100%); border-color:#3278b3; color:#fff }
+
+    .buttn { color:#555; background:#fff; border:1px solid #ddd; border-radius:5px; font-size:12px; margin-bottom:-1px; padding:5px 7px; text-align:left; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; cursor:pointer }
+    .buttn:hover { background:#f8f8f8 }
+    .buttn.active, .bttn.active:hover { background:#428bca; background-image:linear-gradient(to bottom, #428bca 0px, #3278b3 100%); border-color:#3278b3; color:#fff; cursor:default }
+
+    .tabs { list-style:outside none none; margin:0 0 5px; padding:0; border-bottom:1px solid #ddd }
+    .tabs:after { clear:both }
+    .tabs li { float:left; margin-bottom:-1px; display:block; position:relative }
+    .tabs li div { border:1px solid transparent; border-radius:4px 4px 0 0; line-height:20px; margin-right:2px; padding:10px 15px; color:#428bca }
+    .tabs li div:hover { border-color:#eee #eee #ddd; background:#eee; cursor:pointer; }
+    .tabs li.active div { background:#fff; border-color:#ddd #ddd transparent; border-style:solid; border-width:1px; color:#555; cursor:default }
+    .failure-mesg { color:#900 }
+    .failure-trace { color:#333; white-space:pre; overflow:auto }
+
+    .link { color:#428BCA; padding:5px 15px 5px 5px; text-decoration:underline; cursor:pointer }
+    .link.active { color:#333; text-decoration:none; cursor:default }
+
+    .chart { padding:0; margin:0; width:890px }
+    .chart svg { height:300px; padding:0; margin:0; overflow:visible; float:right }
+    .chart.lower svg { height:180px }
+    .chart-label-y { font-size:12px; position:relative; top:5px; padding:0; margin:0 }
+
+    .expandable { cursor:pointer }
+    .clearfix { clear:both }
+    .sortable > .arrow { display:inline-block; width:12px; height:inherit; color:#c90 }
+    .content-main { margin:0 5px; display:block; float:left }
+
+    .content-wrap {  margin:0 auto; padding:0 5px;  }
+    
+    @media only screen and (min-width: 320px)  { .content-wrap { width:900px  } .content-main { width:600px } }
+    @media only screen and (min-width: 900px)  { .content-wrap { width:880px  } .content-main { width:590px } }
+    @media only screen and (min-width: 1000px) { .content-wrap { width:980px  } .content-main { width:690px } }
+    @media only screen and (min-width: 1100px) { .content-wrap { width:1080px } .content-main { width:790px } }
+    @media only screen and (min-width: 1200px) { .content-wrap { width:1180px } .content-main { width:890px } }
+
+  </style>
+</head>
+<body ng-controller="Controller">
+
+  <div class="header" id="page-header">
+    <div class="content-wrap">
+      <a href="https://github.com/openstack/rally">Rally</a>&nbsp;
+      <span>task results</span>
+    </div>
+  </div>
+
+  <div class="content-wrap" id="page-content">
+    
+
+    <p id="page-error" class="notify-error" style="display:none"></p>
+
+    <div id="content-nav" class="aside" ng-show="scenarios.length" ng-cloack>
+      <div>
+        <div class="navcls"
+             ng-class="{active:view.is_main}"
+             ng-click="location.path('')">Task overview</div>
+        <div class="navcls"
+             ng-class="{active:view.is_source}"
+             ng-click="location.path('source', '')">Input file</div>
+      </div>
+      <div>
+        <div class="navcls" title="{{n.cls}}"
+             ng-repeat-start="n in nav track by $index"
+             ng-click="showNav(n.idx)"
+             ng-class="{expanded:n.idx==nav_idx}">
+                <span ng-hide="n.idx==nav_idx">&#9658;</span>
+                <span ng-show="n.idx==nav_idx">&#9660;</span>
+                {{n.cls}}</div>
+        <div class="navmet" title="{{m.name}}"
+             ng-show="n.idx==nav_idx"
+             ng-class="{active:m.ref==scenario.ref}"
+             ng-click="location.path(m.ref)"
+             ng-repeat="m in n.met track by $index"
+             ng-repeat-end>{{m.name}}</div>
+      </div>
+    </div>
+
+    <div id="content-main" class="content-main" ng-show="scenarios.length" ng-cloak>
+
+      <div ng-show="view.is_main">
+        <h1>Task overview</h1>
+        <table class="linked compact"
+               ng-init="ov_srt='ref'; ov_dir=false">
+          <thead>
+            <tr>
+              <th class="sortable"
+                  title="Scenario name, with optional suffix of call number"
+                  ng-click="ov_srt='ref'; ov_dir=!ov_dir">
+                Scenario
+                <span class="arrow">
+                  <b ng-show="ov_srt=='ref' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='ref' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable"
+                  title="How long the scenario run, without context duration"
+                  ng-click="ov_srt='load_duration'; ov_dir=!ov_dir">
+                Load duration (s)
+                <span class="arrow">
+                  <b ng-show="ov_srt=='load_duration' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='load_duration' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable"
+                  title="Scenario duration plus context duration"
+                  ng-click="ov_srt='full_duration'; ov_dir=!ov_dir">
+                Full duration (s)
+                <span class="arrow">
+                  <b ng-show="ov_srt=='full_duration' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='full_duration' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Number of iterations"
+                  ng-click="ov_srt='iterations_count'; ov_dir=!ov_dir">
+                Iterations
+                <span class="arrow">
+                  <b ng-show="ov_srt=='iterations_count' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='iterations_count' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Scenario runner type"
+                  ng-click="ov_srt='runner'; ov_dir=!ov_dir">
+                Runner
+                <span class="arrow">
+                  <b ng-show="ov_srt=='runner' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='runner' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Number of errors occurred"
+                  ng-click="ov_srt='errors.length'; ov_dir=!ov_dir">
+                Errors
+                <span class="arrow">
+                  <b ng-show="ov_srt=='errors.length' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='errors.length' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Number of hooks"
+                  ng-click="ov_srt='hooks.count'; ov_dir=!ov_dir">
+                Hooks
+                <span class="arrow">
+                  <b ng-show="ov_srt=='hooks.length' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='hooks.length' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Whether SLA check is successful"
+                  ng-click="ov_srt='sla_success'; ov_dir=!ov_dir">
+                Success (SLA)
+                <span class="arrow">
+                  <b ng-show="ov_srt=='sla_success' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='sla_success' && ov_dir">&#x25be;</b>
+                </span>
+            <tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sc in scenarios | orderBy:ov_srt:ov_dir"
+                ng-click="location.path(sc.ref)">
+              <td>{{sc.ref}}
+              <td>{{sc.load_duration | number:3}}
+              <td>{{sc.full_duration | number:3}}
+              <td>{{sc.iterations_count}}
+              <td>{{sc.runner}}
+              <td>{{sc.errors.length}}
+              <td>{{sc.hooks.length}}
+              <td>
+                <span ng-show="sc.sla_success" class="status-pass">&#x2714;</span>
+                <span ng-hide="sc.sla_success" class="status-fail">&#x2716;</span>
+            <tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div ng-show="view.is_source">
+        <h1>Input file</h1>
+        <pre class="code">{{source}}</pre>
+      </div>
+
+      <div ng-show="view.is_scenario">
+        <h1>{{scenario.cls}}.<wbr>{{scenario.name}} ({{scenario.full_duration | number:3}}s)</h1>
+        <ul class="tabs">
+          <li ng-repeat="t in tabs"
+              ng-show="t.isVisible()"
+              ng-class="{active:t.id == tab}"
+              ng-click="location.hash(t.id)">
+            <div>{{t.name}}</div>
+          </li>
+          <div class="clearfix"></div>
+        </ul>
+        <div ng-include="tab"></div>
+
+        <script type="text/ng-template" id="overview">
+          <p class="thesis">
+            Load duration: <b>{{scenario.load_duration | number:3}} s</b> &nbsp;
+            Full duration: <b>{{scenario.full_duration | number:3}} s</b> &nbsp;
+            Iterations: <b>{{scenario.iterations_count}}</b> &nbsp;
+            Failures: <b>{{scenario.errors.length}}</b>
+          </p>
+
+          <div ng-show="scenario.sla.length">
+            <h2>Service-level agreement</h2>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Criterion
+                  <th>Detail
+                  <th>Success
+                <tr>
+              </thead>
+              <tbody>
+                <tr class="rich"
+                    ng-repeat="row in scenario.sla track by $index"
+                    ng-class="{'status-fail':!row.success, 'status-pass':row.success}">
+                  <td>{{row.criterion}}
+                  <td>{{row.detail}}
+                  <td class="capitalize">{{row.success}}
+                <tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div widget="Table"
+               data="scenario.table"
+               lastrow-class="rich"
+               title="Total durations">
+          </div>
+
+          <div widget="StackedArea"
+               data="scenario.iterations.iter"
+               name-x="Iteration sequence number"
+               controls="true"
+               guide="true">
+          </div>
+
+          <div widget="StackedArea"
+               data="scenario.load_profile"
+               title="Load Profile"
+               title-class="h3"
+               name-x="Timeline (seconds)"
+               format-y="d"
+               format-x=",.2f"
+               class="lower">
+          </div>
+
+          <div widget="Pie"
+               data="scenario.iterations.pie"
+               title="Distribution"
+               title-class="h3"
+               style="float:left; width:40%; margin-top:15px">
+          </div>
+
+          <div widget="Histogram"
+               ng-if="scenario.iterations.histogram.data.length"
+               data="scenario.iterations.histogram.data[mainHistogram.id]"
+               style="float:left; width:59%; margin-top:15px; position:relative; top:40px">
+          </div>
+
+          <select ng-model="mainHistogram"
+                  ng-show="scenario.iterations.histogram.data.length"
+                  ng-options="i.name for i in scenario.iterations.histogram.views track by i.id"
+                  style="float:right; margin:45px 35px 0">
+          </select>
+
+          <div class="clearfix"></div>
+
+        </script>
+
+        <script type="text/ng-template" id="details">
+
+          <div widget="StackedArea"
+               data="scenario.atomic.iter"
+               title="Atomic Action Durations"
+               name-x="Iteration sequence number"
+               controls="true"
+               guide="true">
+          </div>
+
+          <div widget="Pie"
+               data="scenario.atomic.pie"
+               title="Distribution"
+               title-class="h3"
+               style="float:left; margin-top:15px"
+               ng-style="compact_atomics() ? {width:'40%'} : {}">
+          </div>
+
+          <div widget="Histogram" data="scenario.atomic.histogram.data[atomicHistogram.id]"
+               ng-if="scenario.atomic.histogram.data.length"
+               style="float:left; position:relative; top:40px"
+               ng-style="compact_atomics() ? {width:'59%', 'margin-top':'15px'} : {}">
+          </div>
+
+          <select ng-show="scenario.atomic.histogram.data.length"
+                  ng-model="atomicHistogram"
+                  ng-options="i.name for i in scenario.atomic.histogram.views track by i.id"
+                  style="float:right; margin:45px 35px 0">
+          </select>
+
+          <div class="clearfix"></div>
+
+        </script>
+
+        <script type="text/ng-template" id="output">
+
+          <div style="padding:10px 0 0">
+            <span class="link"
+                  ng-click="location.hash('output/additive')"
+                  ng-class="{active:scenario.output.active === 'additive'}"
+                  ng-if="scenario.output.has_additive">Aggregated</span>
+            <span class="link"
+                  ng-click="location.hash('output/complete')"
+                  ng-class="{active:scenario.output.active === 'complete'}"
+                  ng-if="scenario.output.has_complete">Per iteration</span>
+          </div>
+
+          <div ng-repeat="chart in scenario.additive_output"
+               ng-if="scenario.output.active === 'additive'">
+            <div widget="{{chart.widget}}"
+                 title="{{chart.title}}"
+                 description="{{chart.description}}"
+                 name-x="{{chart.axis_label}}"
+                 name-y="{{chart.label}}"
+                 data="chart.data">
+            </div>
+          </div>
+
+          <div ng-if="scenario.output.active === 'complete'" style="padding:10px 0 0">
+            <select ng-model="outputIteration">
+              <option ng-repeat="i in scenario.complete_output track by $index"
+                      value="{{$index}}">
+                Iteration {{$index}}
+            </select>
+
+            <div ng-repeat="chart in scenario.complete_output[outputIteration]">
+              <div widget="{{chart.widget}}"
+                   title="{{chart.title}}"
+                   description="{{chart.description}}"
+                   name-x="{{chart.axis_label}}"
+                   name-y="{{chart.label}}"
+                   data="chart.data">
+              </div>
+            </div>
+          </div>
+        </script>
+
+        <script type="text/ng-template" id="hooks">
+
+          <div style="padding:15px 0">
+            <span ng-repeat="h in scenario.hooks track by $index"
+                  class="buttn"
+                  title="{{h.desc}}"
+                  style="margin:0 10px 0 0"
+                  ng-click="location.hash('hooks/'+$index)"
+                  ng-class="{active:scenario.hook_idx===$index}">
+              {{h.name}}
+            </span>
+          </div>
+
+          <table class="striped" style="margin:5px 0 25px">
+            <thead>
+              <tr>
+                <th>Plugin
+                <th>Description
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{scenario.hooks.cur.name}}
+                <td>{{scenario.hooks.cur.desc}}
+            </tbody>
+          </table>
+
+          <div>
+            <span class="link"
+                  ng-click="scenario.hooks.cur.active = 'additive'"
+                  ng-class="{active:scenario.hooks.cur.active === 'additive'}"
+                  ng-if="scenario.hooks.cur.additive.length">Aggregated</span>
+            <span class="link"
+                  ng-click="scenario.hooks.cur.active = 'complete'"
+                  ng-class="{active:scenario.hooks.cur.active === 'complete'}"
+                  ng-if="scenario.hooks.cur.complete.length">Per hook run</span>
+          </div>
+
+          <div ng-repeat="chart in scenario.hooks.cur.additive"
+               ng-if="scenario.hooks.cur.active === 'additive'">
+            <div widget="{{chart.widget}}"
+                 title="{{chart.title}}"
+                 description="{{chart.description}}"
+                 name-x="{{chart.axis_label}}"
+                 name-y="{{chart.label}}"
+                 data="chart.data">
+            </div>
+          </div>
+
+          <div ng-if="scenario.hooks.cur.active === 'complete'" style="padding:10px 0 0">
+
+            <select ng-if="complete_hooks_as_dropdown()"
+                    ng-model="scenario.hooks.cur.run_idx"
+                    ng-change="set_hook_run()">
+              <option ng-repeat="h in scenario.hooks.cur.complete track by $index"
+                      ng-selected="scenario.hooks.cur.run_idx == $index"
+                      value="{{$index}}">
+                {{h.triggered_by}}
+            </select>
+
+            <div ng-if="! complete_hooks_as_dropdown()"
+                 style="border:#ccc solid; border-width:1px 0 0; padding:5px 0 0">
+              <span ng-repeat="h in scenario.hooks.cur.complete track by $index"
+                    class="link"
+                    ng-class="{active:scenario.hooks.cur.run_idx == $index}"
+                    ng-click="set_hook_run($index)">
+                {{h.triggered_by}}
+              </span>
+            </div>
+
+            <table class="striped" style="margin:15px 0 15px">
+              <thead>
+                <tr>
+                  <th>Status
+                  <th>Triggered by
+                  <th>Started at
+                  <th>Finished at
+              </thead>
+              <tbody>
+                <tr>
+                  <td ng-style="scenario.hooks.cur.run.status === 'success' ? {color:'green'} : {color:'red'}">
+                    <b>{{scenario.hooks.cur.run.status}}</b>
+                  <td>{{scenario.hooks.cur.run.triggered_by}}
+                  <td>{{scenario.hooks.cur.run.started_at}}
+                  <td>{{scenario.hooks.cur.run.finished_at}}
+              </tbody>
+            </table>
+
+            <div ng-repeat="chart in scenario.hooks.cur.run.charts">
+              <div widget="{{chart.widget}}"
+                   title="{{chart.title}}"
+                   description="{{chart.description}}"
+                   name-x="{{chart.axis_label}}"
+                   name-y="{{chart.label}}"
+                   data="chart.data">
+              </div>
+            </div>
+          </div>
+        </script>
+
+        <script type="text/ng-template" id="failures">
+          <h2>Task failures (<ng-pluralize
+            count="scenario.errors.length"
+            when="{'1': '1 iteration', 'other': '{} iterations'}"></ng-pluralize> failed)
+          </h2>
+          <table class="striped">
+            <thead>
+              <tr>
+                <th>
+                <th>Iteration
+                <th>Exception type
+                <th>Exception message
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="expandable"
+                  ng-repeat-start="i in scenario.errors track by $index"
+                  ng-click="i.expanded = ! i.expanded">
+                <td>
+                  <span ng-hide="i.expanded">&#9658;</span>
+                  <span ng-show="i.expanded">&#9660;</span>
+                <td>{{i.iteration}}
+                <td>{{i.type}}
+                <td class="failure-mesg">{{i.message}}
+              </tr>
+              <tr ng-show="i.expanded" ng-repeat-end>
+                <td colspan="4" class="failure-trace">{{i.traceback}}
+              </tr>
+            </tbody>
+          </table>
+        </script>
+
+        <script type="text/ng-template" id="task">
+          <h2>Subtask Configuration</h2>
+          <pre class="code">{{scenario.config}}</pre>
+        </script>
+      </div>
+
+    </div>
+    <div class="clearfix"></div>
+
+
+  </div>
+
+  <script type="text/javascript">
+    if (! window.angular) {(function(f){
+      f(document.getElementById("content-nav"), "none");
+      f(document.getElementById("content-main"), "none");
+      f(document.getElementById("page-error"), "block").textContent = "Failed to load AngularJS framework"
+    })(function(e, s){e.style.display = s; return e})}
+</script>
+</body>
+</html>
