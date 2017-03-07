@@ -73,3 +73,13 @@
 - [2017-03-07 11:31:43 Authenticate.keystone constant(1000-85)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.45/authenticate/(20170307_113143)Authenticate.keystone-constant(1000-85)_PassRetry(1)-FAILED.html) `85` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-07 11:33:42 Authenticate.keystone constant(1000-80)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.45/authenticate/(20170307_113342)Authenticate.keystone-constant(1000-80)_PassRetry(1)-PASSED.html) `80` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### Authenticate.validate_cinder
+
+- [2017-03-07 11:45:41 Authenticate.validate_cinder constant(1000-5)](https://godleon.github.io/osp_binary_test_result/0.0.45/authenticate/(20170307_114541)Authenticate.validate_cinder-constant(1000-5)-FAILED.html) `5` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-07 11:47:36 Authenticate.validate_cinder constant(1000-3)](https://godleon.github.io/osp_binary_test_result/0.0.45/authenticate/(20170307_114736)Authenticate.validate_cinder-constant(1000-3)-FAILED.html) `3` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-07 11:49:28 Authenticate.validate_cinder constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.45/authenticate/(20170307_114928)Authenticate.validate_cinder-constant(1000-2)-FAILED.html) `2` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-07 11:51:24 Authenticate.validate_cinder constant(1000-1)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.45/authenticate/(20170307_115124)Authenticate.validate_cinder-constant(1000-1)_PassRetry(1)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
