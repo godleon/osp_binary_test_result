@@ -1,0 +1,1043 @@
+<!doctype html>
+<html ng-app="App">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Rally version 0.7.0">
+  <title>Rally | Rally Task Report</title>
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.js"></script>
+  
+
+  <script type="text/javascript">
+    "use strict";
+    var widgetDirective = function($compile) {
+  var Chart = {
+    _render: function(node, data, chart, do_after){
+      nv.addGraph(function() {
+        d3.select(node)
+          .datum(data).transition().duration(0)
+          .call(chart);
+        if (typeof do_after === "function") {
+          do_after(node, chart)
+        }
+        nv.utils.windowResize(chart.update);
+      })
+    },
+    _widgets: {
+      Pie: "pie",
+      StackedArea: "stack",
+      Lines: "lines",
+      Histogram: "histogram"
+    },
+    get_chart: function(widget) {
+      if (widget in this._widgets) {
+        var name = this._widgets[widget];
+        return Chart[name]
+      }
+      return function() { console.log("Error: unexpected widget:", widget) }
+    },
+    pie: function(node, data, opts, do_after) {
+      var chart = nv.models.pieChart()
+        .x(function(d) { return d.key })
+        .y(function(d) { return d.values })
+        .showLabels(true)
+        .labelType("percent")
+        .donut(true)
+        .donutRatio(0.25)
+        .donutLabelsOutside(true)
+        .color(function(d){
+          if (d.data && d.data.color) { return d.data.color }
+        });
+      var colorizer = new Chart.colorizer("errors"), data_ = [];
+      for (var i in data) {
+        data_.push({key:data[i][0], values:data[i][1], color:colorizer.get_color(data[i][0])})
+      }
+      Chart._render(node, data_, chart)
+    },
+    colorizer: function(failure_key, failure_color) {
+      this.failure_key = failure_key || "failed_duration";
+      this.failure_color = failure_color || "#d62728";  // red
+      this.color_idx = -1;
+      /* NOTE(amaretskiy): this is actually a result of
+         d3.scale.category20().range(), excluding red color (#d62728)
+         which is reserved for errors */
+      this.colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c",
+                     "#98df8a", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b",
+                     "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7",
+                     "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"];
+      this.get_color = function(key) {
+        if (key === this.failure_key) {
+          return this.failure_color
+        }
+        if (this.color_idx > (this.colors.length - 2)) {
+          this.color_idx = 0
+        } else {
+          this.color_idx++
+        }
+        return this.colors[this.color_idx]
+      }
+    },
+    stack: function(node, data, opts, do_after) {
+      var chart = nv.models.stackedAreaChart()
+        .x(function(d) { return d[0] })
+        .y(function(d) { return d[1] })
+        .useInteractiveGuideline(opts.guide)
+        .showControls(opts.controls)
+        .clipEdge(true);
+      chart.xAxis
+        .axisLabel(opts.xname)
+        .tickFormat(opts.xformat)
+        .showMaxMin(opts.showmaxmin);
+      chart.yAxis
+        .orient("left")
+        .tickFormat(d3.format(opts.yformat || ",.3f"));
+      var colorizer = new Chart.colorizer(), data_ = [];
+      for (var i in data) {
+        data_.push({key:data[i][0], values:data[i][1], color:colorizer.get_color(data[i][0])})
+      }
+      Chart._render(node, data_, chart, do_after);
+    },
+    lines: function(node, data, opts, do_after) {
+      var chart = nv.models.lineChart()
+        .x(function(d) { return d[0] })
+        .y(function(d) { return d[1] })
+        .useInteractiveGuideline(opts.guide)
+        .clipEdge(true);
+      chart.xAxis
+        .axisLabel(opts.xname)
+        .tickFormat(opts.xformat)
+        .rotateLabels(opts.xrotate)
+        .showMaxMin(opts.showmaxmin);
+      chart.yAxis
+        .orient("left")
+        .tickFormat(d3.format(opts.yformat || ",.3f"));
+      var colorizer = new Chart.colorizer(), data_ = [];
+      for (var i in data) {
+        data_.push({key:data[i][0], values:data[i][1], color:colorizer.get_color(data[i][0])})
+      }
+      Chart._render(node, data_, chart, do_after)
+    },
+    histogram: function(node, data, opts) {
+      var chart = nv.models.multiBarChart()
+        .reduceXTicks(true)
+        .showControls(false)
+        .transitionDuration(0)
+        .groupSpacing(0.05);
+      chart
+        .legend.radioButtonMode(true);
+      chart.xAxis
+        .axisLabel("Duration (seconds)")
+        .tickFormat(d3.format(",.2f"));
+      chart.yAxis
+        .axisLabel("Iterations (frequency)")
+        .tickFormat(d3.format("d"));
+      Chart._render(node, data, chart)
+    }
+  };
+
+  return {
+    restrict: "A",
+    scope: { data: "=" },
+    link: function(scope, element, attrs) {
+      scope.$watch("data", function(data) {
+        if (! data) { return console.log("Chart has no data to render!") }
+        if (attrs.widget === "Table") {
+          var ng_class = attrs.lastrowClass ? " ng-class='{"+attrs.lastrowClass+":$last}'" : "";
+          var template = "<table class='striped'><thead>" +
+            "<tr><th ng-repeat='i in data.cols track by $index'>{{i}}<tr>" +
+            "</thead><tbody>" +
+            "<tr" + ng_class + " ng-repeat='row in data.rows track by $index'>" +
+            "<td ng-repeat='i in row track by $index'>{{i}}" +
+            "<tr>" +
+            "</tbody></table>";
+          var el = element.empty().append($compile(template)(scope)).children()[0]
+        } else if (attrs.widget === "TextArea") {
+          var template = "<div style='padding:0 0 5px' ng-repeat='str in data track by $index'>{{str}}</div><div style='height:10px'></div>";
+          var el = element.empty().append($compile(template)(scope)).children()[0]
+        } else {
+
+          var el_chart = element.addClass("chart").css({display:"block"});
+          var el = el_chart.html("<svg></svg>").children()[0];
+
+          var do_after = null;
+
+          if (attrs.widget in {StackedArea:0, Lines:0}) {
+
+            /* Hide widget if not enough data */
+            if ((! data.length) || (data[0].length < 1) || (data[0][1].length < 2)) {
+              return element.empty().css({display:"none"})
+            }
+
+            /* NOTE(amaretskiy): Dirty fix for changing chart width in case
+               if there are too long Y values that overlaps chart box. */
+            var do_after = function(node, chart){
+              var g_box = angular.element(el_chart[0].querySelector(".nv-y.nv-axis"));
+
+              if (g_box && g_box[0] && g_box[0].getBBox) {
+
+                try {
+                  // 30 is padding aroung graphs
+                  var width = g_box[0].getBBox().width + 30;
+                } catch (err) {
+                  // This happens sometimes, just skip silently
+                  return
+                }
+
+                // 890 is chart width (set by CSS)
+                if (typeof width === "number" && width > 890) {
+                  width = (890 * 2) - width;
+                  if (width > 0) {
+                    angular.element(node).css({width:width+"px"});
+                    chart.update()
+                  }
+                }
+              }
+            }
+          }
+          else if (attrs.widget === "Pie") {
+            if (! data.length) {
+              return element.empty().css({display:"none"})
+            }
+          }
+
+          var opts = {
+            xname: attrs.nameX || "",
+            xrotate: attrs.rotateX || 0,
+            yformat: attrs.formatY || ",.3f",
+            controls: attrs.controls === "true",
+            guide: attrs.guide === "true",
+            showmaxmin: attrs.showmaxmin === "true"
+          };
+          if (attrs.formatDateX) {
+            opts.xformat = function(d) { return d3.time.format(attrs.formatDateX)(new Date(d)) }
+          } else {
+            opts.xformat = d3.format(attrs.formatX || "d")
+          }
+          Chart.get_chart(attrs.widget)(el, data, opts, do_after);
+        }
+
+        if (attrs.nameY) {
+          /* NOTE(amaretskiy): Dirty fix for displaying Y-axis label correctly.
+             I believe sometimes NVD3 will allow doing this in normal way */
+          var label_y = angular.element("<div>").addClass("chart-label-y").text(attrs.nameY);
+          angular.element(el).parent().prepend(label_y)
+        }
+
+        if (attrs.description) {
+          var desc_el = angular.element("<div>").addClass(attrs.descriptionClass || "h3").text(attrs.description);
+          angular.element(el).parent().prepend(desc_el)
+        }
+
+        if (attrs.title) {
+          var title_el = angular.element("<div>").addClass(attrs.titleClass || "h2").text(attrs.title);
+          angular.element(el).parent().prepend(title_el)
+        }
+
+        angular.element(el).parent().append(angular.element("<div style='clear:both'>"))
+      });
+    }
+  }
+};
+
+    var controllerFunction = function($scope, $location) {
+        $scope.source = "{\n  \"Authenticate.keystone\": [\n    {\n      \"context\": {\n        \"quotas\": {\n          \"cinder\": {\n            \"gigabytes\": -1, \n            \"snapshots\": -1, \n            \"volumes\": -1\n          }, \n          \"neutron\": {\n            \"floatingip\": -1, \n            \"network\": -1, \n            \"port\": -1, \n            \"router\": -1, \n            \"security_group\": -1, \n            \"security_group_rule\": -1, \n            \"subnet\": -1\n          }, \n          \"nova\": {\n            \"cores\": -1, \n            \"fixed_ips\": -1, \n            \"floating_ips\": -1, \n            \"injected_file_content_bytes\": -1, \n            \"injected_file_path_bytes\": -1, \n            \"injected_files\": -1, \n            \"instances\": -1, \n            \"key_pairs\": -1, \n            \"metadata_items\": -1, \n            \"ram\": -1, \n            \"security_group_rules\": -1, \n            \"security_groups\": -1, \n            \"server_group_members\": -1, \n            \"server_groups\": -1\n          }\n        }, \n        \"users\": {\n          \"project_domain\": \"default\", \n          \"resource_management_workers\": 20, \n          \"tenants\": 3, \n          \"user_choice_method\": \"random\", \n          \"user_domain\": \"default\", \n          \"users_per_tenant\": 50\n        }\n      }, \n      \"runner\": {\n        \"concurrency\": 20, \n        \"times\": 100, \n        \"type\": \"constant\"\n      }, \n      \"sla\": {\n        \"failure_rate\": {\n          \"max\": 0\n        }, \n        \"max_avg_duration\": 3, \n        \"max_seconds_per_iteration\": 5\n      }\n    }\n  ]\n}";
+        $scope.scenarios = [{"load_profile": [["parallel iterations", [[0.0, 0], [0.003930192947387696, 1.2526884773165263], [0.007860385894775392, 2.8631085926933206], [0.011790578842163089, 3], [0.015720771789550784, 3], [0.01965096473693848, 4.24791985452449], [0.023581157684326177, 5.61218663145282], [0.027511350631713873, 6.75349529956279], [0.03144154357910157, 8.20033408507328], [0.03537173652648926, 11.112627532511906], [0.03930192947387696, 12.968033823929792], [0.04323212242126465, 15.051901601172116], [0.047162315368652355, 17.122666585135157], [0.05109250831604005, 18.068277302258185], [0.055022701263427745, 18.115779113665113], [0.05895289421081544, 17], [0.06288308715820314, 17], [0.06681328010559083, 17], [0.07074347305297853, 16.093894211893602], [0.07467366600036622, 16], [0.07860385894775392, 16.044434673604613], [0.08253405189514161, 16.484246219340143], [0.0864642448425293, 17.695417686417194], [0.090394437789917, 19], [0.09432463073730471, 19], [0.0982548236846924, 19], [0.1021850166320801, 19], [0.1061152095794678, 19.19724365255347], [0.11004540252685549, 20], [0.11397559547424319, 19.79785183880249], [0.11790578842163088, 19], [0.12183598136901858, 19], [0.12576617431640627, 19], [0.12969636726379397, 19], [0.13362656021118166, 18.800296328218685], [0.13755675315856936, 19], [0.14148694610595705, 19], [0.14541713905334475, 19], [0.14934733200073244, 19.2534581736068], [0.15327752494812014, 20], [0.15720771789550783, 20], [0.16113791084289553, 20], [0.16506810379028322, 20], [0.16899829673767092, 20], [0.1729284896850586, 20], [0.1768586826324463, 20], [0.180788875579834, 20], [0.1847190685272217, 20], [0.18864926147460942, 20], [0.19257945442199711, 20], [0.1965096473693848, 20], [0.2004398403167725, 20], [0.2043700332641602, 20], [0.2083002262115479, 20], [0.2122304191589356, 20], [0.21616061210632329, 20], [0.22009080505371098, 20], [0.22402099800109868, 20], [0.22795119094848637, 20], [0.23188138389587407, 19.61575751752077], [0.23581157684326176, 19], [0.23974176979064946, 19], [0.24367196273803715, 18.284579916168127], [0.24760215568542485, 18], [0.25153234863281254, 18], [0.25546254158020026, 18], [0.25939273452758793, 18], [0.26332292747497565, 18], [0.2672531204223633, 18], [0.27118331336975104, 17.924397965012297], [0.2751135063171387, 17], [0.27904369926452643, 16.637772966771532], [0.2829738922119141, 15.674873201514334], [0.2869040851593018, 14.531078307619342], [0.2908342781066895, 13], [0.2947644710540772, 12.079870791967], [0.2986946640014649, 12], [0.3026248569488526, 10.7912652574333], [0.3065550498962403, 10], [0.310485242843628, 8.507136676416458], [0.31441543579101566, 8], [0.3183456287384034, 7.725598904760023], [0.32227582168579105, 6.815597560460695], [0.3262060146331788, 6], [0.33013620758056644, 5.802260849393326], [0.33406640052795417, 4.10151304043137], [0.33799659347534183, 4], [0.34192678642272956, 3.412846454325601], [0.3458569793701172, 3], [0.34978717231750495, 3], [0.3537173652648926, 3], [0.35764755821228034, 3], [0.361577751159668, 3], [0.3655079441070557, 2.2573333469219095], [0.3694381370544434, 2], [0.3733683300018311, 2], [0.37729852294921884, 2], [0.3812287158966065, 1.6392880940213392], [0.38515890884399423, 1], [0.3890891017913819, 0.039215686274487085], [0.39301929473876956, 0]]]], "errors": [{"type": "Unauthorized", "message": "The request you have made requires authentication. (HTTP 401) (Request-ID: req-1ef95cef-8570-42ae-9c96-e73dbfd89a38)", "traceback": "Traceback (most recent call last):\n  File \"/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 73, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/authenticate/authenticate.py\", line 31, in run\n    self.clients(\"keystone\")\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenario.py\", line 71, in clients\n    return client(version) if version is not None else client()\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 208, in __call__\n    self.cache[key] = self.create_client(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 323, in create_client\n    return client.Client(**kw)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/client.py\", line 62, in Client\n    d = discover.Discover(session=session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/discover.py\", line 185, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 147, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 41, in get_version_data\n    resp = session.get(url, headers=headers, authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 673, in get\n    return self.request(url, 'GET', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 462, in request\n    auth_headers = self.get_auth_headers(auth)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 733, in get_auth_headers\n    return auth.get_headers(self, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/plugin.py\", line 90, in get_headers\n    token = self.get_token(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 90, in get_token\n    return self.get_access(session).auth_token\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 136, in get_access\n    self.auth_ref = self.get_auth_ref(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/generic/base.py\", line 181, in get_auth_ref\n    return self._plugin.get_auth_ref(session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/v2.py\", line 65, in get_auth_ref\n    authenticated=False, log=False)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 681, in post\n    return self.request(url, 'POST', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 570, in request\n    raise exceptions.from_response(resp, method, url)\nUnauthorized: The request you have made requires authentication. (HTTP 401) (Request-ID: req-1ef95cef-8570-42ae-9c96-e73dbfd89a38)\n", "iteration": 4}, {"type": "Unauthorized", "message": "The request you have made requires authentication. (HTTP 401) (Request-ID: req-5d1716e7-e862-4f5e-9e61-85f8b285bcf4)", "traceback": "Traceback (most recent call last):\n  File \"/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 73, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/authenticate/authenticate.py\", line 31, in run\n    self.clients(\"keystone\")\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenario.py\", line 71, in clients\n    return client(version) if version is not None else client()\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 208, in __call__\n    self.cache[key] = self.create_client(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 323, in create_client\n    return client.Client(**kw)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/client.py\", line 62, in Client\n    d = discover.Discover(session=session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/discover.py\", line 185, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 147, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 41, in get_version_data\n    resp = session.get(url, headers=headers, authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 673, in get\n    return self.request(url, 'GET', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 462, in request\n    auth_headers = self.get_auth_headers(auth)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 733, in get_auth_headers\n    return auth.get_headers(self, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/plugin.py\", line 90, in get_headers\n    token = self.get_token(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 90, in get_token\n    return self.get_access(session).auth_token\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 136, in get_access\n    self.auth_ref = self.get_auth_ref(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/generic/base.py\", line 181, in get_auth_ref\n    return self._plugin.get_auth_ref(session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/v2.py\", line 65, in get_auth_ref\n    authenticated=False, log=False)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 681, in post\n    return self.request(url, 'POST', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 570, in request\n    raise exceptions.from_response(resp, method, url)\nUnauthorized: The request you have made requires authentication. (HTTP 401) (Request-ID: req-5d1716e7-e862-4f5e-9e61-85f8b285bcf4)\n", "iteration": 6}, {"type": "Unauthorized", "message": "The request you have made requires authentication. (HTTP 401) (Request-ID: req-9d4b78c9-2411-468f-9025-6d8668c8beee)", "traceback": "Traceback (most recent call last):\n  File \"/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 73, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/authenticate/authenticate.py\", line 31, in run\n    self.clients(\"keystone\")\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenario.py\", line 71, in clients\n    return client(version) if version is not None else client()\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 208, in __call__\n    self.cache[key] = self.create_client(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 323, in create_client\n    return client.Client(**kw)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/client.py\", line 62, in Client\n    d = discover.Discover(session=session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/discover.py\", line 185, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 147, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 41, in get_version_data\n    resp = session.get(url, headers=headers, authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 673, in get\n    return self.request(url, 'GET', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 462, in request\n    auth_headers = self.get_auth_headers(auth)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 733, in get_auth_headers\n    return auth.get_headers(self, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/plugin.py\", line 90, in get_headers\n    token = self.get_token(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 90, in get_token\n    return self.get_access(session).auth_token\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 136, in get_access\n    self.auth_ref = self.get_auth_ref(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/generic/base.py\", line 181, in get_auth_ref\n    return self._plugin.get_auth_ref(session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/v2.py\", line 65, in get_auth_ref\n    authenticated=False, log=False)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 681, in post\n    return self.request(url, 'POST', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 570, in request\n    raise exceptions.from_response(resp, method, url)\nUnauthorized: The request you have made requires authentication. (HTTP 401) (Request-ID: req-9d4b78c9-2411-468f-9025-6d8668c8beee)\n", "iteration": 7}, {"type": "Unauthorized", "message": "The request you have made requires authentication. (HTTP 401) (Request-ID: req-d3351476-77b7-48f4-a6e5-3df1036c522f)", "traceback": "Traceback (most recent call last):\n  File \"/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 73, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/authenticate/authenticate.py\", line 31, in run\n    self.clients(\"keystone\")\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenario.py\", line 71, in clients\n    return client(version) if version is not None else client()\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 208, in __call__\n    self.cache[key] = self.create_client(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 323, in create_client\n    return client.Client(**kw)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/client.py\", line 62, in Client\n    d = discover.Discover(session=session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/discover.py\", line 185, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 147, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 41, in get_version_data\n    resp = session.get(url, headers=headers, authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 673, in get\n    return self.request(url, 'GET', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 462, in request\n    auth_headers = self.get_auth_headers(auth)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 733, in get_auth_headers\n    return auth.get_headers(self, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/plugin.py\", line 90, in get_headers\n    token = self.get_token(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 90, in get_token\n    return self.get_access(session).auth_token\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 136, in get_access\n    self.auth_ref = self.get_auth_ref(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/generic/base.py\", line 181, in get_auth_ref\n    return self._plugin.get_auth_ref(session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/v2.py\", line 65, in get_auth_ref\n    authenticated=False, log=False)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 681, in post\n    return self.request(url, 'POST', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 570, in request\n    raise exceptions.from_response(resp, method, url)\nUnauthorized: The request you have made requires authentication. (HTTP 401) (Request-ID: req-d3351476-77b7-48f4-a6e5-3df1036c522f)\n", "iteration": 15}, {"type": "Unauthorized", "message": "The request you have made requires authentication. (HTTP 401) (Request-ID: req-8431c47d-8639-422b-8545-b82fe8393816)", "traceback": "Traceback (most recent call last):\n  File \"/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 73, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/authenticate/authenticate.py\", line 31, in run\n    self.clients(\"keystone\")\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenario.py\", line 71, in clients\n    return client(version) if version is not None else client()\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 208, in __call__\n    self.cache[key] = self.create_client(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 323, in create_client\n    return client.Client(**kw)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/client.py\", line 62, in Client\n    d = discover.Discover(session=session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/discover.py\", line 185, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 147, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 41, in get_version_data\n    resp = session.get(url, headers=headers, authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 673, in get\n    return self.request(url, 'GET', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 462, in request\n    auth_headers = self.get_auth_headers(auth)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 733, in get_auth_headers\n    return auth.get_headers(self, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/plugin.py\", line 90, in get_headers\n    token = self.get_token(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 90, in get_token\n    return self.get_access(session).auth_token\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 136, in get_access\n    self.auth_ref = self.get_auth_ref(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/generic/base.py\", line 181, in get_auth_ref\n    return self._plugin.get_auth_ref(session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/v2.py\", line 65, in get_auth_ref\n    authenticated=False, log=False)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 681, in post\n    return self.request(url, 'POST', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 570, in request\n    raise exceptions.from_response(resp, method, url)\nUnauthorized: The request you have made requires authentication. (HTTP 401) (Request-ID: req-8431c47d-8639-422b-8545-b82fe8393816)\n", "iteration": 16}, {"type": "Unauthorized", "message": "The request you have made requires authentication. (HTTP 401) (Request-ID: req-6fa48028-6577-4f2a-9eed-287d743b75a5)", "traceback": "Traceback (most recent call last):\n  File \"/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 73, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/authenticate/authenticate.py\", line 31, in run\n    self.clients(\"keystone\")\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenario.py\", line 71, in clients\n    return client(version) if version is not None else client()\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 208, in __call__\n    self.cache[key] = self.create_client(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 323, in create_client\n    return client.Client(**kw)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/client.py\", line 62, in Client\n    d = discover.Discover(session=session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/discover.py\", line 185, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 147, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 41, in get_version_data\n    resp = session.get(url, headers=headers, authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 673, in get\n    return self.request(url, 'GET', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 462, in request\n    auth_headers = self.get_auth_headers(auth)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 733, in get_auth_headers\n    return auth.get_headers(self, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/plugin.py\", line 90, in get_headers\n    token = self.get_token(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 90, in get_token\n    return self.get_access(session).auth_token\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 136, in get_access\n    self.auth_ref = self.get_auth_ref(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/generic/base.py\", line 181, in get_auth_ref\n    return self._plugin.get_auth_ref(session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/v2.py\", line 65, in get_auth_ref\n    authenticated=False, log=False)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 681, in post\n    return self.request(url, 'POST', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 570, in request\n    raise exceptions.from_response(resp, method, url)\nUnauthorized: The request you have made requires authentication. (HTTP 401) (Request-ID: req-6fa48028-6577-4f2a-9eed-287d743b75a5)\n", "iteration": 20}, {"type": "Unauthorized", "message": "The request you have made requires authentication. (HTTP 401) (Request-ID: req-456d6478-5a1b-49b8-9274-6f3bc92428ee)", "traceback": "Traceback (most recent call last):\n  File \"/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 73, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/authenticate/authenticate.py\", line 31, in run\n    self.clients(\"keystone\")\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenario.py\", line 71, in clients\n    return client(version) if version is not None else client()\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 208, in __call__\n    self.cache[key] = self.create_client(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 323, in create_client\n    return client.Client(**kw)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/client.py\", line 62, in Client\n    d = discover.Discover(session=session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/discover.py\", line 185, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 147, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 41, in get_version_data\n    resp = session.get(url, headers=headers, authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 673, in get\n    return self.request(url, 'GET', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 462, in request\n    auth_headers = self.get_auth_headers(auth)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 733, in get_auth_headers\n    return auth.get_headers(self, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/plugin.py\", line 90, in get_headers\n    token = self.get_token(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 90, in get_token\n    return self.get_access(session).auth_token\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 136, in get_access\n    self.auth_ref = self.get_auth_ref(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/generic/base.py\", line 181, in get_auth_ref\n    return self._plugin.get_auth_ref(session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/v2.py\", line 65, in get_auth_ref\n    authenticated=False, log=False)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 681, in post\n    return self.request(url, 'POST', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 570, in request\n    raise exceptions.from_response(resp, method, url)\nUnauthorized: The request you have made requires authentication. (HTTP 401) (Request-ID: req-456d6478-5a1b-49b8-9274-6f3bc92428ee)\n", "iteration": 25}, {"type": "Unauthorized", "message": "The request you have made requires authentication. (HTTP 401) (Request-ID: req-c7f159bd-89f0-4102-968e-b91d5ac01554)", "traceback": "Traceback (most recent call last):\n  File \"/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 73, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/authenticate/authenticate.py\", line 31, in run\n    self.clients(\"keystone\")\n  File \"/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenario.py\", line 71, in clients\n    return client(version) if version is not None else client()\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 208, in __call__\n    self.cache[key] = self.create_client(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/rally/osclients.py\", line 323, in create_client\n    return client.Client(**kw)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/client.py\", line 62, in Client\n    d = discover.Discover(session=session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/discover.py\", line 185, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 147, in __init__\n    authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneclient/_discover.py\", line 41, in get_version_data\n    resp = session.get(url, headers=headers, authenticated=authenticated)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 673, in get\n    return self.request(url, 'GET', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 462, in request\n    auth_headers = self.get_auth_headers(auth)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 733, in get_auth_headers\n    return auth.get_headers(self, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/plugin.py\", line 90, in get_headers\n    token = self.get_token(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 90, in get_token\n    return self.get_access(session).auth_token\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/base.py\", line 136, in get_access\n    self.auth_ref = self.get_auth_ref(session)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/generic/base.py\", line 181, in get_auth_ref\n    return self._plugin.get_auth_ref(session, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/identity/v2.py\", line 65, in get_auth_ref\n    authenticated=False, log=False)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 681, in post\n    return self.request(url, 'POST', **kwargs)\n  File \"/usr/lib/python2.7/site-packages/positional/__init__.py\", line 101, in inner\n    return wrapped(*args, **kwargs)\n  File \"/usr/lib/python2.7/site-packages/keystoneauth1/session.py\", line 570, in request\n    raise exceptions.from_response(resp, method, url)\nUnauthorized: The request you have made requires authentication. (HTTP 401) (Request-ID: req-c7f159bd-89f0-4102-968e-b91d5ac01554)\n", "iteration": 26}], "name": "keystone", "has_output": false, "runner": "constant", "hooks": [], "iterations_count": 28, "output_errors": [], "pos": "0", "load_duration": 0.3853130340576172, "sla_success": false, "met": "keystone", "atomic": {"pie": [["authenticate.keystone", 0.1923343198640006]], "iter": [["authenticate.keystone", [[1, 0.23031401634216309], [2, 0.23787212371826172], [3, 0.29640889167785645], [4, 0.031738996505737305], [5, 0.2679588794708252], [6, 0.030920982360839844], [7, 0.02859807014465332], [8, 0.2909049987792969], [9, 0.24017620086669922], [10, 0.2976360321044922], [11, 0.24581003189086914], [12, 0.2871379852294922], [13, 0.2447371482849121], [14, 0.26163196563720703], [15, 0.025758981704711914], [16, 0.025061845779418945], [17, 0.24444890022277832], [18, 0.2444159984588623], [19, 0.2587471008300781], [20, 0.029491186141967773], [21, 0.2633829116821289], [22, 0.2290480136871338], [23, 0.25674891471862793], [24, 0.30055785179138184], [25, 0.027998924255371094], [26, 0.025762081146240234], [27, 0.23065495491027832], [28, 0.23143696784973145]]], ["failed_duration", [[1, 0], [2, 0], [3, 0], [4, 7.200241088867188e-05], [5, 0], [6, 5.3882598876953125e-05], [7, 6.29425048828125e-05], [8, 0], [9, 0], [10, 0], [11, 0], [12, 0], [13, 0], [14, 0], [15, 3.910064697265625e-05], [16, 4.6253204345703125e-05], [17, 0], [18, 0], [19, 0], [20, 6.270408630371094e-05], [21, 0], [22, 0], [23, 0], [24, 0], [25, 2.09808349609375e-05], [26, 2.3126602172851562e-05], [27, 0], [28, 0]]]], "histogram": {"data": [[{"disabled": 0, "values": [{"y": 8, "x": 0.07097784678141275}, {"y": 0, "x": 0.11689384778340657}, {"y": 0, "x": 0.1628098487854004}, {"y": 0, "x": 0.2087258497873942}, {"y": 10, "x": 0.254641850789388}, {"y": 10, "x": 0.30055785179138184}], "key": "authenticate.keystone", "view": "Square Root Choice"}], [{"disabled": 0, "values": [{"y": 8, "x": 0.07097784678141275}, {"y": 0, "x": 0.11689384778340657}, {"y": 0, "x": 0.1628098487854004}, {"y": 0, "x": 0.2087258497873942}, {"y": 10, "x": 0.254641850789388}, {"y": 10, "x": 0.30055785179138184}], "key": "authenticate.keystone", "view": "Sturges Formula"}], [{"disabled": 0, "values": [{"y": 8, "x": 0.06441841806684222}, {"y": 0, "x": 0.10377499035426549}, {"y": 0, "x": 0.14313156264168875}, {"y": 0, "x": 0.18248813492911203}, {"y": 0, "x": 0.22184470721653532}, {"y": 12, "x": 0.26120127950395855}, {"y": 8, "x": 0.30055785179138184}], "key": "authenticate.keystone", "view": "Rice Rule"}]], "views": [{"id": 0, "name": "Square Root Choice"}, {"id": 1, "name": "Sturges Formula"}, {"id": 2, "name": "Rice Rule"}]}}, "iterations": {"pie": [["success", 20], ["errors", 8]], "iter": [["duration", [[1, 0.23037123680114746], [2, 0.23792314529418945], [3, 0.29645490646362305], [4, 0], [5, 0.2680339813232422], [6, 0], [7, 0], [8, 0.29096508026123047], [9, 0.24023199081420898], [10, 0.29767894744873047], [11, 0.24586105346679688], [12, 0.28717803955078125], [13, 0.24478888511657715], [14, 0.26168394088745117], [15, 0], [16, 0], [17, 0.24449801445007324], [18, 0.24446797370910645], [19, 0.2587900161743164], [20, 0], [21, 0.2634091377258301], [22, 0.22907781600952148], [23, 0.2567710876464844], [24, 0.30059289932250977], [25, 0], [26, 0], [27, 0.23067903518676758], [28, 0.2314598560333252]]], ["idle_duration", [[1, 0.0], [2, 0.0], [3, 0.0], [4, 0], [5, 0.0], [6, 0], [7, 0], [8, 0.0], [9, 0.0], [10, 0.0], [11, 0.0], [12, 0.0], [13, 0.0], [14, 0.0], [15, 0], [16, 0], [17, 0.0], [18, 0.0], [19, 0.0], [20, 0], [21, 0.0], [22, 0.0], [23, 0.0], [24, 0.0], [25, 0], [26, 0], [27, 0.0], [28, 0.0]]], ["failed_duration", [[1, 0], [2, 0], [3, 0], [4, 0.03181099891662598], [5, 0], [6, 0.030974864959716797], [7, 0.028661012649536133], [8, 0], [9, 0], [10, 0], [11, 0], [12, 0], [13, 0], [14, 0], [15, 0.02579808235168457], [16, 0.02510809898376465], [17, 0], [18, 0], [19, 0], [20, 0.029553890228271484], [21, 0], [22, 0], [23, 0], [24, 0], [25, 0.02801990509033203], [26, 0.025785207748413086], [27, 0], [28, 0]]]], "histogram": {"data": [[{"disabled": null, "values": [{"y": 14, "x": 0.2409969965616862}, {"y": 4, "x": 0.2529161771138509}, {"y": 4, "x": 0.2648353576660156}, {"y": 1, "x": 0.27675453821818036}, {"y": 1, "x": 0.28867371877034503}, {"y": 4, "x": 0.30059289932250977}], "key": "task", "view": "Square Root Choice"}], [{"disabled": null, "values": [{"y": 14, "x": 0.2409969965616862}, {"y": 4, "x": 0.2529161771138509}, {"y": 4, "x": 0.2648353576660156}, {"y": 1, "x": 0.27675453821818036}, {"y": 1, "x": 0.28867371877034503}, {"y": 4, "x": 0.30059289932250977}], "key": "task", "view": "Sturges Formula"}], [{"disabled": null, "values": [{"y": 13, "x": 0.23929425648280553}, {"y": 5, "x": 0.24951069695608957}, {"y": 2, "x": 0.2597271374293736}, {"y": 3, "x": 0.26994357790265766}, {"y": 0, "x": 0.2801600183759417}, {"y": 1, "x": 0.29037645884922575}, {"y": 4, "x": 0.30059289932250977}], "key": "task", "view": "Rice Rule"}]], "views": [{"id": 0, "name": "Square Root Choice"}, {"id": 1, "name": "Sturges Formula"}, {"id": 2, "name": "Rice Rule"}]}}, "additive_output": [], "table": {"rows": [["authenticate.keystone", 0.229, 0.251, 0.297, 0.298, 0.301, 0.258, "71.4%", 28], ["total", 0.229, 0.251, 0.297, 0.298, 0.301, 0.258, "71.4%", 28]], "cols": ["Action", "Min (sec)", "Median (sec)", "90%ile (sec)", "95%ile (sec)", "Max (sec)", "Avg (sec)", "Success", "Count"]}, "full_duration": 12.634521007537842, "config": "{\n  \"Authenticate.keystone\": [\n    {\n      \"runner\": {\n        \"type\": \"constant\", \n        \"concurrency\": 20, \n        \"times\": 100\n      }, \n      \"sla\": {\n        \"max_seconds_per_iteration\": 5, \n        \"failure_rate\": {\n          \"max\": 0\n        }, \n        \"max_avg_duration\": 3\n      }, \n      \"context\": {\n        \"quotas\": {\n          \"cinder\": {\n            \"gigabytes\": -1, \n            \"snapshots\": -1, \n            \"volumes\": -1\n          }, \n          \"nova\": {\n            \"injected_file_content_bytes\": -1, \n            \"server_groups\": -1, \n            \"metadata_items\": -1, \n            \"server_group_members\": -1, \n            \"ram\": -1, \n            \"floating_ips\": -1, \n            \"security_group_rules\": -1, \n            \"instances\": -1, \n            \"key_pairs\": -1, \n            \"injected_files\": -1, \n            \"cores\": -1, \n            \"fixed_ips\": -1, \n            \"injected_file_path_bytes\": -1, \n            \"security_groups\": -1\n          }, \n          \"neutron\": {\n            \"subnet\": -1, \n            \"network\": -1, \n            \"floatingip\": -1, \n            \"security_group_rule\": -1, \n            \"security_group\": -1, \n            \"router\": -1, \n            \"port\": -1\n          }\n        }, \n        \"users\": {\n          \"users_per_tenant\": 50, \n          \"project_domain\": \"default\", \n          \"user_choice_method\": \"random\", \n          \"user_domain\": \"default\", \n          \"tenants\": 3, \n          \"resource_management_workers\": 20\n        }\n      }\n    }\n  ]\n}", "sla": [{"criterion": "max_seconds_per_iteration", "detail": "Maximum seconds per iteration 0.30s <= 5.00s - Passed", "success": true}, {"criterion": "failure_rate", "detail": "Failure rate criteria 0.00% <= 28.57% <= 0.00% - Failed", "success": false}, {"criterion": "max_avg_duration", "detail": "Average duration of one iteration 0.26s <= 3.00s - Passed", "success": true}, {"criterion": "aborted_on_sla", "detail": "Task was aborted due to SLA failure(s).", "success": false}], "complete_output": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []], "cls": "Authenticate"}];
+
+      $scope.location = {
+        /* #/path/hash/sub/div */
+        normalize: function(str) {
+          /* Remove unwanted characters from string */
+          if (typeof str !== "string") { return "" }
+          return str.replace(/[^\w\-\.]/g, "")
+        },
+        uri: function(obj) {
+          /* Getter/Setter */
+          if (! obj) {
+            var uri = {path: "", hash: "", sub: "", div: ""};
+            var arr = ["div", "sub", "hash", "path"];
+            angular.forEach($location.url().split("/"), function(value){
+              var v = $scope.location.normalize(value);
+              if (v) { var k = arr.pop(); if (k) { this[k] = v }}
+            }, uri);
+            return uri
+          }
+          var arr = [obj.path, obj.hash, obj.sub, obj.div], res = [];
+          for (var i in arr) { if (! arr[i]) { break }; res.push(arr[i]) }
+          return $location.url("/" + res.join("/"))
+        },
+        path: function(path, hash) {
+          /* Getter/Setter */
+          if (path === "") { return this.uri({}) }
+          path = this.normalize(path);
+          var uri = this.uri();
+          if (! path) { return uri.path }
+          uri.path = path;
+          var _hash = this.normalize(hash);
+          if (_hash || hash === "") { uri.hash = _hash }
+          return this.uri(uri)
+        },
+        hash: function(hash) {
+          /* Getter/Setter */
+          if (hash) { this.uri({path:this.uri().path, hash:hash}) }
+          return this.uri().hash
+        }
+      }
+
+      /* Dispatch */
+
+      $scope.route = function(uri) {
+        if (! $scope.scenarios_map) { return }
+
+        // Expand menu if there is only one menu group
+        if ($scope.nav.length === 1) {
+          $scope.nav_idx = $scope.nav[0].idx;
+        }
+
+        if (uri.path in $scope.scenarios_map) {
+          $scope.view = {is_scenario:true};
+          $scope.scenario = $scope.scenarios_map[uri.path];
+          $scope.nav_idx = $scope.nav_map[uri.path];
+          if ($scope.scenario.iterations.histogram.views.length) {
+            $scope.mainHistogram = $scope.scenario.iterations.histogram.views[0]
+          }
+          if ($scope.scenario.atomic.histogram.views.length) {
+            $scope.atomicHistogram = $scope.scenario.atomic.histogram.views[0]
+          }
+          $scope.outputIteration = 0;
+          $scope.showTab(uri);
+        } else {
+          $scope.scenario = null;
+          if (uri.path === "source") {
+            $scope.view = {is_source:true}
+          } else {
+            $scope.view = {is_main:true}
+          }
+        }
+      }
+
+      $scope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
+        $scope.route($scope.location.uri())
+      });
+
+      $scope.showNav = function(nav_idx) { $scope.nav_idx = nav_idx }
+
+      /* Tabs */
+
+      $scope.tabs = [
+        {
+          id: "overview",
+          name: "Overview",
+          visible: function(){ return !! $scope.scenario.iterations.pie.length }
+        },{
+          id: "details",
+          name: "Details",
+          visible: function(){ return !! $scope.scenario.atomic.pie.length }
+        },{
+          id: "output",
+          name: "Scenario Data",
+          visible: function(){ return $scope.scenario.has_output }
+        },{
+          id: "hooks",
+          name: "Hooks",
+          visible: function(){ return $scope.scenario.hooks.length }
+        },{
+          id: "failures",
+          name: "Failures",
+          visible: function(){ return !! $scope.scenario.errors.length }
+        },{
+          id: "task",
+          name: "Input task",
+          visible: function(){ return !! $scope.scenario.config }
+        }
+      ];
+      $scope.tabs_map = {};
+      angular.forEach($scope.tabs,
+                      function(tab){ this[tab.id] = tab }, $scope.tabs_map);
+
+      $scope.showTab = function(uri) {
+        $scope.tab = uri.hash in $scope.tabs_map ? uri.hash : "overview";
+        if (uri.hash === "output") {
+          if (typeof $scope.scenario.output === "undefined") {
+            var has_additive = !! $scope.scenario.additive_output.length;
+            var has_complete = !! ($scope.scenario.complete_output.length
+                                   && $scope.scenario.complete_output[0].length);
+            $scope.scenario.output = {
+              has_additive: has_additive,
+              has_complete: has_complete,
+              length: has_additive + has_complete,
+              active: has_additive ? "additive" : (has_complete ? "complete" : "")
+            }
+          }
+          if (uri.sub && $scope.scenario.output["has_" + uri.sub]) {
+            $scope.scenario.output.active = uri.sub
+          }
+        }
+        else if (uri.hash === "hooks") {
+          if ($scope.scenario.hooks.length) {
+            var hook_idx = parseInt(uri.sub);
+
+            if (isNaN(hook_idx) || ($scope.scenario.hooks.length - hook_idx) <= 0) {
+              hook_idx = 0
+            }
+
+            if ($scope.scenario.hook_idx === hook_idx) {
+              return
+            }
+
+            $scope.scenario.hooks.cur = $scope.scenario.hooks[hook_idx];
+            $scope.scenario.hook_idx = hook_idx;
+            if (typeof $scope.scenario.hooks.cur.active === "undefined") {
+              if ($scope.scenario.hooks.cur.additive.length) {
+                $scope.scenario.hooks.cur.active = "additive"
+              }
+              if ($scope.scenario.hooks.cur.complete.length) {
+                if (typeof $scope.scenario.hooks.cur.active === "undefined") {
+                  $scope.scenario.hooks.cur.active = "complete"
+                }
+                $scope.set_hook_run()
+              }
+            }
+          }
+        }
+      }
+
+      for (var i in $scope.tabs) {
+        if ($scope.tabs[i].id === $scope.location.hash()) {
+          $scope.tab = $scope.tabs[i].id
+        }
+        $scope.tabs[i].isVisible = function() {
+          if ($scope.scenario) {
+            if (this.visible()) { return true }
+            /* If tab should be hidden but is selected - show another one */
+            if (this.id === $scope.location.hash()) {
+              for (var i in $scope.tabs) {
+                var tab = $scope.tabs[i];
+                if (tab.id != this.id && tab.visible()) {
+                  $scope.tab = tab.id;
+                  return false
+                }
+              }
+            }
+          }
+          return false
+        }
+      }
+
+      $scope.set_hook_run = function(idx) {
+        if (typeof idx !== "undefined") {
+          $scope.scenario.hooks.cur.run_idx = idx
+        }
+        else if (typeof $scope.scenario.hooks.cur.run_idx === "undefined") {
+          $scope.scenario.hooks.cur.run_idx = 0
+        }
+        idx = $scope.scenario.hooks.cur.run_idx;
+        if (($scope.scenario.hooks.cur.complete.length - idx) > 0) {
+          $scope.scenario.hooks.cur.run = $scope.scenario.hooks.cur.complete[idx]
+        }
+      }
+
+      $scope.complete_hooks_as_dropdown = function() {
+        return $scope.scenario.hooks.cur.complete.length > 10
+      }
+
+      /* Other helpers */
+
+      $scope.showError = function(message) {
+          return (function (e) {
+            e.style.display = "block";
+            e.textContent = message
+          })(document.getElementById("page-error"))
+      }
+
+      $scope.compact_atomics = function() {
+        return ($scope.scenario && $scope.scenario.atomic.iter.length < 9)
+      }
+
+      /* Initialization */
+
+      angular.element(document).ready(function(){
+        if (! $scope.scenarios.length) {
+          return $scope.showError("No data...")
+        }
+
+        /* Compose data mapping */
+
+        $scope.nav = [];
+        $scope.nav_map = {};
+        $scope.scenarios_map = {};
+        var met = [], itr = 0, cls_idx = 0;
+        var prev_cls, prev_met;
+
+        for (var idx in $scope.scenarios) {
+          var sc = $scope.scenarios[idx];
+          if (! prev_cls) {
+            prev_cls = sc.cls
+          }
+          else if (prev_cls !== sc.cls) {
+            $scope.nav.push({cls:prev_cls, met:met, idx:cls_idx});
+            prev_cls = sc.cls;
+            met = [];
+            itr = 1;
+            cls_idx += 1
+          }
+
+          if (prev_met !== sc.met) { itr = 1 };
+          sc.ref = $scope.location.normalize(sc.cls+"."+sc.met+(itr > 1 ? "-"+itr : ""));
+          $scope.scenarios_map[sc.ref] = sc;
+          $scope.nav_map[sc.ref] = cls_idx;
+          met.push({name:sc.name, itr:itr, idx:idx, ref:sc.ref});
+          prev_met = sc.met;
+          itr += 1;
+        }
+
+        if (met.length) {
+          $scope.nav.push({cls:prev_cls, met:met, idx:cls_idx})
+        }
+
+        /* Start */
+
+        var uri = $scope.location.uri();
+        uri.path = $scope.location.path();
+        $scope.route(uri);
+        $scope.$digest()
+      })
+    };
+
+    if (typeof angular === "object") {
+      angular.module("App", [])
+        .controller("Controller", ["$scope", "$location", controllerFunction])
+        .directive("widget", widgetDirective)
+    }
+
+
+</script>
+  <style>
+    body { margin:0; padding:0 0 50px; font-size:14px; font-family:Helvetica,Arial,sans-serif }
+    a, a:active, a:focus, a:visited { text-decoration:none; outline:none }
+    p { margin:0; padding:5px 0 }
+    p.thesis { padding:10px 0 }
+    h1 { color:#666; margin:0 0 20px; font-size:30px; font-weight:normal }
+    h2, .h2 { color:#666; margin:24px 0 6px; font-size:25px; font-weight:normal }
+    h3, .h3 { color:#777; margin:12px 0 4px; font-size:18px; font-weight:normal }
+    table { border-collapse:collapse; border-spacing:0; width:100%; font-size:12px; margin:0 0 10px }
+    table th { text-align:left; padding:8px; color:#000; border:2px solid #ddd; border-width:0 0 2px 0 }
+    table th.sortable { cursor:pointer }
+    table td { text-align:left; border-top:1px solid #ddd; padding:8px; color:#333 }
+    table.compact td { padding:4px 8px }
+    table.striped tr:nth-child(odd) td { background:#f9f9f9 }
+    table.linked tbody tr:hover { background:#f9f9f9; cursor:pointer }
+    .pointer { cursor:pointer }
+    .rich, .rich td { font-weight:bold }
+    .code { padding:10px; font-size:13px; color:#333; background:#f6f6f6; border:1px solid #e5e5e5; border-radius:4px }
+
+    .header { text-align:left; background:#333; font-size:18px; padding:13px 0; margin-bottom:20px; color:#fff; background-image:linear-gradient(to bottom, #444 0px, #222 100%) }
+    .header a, .header a:visited, .header a:focus { color:#999 }
+
+    .notify-error { padding:5px 10px; background:#fee; color:red }
+    .status-skip, .status-skip td { color:grey }
+    .status-pass, .status-pass td { color:green }
+    .status-fail, .status-fail td { color:red }
+    .capitalize { text-transform:capitalize }
+    
+    .aside { margin:0 20px 0 0; display:block; width:255px; float:left }
+    .aside > div { margin-bottom: 15px }
+    .aside > div div:first-child { border-top-left-radius:4px; border-top-right-radius:4px }
+    .aside > div div:last-child { border-bottom-left-radius:4px; border-bottom-right-radius:4px }
+    .navcls { color:#678; background:#eee; border:1px solid #ddd; margin-bottom:-1px; display:block; padding:8px 9px; font-weight:bold; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer }
+    .navcls.expanded { color:#469 }
+    .navcls.active { background:#428bca; background-image:linear-gradient(to bottom, #428bca 0px, #3278b3 100%); border-color:#3278b3; color:#fff }
+    .navmet { color:#555; background:#fff; border:1px solid #ddd; font-size:12px; display:block; margin-bottom:-1px; padding:8px 10px; text-align:left; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; cursor:pointer }
+    .navmet:hover { background:#f8f8f8 }
+    .navmet.active, .navmet.active:hover { background:#428bca; background-image:linear-gradient(to bottom, #428bca 0px, #3278b3 100%); border-color:#3278b3; color:#fff }
+
+    .buttn { color:#555; background:#fff; border:1px solid #ddd; border-radius:5px; font-size:12px; margin-bottom:-1px; padding:5px 7px; text-align:left; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; cursor:pointer }
+    .buttn:hover { background:#f8f8f8 }
+    .buttn.active, .bttn.active:hover { background:#428bca; background-image:linear-gradient(to bottom, #428bca 0px, #3278b3 100%); border-color:#3278b3; color:#fff; cursor:default }
+
+    .tabs { list-style:outside none none; margin:0 0 5px; padding:0; border-bottom:1px solid #ddd }
+    .tabs:after { clear:both }
+    .tabs li { float:left; margin-bottom:-1px; display:block; position:relative }
+    .tabs li div { border:1px solid transparent; border-radius:4px 4px 0 0; line-height:20px; margin-right:2px; padding:10px 15px; color:#428bca }
+    .tabs li div:hover { border-color:#eee #eee #ddd; background:#eee; cursor:pointer; }
+    .tabs li.active div { background:#fff; border-color:#ddd #ddd transparent; border-style:solid; border-width:1px; color:#555; cursor:default }
+    .failure-mesg { color:#900 }
+    .failure-trace { color:#333; white-space:pre; overflow:auto }
+
+    .link { color:#428BCA; padding:5px 15px 5px 5px; text-decoration:underline; cursor:pointer }
+    .link.active { color:#333; text-decoration:none; cursor:default }
+
+    .chart { padding:0; margin:0; width:890px }
+    .chart svg { height:300px; padding:0; margin:0; overflow:visible; float:right }
+    .chart.lower svg { height:180px }
+    .chart-label-y { font-size:12px; position:relative; top:5px; padding:0; margin:0 }
+
+    .expandable { cursor:pointer }
+    .clearfix { clear:both }
+    .sortable > .arrow { display:inline-block; width:12px; height:inherit; color:#c90 }
+    .content-main { margin:0 5px; display:block; float:left }
+
+    .content-wrap {  margin:0 auto; padding:0 5px;  }
+    
+    @media only screen and (min-width: 320px)  { .content-wrap { width:900px  } .content-main { width:600px } }
+    @media only screen and (min-width: 900px)  { .content-wrap { width:880px  } .content-main { width:590px } }
+    @media only screen and (min-width: 1000px) { .content-wrap { width:980px  } .content-main { width:690px } }
+    @media only screen and (min-width: 1100px) { .content-wrap { width:1080px } .content-main { width:790px } }
+    @media only screen and (min-width: 1200px) { .content-wrap { width:1180px } .content-main { width:890px } }
+
+  </style>
+</head>
+<body ng-controller="Controller">
+
+  <div class="header" id="page-header">
+    <div class="content-wrap">
+      <a href="https://github.com/openstack/rally">Rally</a>&nbsp;
+      <span>task results</span>
+    </div>
+  </div>
+
+  <div class="content-wrap" id="page-content">
+    
+
+    <p id="page-error" class="notify-error" style="display:none"></p>
+
+    <div id="content-nav" class="aside" ng-show="scenarios.length" ng-cloack>
+      <div>
+        <div class="navcls"
+             ng-class="{active:view.is_main}"
+             ng-click="location.path('')">Task overview</div>
+        <div class="navcls"
+             ng-class="{active:view.is_source}"
+             ng-click="location.path('source', '')">Input file</div>
+      </div>
+      <div>
+        <div class="navcls" title="{{n.cls}}"
+             ng-repeat-start="n in nav track by $index"
+             ng-click="showNav(n.idx)"
+             ng-class="{expanded:n.idx==nav_idx}">
+                <span ng-hide="n.idx==nav_idx">&#9658;</span>
+                <span ng-show="n.idx==nav_idx">&#9660;</span>
+                {{n.cls}}</div>
+        <div class="navmet" title="{{m.name}}"
+             ng-show="n.idx==nav_idx"
+             ng-class="{active:m.ref==scenario.ref}"
+             ng-click="location.path(m.ref)"
+             ng-repeat="m in n.met track by $index"
+             ng-repeat-end>{{m.name}}</div>
+      </div>
+    </div>
+
+    <div id="content-main" class="content-main" ng-show="scenarios.length" ng-cloak>
+
+      <div ng-show="view.is_main">
+        <h1>Task overview</h1>
+        <table class="linked compact"
+               ng-init="ov_srt='ref'; ov_dir=false">
+          <thead>
+            <tr>
+              <th class="sortable"
+                  title="Scenario name, with optional suffix of call number"
+                  ng-click="ov_srt='ref'; ov_dir=!ov_dir">
+                Scenario
+                <span class="arrow">
+                  <b ng-show="ov_srt=='ref' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='ref' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable"
+                  title="How long the scenario run, without context duration"
+                  ng-click="ov_srt='load_duration'; ov_dir=!ov_dir">
+                Load duration (s)
+                <span class="arrow">
+                  <b ng-show="ov_srt=='load_duration' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='load_duration' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable"
+                  title="Scenario duration plus context duration"
+                  ng-click="ov_srt='full_duration'; ov_dir=!ov_dir">
+                Full duration (s)
+                <span class="arrow">
+                  <b ng-show="ov_srt=='full_duration' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='full_duration' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Number of iterations"
+                  ng-click="ov_srt='iterations_count'; ov_dir=!ov_dir">
+                Iterations
+                <span class="arrow">
+                  <b ng-show="ov_srt=='iterations_count' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='iterations_count' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Scenario runner type"
+                  ng-click="ov_srt='runner'; ov_dir=!ov_dir">
+                Runner
+                <span class="arrow">
+                  <b ng-show="ov_srt=='runner' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='runner' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Number of errors occurred"
+                  ng-click="ov_srt='errors.length'; ov_dir=!ov_dir">
+                Errors
+                <span class="arrow">
+                  <b ng-show="ov_srt=='errors.length' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='errors.length' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Number of hooks"
+                  ng-click="ov_srt='hooks.count'; ov_dir=!ov_dir">
+                Hooks
+                <span class="arrow">
+                  <b ng-show="ov_srt=='hooks.length' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='hooks.length' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Whether SLA check is successful"
+                  ng-click="ov_srt='sla_success'; ov_dir=!ov_dir">
+                Success (SLA)
+                <span class="arrow">
+                  <b ng-show="ov_srt=='sla_success' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='sla_success' && ov_dir">&#x25be;</b>
+                </span>
+            <tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sc in scenarios | orderBy:ov_srt:ov_dir"
+                ng-click="location.path(sc.ref)">
+              <td>{{sc.ref}}
+              <td>{{sc.load_duration | number:3}}
+              <td>{{sc.full_duration | number:3}}
+              <td>{{sc.iterations_count}}
+              <td>{{sc.runner}}
+              <td>{{sc.errors.length}}
+              <td>{{sc.hooks.length}}
+              <td>
+                <span ng-show="sc.sla_success" class="status-pass">&#x2714;</span>
+                <span ng-hide="sc.sla_success" class="status-fail">&#x2716;</span>
+            <tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div ng-show="view.is_source">
+        <h1>Input file</h1>
+        <pre class="code">{{source}}</pre>
+      </div>
+
+      <div ng-show="view.is_scenario">
+        <h1>{{scenario.cls}}.<wbr>{{scenario.name}} ({{scenario.full_duration | number:3}}s)</h1>
+        <ul class="tabs">
+          <li ng-repeat="t in tabs"
+              ng-show="t.isVisible()"
+              ng-class="{active:t.id == tab}"
+              ng-click="location.hash(t.id)">
+            <div>{{t.name}}</div>
+          </li>
+          <div class="clearfix"></div>
+        </ul>
+        <div ng-include="tab"></div>
+
+        <script type="text/ng-template" id="overview">
+          <p class="thesis">
+            Load duration: <b>{{scenario.load_duration | number:3}} s</b> &nbsp;
+            Full duration: <b>{{scenario.full_duration | number:3}} s</b> &nbsp;
+            Iterations: <b>{{scenario.iterations_count}}</b> &nbsp;
+            Failures: <b>{{scenario.errors.length}}</b>
+          </p>
+
+          <div ng-show="scenario.sla.length">
+            <h2>Service-level agreement</h2>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Criterion
+                  <th>Detail
+                  <th>Success
+                <tr>
+              </thead>
+              <tbody>
+                <tr class="rich"
+                    ng-repeat="row in scenario.sla track by $index"
+                    ng-class="{'status-fail':!row.success, 'status-pass':row.success}">
+                  <td>{{row.criterion}}
+                  <td>{{row.detail}}
+                  <td class="capitalize">{{row.success}}
+                <tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div widget="Table"
+               data="scenario.table"
+               lastrow-class="rich"
+               title="Total durations">
+          </div>
+
+          <div widget="StackedArea"
+               data="scenario.iterations.iter"
+               name-x="Iteration sequence number"
+               controls="true"
+               guide="true">
+          </div>
+
+          <div widget="StackedArea"
+               data="scenario.load_profile"
+               title="Load Profile"
+               title-class="h3"
+               name-x="Timeline (seconds)"
+               format-y="d"
+               format-x=",.2f"
+               class="lower">
+          </div>
+
+          <div widget="Pie"
+               data="scenario.iterations.pie"
+               title="Distribution"
+               title-class="h3"
+               style="float:left; width:40%; margin-top:15px">
+          </div>
+
+          <div widget="Histogram"
+               ng-if="scenario.iterations.histogram.data.length"
+               data="scenario.iterations.histogram.data[mainHistogram.id]"
+               style="float:left; width:59%; margin-top:15px; position:relative; top:40px">
+          </div>
+
+          <select ng-model="mainHistogram"
+                  ng-show="scenario.iterations.histogram.data.length"
+                  ng-options="i.name for i in scenario.iterations.histogram.views track by i.id"
+                  style="float:right; margin:45px 35px 0">
+          </select>
+
+          <div class="clearfix"></div>
+
+        </script>
+
+        <script type="text/ng-template" id="details">
+
+          <div widget="StackedArea"
+               data="scenario.atomic.iter"
+               title="Atomic Action Durations"
+               name-x="Iteration sequence number"
+               controls="true"
+               guide="true">
+          </div>
+
+          <div widget="Pie"
+               data="scenario.atomic.pie"
+               title="Distribution"
+               title-class="h3"
+               style="float:left; margin-top:15px"
+               ng-style="compact_atomics() ? {width:'40%'} : {}">
+          </div>
+
+          <div widget="Histogram" data="scenario.atomic.histogram.data[atomicHistogram.id]"
+               ng-if="scenario.atomic.histogram.data.length"
+               style="float:left; position:relative; top:40px"
+               ng-style="compact_atomics() ? {width:'59%', 'margin-top':'15px'} : {}">
+          </div>
+
+          <select ng-show="scenario.atomic.histogram.data.length"
+                  ng-model="atomicHistogram"
+                  ng-options="i.name for i in scenario.atomic.histogram.views track by i.id"
+                  style="float:right; margin:45px 35px 0">
+          </select>
+
+          <div class="clearfix"></div>
+
+        </script>
+
+        <script type="text/ng-template" id="output">
+
+          <div style="padding:10px 0 0">
+            <span class="link"
+                  ng-click="location.hash('output/additive')"
+                  ng-class="{active:scenario.output.active === 'additive'}"
+                  ng-if="scenario.output.has_additive">Aggregated</span>
+            <span class="link"
+                  ng-click="location.hash('output/complete')"
+                  ng-class="{active:scenario.output.active === 'complete'}"
+                  ng-if="scenario.output.has_complete">Per iteration</span>
+          </div>
+
+          <div ng-repeat="chart in scenario.additive_output"
+               ng-if="scenario.output.active === 'additive'">
+            <div widget="{{chart.widget}}"
+                 title="{{chart.title}}"
+                 description="{{chart.description}}"
+                 name-x="{{chart.axis_label}}"
+                 name-y="{{chart.label}}"
+                 data="chart.data">
+            </div>
+          </div>
+
+          <div ng-if="scenario.output.active === 'complete'" style="padding:10px 0 0">
+            <select ng-model="outputIteration">
+              <option ng-repeat="i in scenario.complete_output track by $index"
+                      value="{{$index}}">
+                Iteration {{$index}}
+            </select>
+
+            <div ng-repeat="chart in scenario.complete_output[outputIteration]">
+              <div widget="{{chart.widget}}"
+                   title="{{chart.title}}"
+                   description="{{chart.description}}"
+                   name-x="{{chart.axis_label}}"
+                   name-y="{{chart.label}}"
+                   data="chart.data">
+              </div>
+            </div>
+          </div>
+        </script>
+
+        <script type="text/ng-template" id="hooks">
+
+          <div style="padding:15px 0">
+            <span ng-repeat="h in scenario.hooks track by $index"
+                  class="buttn"
+                  title="{{h.desc}}"
+                  style="margin:0 10px 0 0"
+                  ng-click="location.hash('hooks/'+$index)"
+                  ng-class="{active:scenario.hook_idx===$index}">
+              {{h.name}}
+            </span>
+          </div>
+
+          <table class="striped" style="margin:5px 0 25px">
+            <thead>
+              <tr>
+                <th>Plugin
+                <th>Description
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{scenario.hooks.cur.name}}
+                <td>{{scenario.hooks.cur.desc}}
+            </tbody>
+          </table>
+
+          <div>
+            <span class="link"
+                  ng-click="scenario.hooks.cur.active = 'additive'"
+                  ng-class="{active:scenario.hooks.cur.active === 'additive'}"
+                  ng-if="scenario.hooks.cur.additive.length">Aggregated</span>
+            <span class="link"
+                  ng-click="scenario.hooks.cur.active = 'complete'"
+                  ng-class="{active:scenario.hooks.cur.active === 'complete'}"
+                  ng-if="scenario.hooks.cur.complete.length">Per hook run</span>
+          </div>
+
+          <div ng-repeat="chart in scenario.hooks.cur.additive"
+               ng-if="scenario.hooks.cur.active === 'additive'">
+            <div widget="{{chart.widget}}"
+                 title="{{chart.title}}"
+                 description="{{chart.description}}"
+                 name-x="{{chart.axis_label}}"
+                 name-y="{{chart.label}}"
+                 data="chart.data">
+            </div>
+          </div>
+
+          <div ng-if="scenario.hooks.cur.active === 'complete'" style="padding:10px 0 0">
+
+            <select ng-if="complete_hooks_as_dropdown()"
+                    ng-model="scenario.hooks.cur.run_idx"
+                    ng-change="set_hook_run()">
+              <option ng-repeat="h in scenario.hooks.cur.complete track by $index"
+                      ng-selected="scenario.hooks.cur.run_idx == $index"
+                      value="{{$index}}">
+                {{h.triggered_by}}
+            </select>
+
+            <div ng-if="! complete_hooks_as_dropdown()"
+                 style="border:#ccc solid; border-width:1px 0 0; padding:5px 0 0">
+              <span ng-repeat="h in scenario.hooks.cur.complete track by $index"
+                    class="link"
+                    ng-class="{active:scenario.hooks.cur.run_idx == $index}"
+                    ng-click="set_hook_run($index)">
+                {{h.triggered_by}}
+              </span>
+            </div>
+
+            <table class="striped" style="margin:15px 0 15px">
+              <thead>
+                <tr>
+                  <th>Status
+                  <th>Triggered by
+                  <th>Started at
+                  <th>Finished at
+              </thead>
+              <tbody>
+                <tr>
+                  <td ng-style="scenario.hooks.cur.run.status === 'success' ? {color:'green'} : {color:'red'}">
+                    <b>{{scenario.hooks.cur.run.status}}</b>
+                  <td>{{scenario.hooks.cur.run.triggered_by}}
+                  <td>{{scenario.hooks.cur.run.started_at}}
+                  <td>{{scenario.hooks.cur.run.finished_at}}
+              </tbody>
+            </table>
+
+            <div ng-repeat="chart in scenario.hooks.cur.run.charts">
+              <div widget="{{chart.widget}}"
+                   title="{{chart.title}}"
+                   description="{{chart.description}}"
+                   name-x="{{chart.axis_label}}"
+                   name-y="{{chart.label}}"
+                   data="chart.data">
+              </div>
+            </div>
+          </div>
+        </script>
+
+        <script type="text/ng-template" id="failures">
+          <h2>Task failures (<ng-pluralize
+            count="scenario.errors.length"
+            when="{'1': '1 iteration', 'other': '{} iterations'}"></ng-pluralize> failed)
+          </h2>
+          <table class="striped">
+            <thead>
+              <tr>
+                <th>
+                <th>Iteration
+                <th>Exception type
+                <th>Exception message
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="expandable"
+                  ng-repeat-start="i in scenario.errors track by $index"
+                  ng-click="i.expanded = ! i.expanded">
+                <td>
+                  <span ng-hide="i.expanded">&#9658;</span>
+                  <span ng-show="i.expanded">&#9660;</span>
+                <td>{{i.iteration}}
+                <td>{{i.type}}
+                <td class="failure-mesg">{{i.message}}
+              </tr>
+              <tr ng-show="i.expanded" ng-repeat-end>
+                <td colspan="4" class="failure-trace">{{i.traceback}}
+              </tr>
+            </tbody>
+          </table>
+        </script>
+
+        <script type="text/ng-template" id="task">
+          <h2>Subtask Configuration</h2>
+          <pre class="code">{{scenario.config}}</pre>
+        </script>
+      </div>
+
+    </div>
+    <div class="clearfix"></div>
+
+
+  </div>
+
+  <script type="text/javascript">
+    if (! window.angular) {(function(f){
+      f(document.getElementById("content-nav"), "none");
+      f(document.getElementById("content-main"), "none");
+      f(document.getElementById("page-error"), "block").textContent = "Failed to load AngularJS framework"
+    })(function(e, s){e.style.display = s; return e})}
+</script>
+</body>
+</html>
