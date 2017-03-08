@@ -413,3 +413,29 @@
 - [2017-03-08 18:54:50 KeystoneBasic.create_and_delete_role constant(1000-100)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_185450)KeystoneBasic.create_and_delete_role-constant(1000-100)_PassRetry(1)-FAILED.html) `99` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-08 18:56:30 KeystoneBasic.create_and_delete_role constant(1000-95)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_185630)KeystoneBasic.create_and_delete_role-constant(1000-95)_PassRetry(1)-PASSED.html) `93` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### KeystoneBasic.create_and_delete_service
+
+- [2017-03-08 19:00:43 KeystoneBasic.create_and_delete_service constant(1000-10)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_190043)KeystoneBasic.create_and_delete_service-constant(1000-10)-PASSED.html) `5` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 19:08:02 KeystoneBasic.create_and_delete_service constant(1000-20)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_190802)KeystoneBasic.create_and_delete_service-constant(1000-20)-PASSED.html) `18` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 19:12:20 KeystoneBasic.create_and_delete_service constant(1000-40)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_191220)KeystoneBasic.create_and_delete_service-constant(1000-40)-PASSED.html) `37` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 19:15:32 KeystoneBasic.create_and_delete_service constant(1000-80)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_191532)KeystoneBasic.create_and_delete_service-constant(1000-80)-PASSED.html) `78` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 19:18:08 KeystoneBasic.create_and_delete_service constant(1000-160)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_191808)KeystoneBasic.create_and_delete_service-constant(1000-160)-FAILED.html) `160` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 19:19:43 KeystoneBasic.create_and_delete_service constant(1000-120)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_191943)KeystoneBasic.create_and_delete_service-constant(1000-120)-FAILED.html) `120` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 19:21:16 KeystoneBasic.create_and_delete_service constant(1000-100)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_192116)KeystoneBasic.create_and_delete_service-constant(1000-100)-PASSED.html) `100` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 19:22:49 KeystoneBasic.create_and_delete_service constant(1000-110)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_192249)KeystoneBasic.create_and_delete_service-constant(1000-110)-FAILED.html) `109` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 19:24:24 KeystoneBasic.create_and_delete_service constant(1000-105)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_192424)KeystoneBasic.create_and_delete_service-constant(1000-105)-PASSED.html) `105` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 19:25:59 KeystoneBasic.create_and_delete_service constant(1000-107)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_192559)KeystoneBasic.create_and_delete_service-constant(1000-107)-FAILED.html) `107` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 19:27:32 KeystoneBasic.create_and_delete_service constant(1000-106)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_192732)KeystoneBasic.create_and_delete_service-constant(1000-106)-PASSED.html) `104` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 19:29:08 KeystoneBasic.create_and_delete_service constant(1000-106)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_192908)KeystoneBasic.create_and_delete_service-constant(1000-106)_PassRetry(1)-PASSED.html) `106` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
