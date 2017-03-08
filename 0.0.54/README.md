@@ -199,3 +199,9 @@
 - [2017-03-08 12:43:16 GlanceImages.create_and_list_image constant(300-266)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_124316)GlanceImages.create_and_list_image-constant(300-266)-PASSED.html) `266` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
 
 - [2017-03-08 12:44:40 GlanceImages.create_and_list_image constant(300-266)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_124440)GlanceImages.create_and_list_image-constant(300-266)_PassRetry(1)-PASSED.html) `266` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### GlanceImages.create_image_and_boot_instances
+
+- [2017-03-08 12:47:53 GlanceImages.create_image_and_boot_instances constant(300-2)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_124753)GlanceImages.create_image_and_boot_instances-constant(300-2)-FAILED.html) `2` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 13:01:13 GlanceImages.create_image_and_boot_instances constant(300-1)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_130113)GlanceImages.create_image_and_boot_instances-constant(300-1)_PassRetry(1)-FAILED.html) `0` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
