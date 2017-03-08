@@ -463,3 +463,33 @@
 - [2017-03-08 20:01:53 KeystoneBasic.create_delete_user constant(1000-6)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_200153)KeystoneBasic.create_delete_user-constant(1000-6)_PassRetry(1)-FAILED.html) `6` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-08 20:03:47 KeystoneBasic.create_delete_user constant(1000-5)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_200347)KeystoneBasic.create_delete_user-constant(1000-5)_PassRetry(1)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### KeystoneBasic.create_and_get_role
+
+- [2017-03-08 20:20:03 KeystoneBasic.create_and_get_role constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_202003)KeystoneBasic.create_and_get_role-constant(1000-2)-PASSED.html) `0` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 20:42:27 KeystoneBasic.create_and_get_role constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_204227)KeystoneBasic.create_and_get_role-constant(1000-4)-PASSED.html) `2` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 20:56:19 KeystoneBasic.create_and_get_role constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_205619)KeystoneBasic.create_and_get_role-constant(1000-8)-PASSED.html) `4` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 21:06:14 KeystoneBasic.create_and_get_role constant(1000-16)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_210614)KeystoneBasic.create_and_get_role-constant(1000-16)-PASSED.html) `12` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 21:13:31 KeystoneBasic.create_and_get_role constant(1000-32)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_211331)KeystoneBasic.create_and_get_role-constant(1000-32)-PASSED.html) `28` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 21:19:18 KeystoneBasic.create_and_get_role constant(1000-64)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_211918)KeystoneBasic.create_and_get_role-constant(1000-64)-PASSED.html) `63` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 21:24:47 KeystoneBasic.create_and_get_role constant(1000-128)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_212447)KeystoneBasic.create_and_get_role-constant(1000-128)-FAILED.html) `128` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 21:27:45 KeystoneBasic.create_and_get_role constant(1000-96)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_212745)KeystoneBasic.create_and_get_role-constant(1000-96)-FAILED.html) `95` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 21:30:48 KeystoneBasic.create_and_get_role constant(1000-80)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_213048)KeystoneBasic.create_and_get_role-constant(1000-80)-FAILED.html) `80` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 21:33:51 KeystoneBasic.create_and_get_role constant(1000-72)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_213351)KeystoneBasic.create_and_get_role-constant(1000-72)-PASSED.html) `72` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 21:36:57 KeystoneBasic.create_and_get_role constant(1000-76)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_213657)KeystoneBasic.create_and_get_role-constant(1000-76)-PASSED.html) `76` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 21:39:55 KeystoneBasic.create_and_get_role constant(1000-78)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_213955)KeystoneBasic.create_and_get_role-constant(1000-78)-FAILED.html) `78` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 21:42:54 KeystoneBasic.create_and_get_role constant(1000-77)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_214254)KeystoneBasic.create_and_get_role-constant(1000-77)-PASSED.html) `77` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 21:45:50 KeystoneBasic.create_and_get_role constant(1000-77)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_214550)KeystoneBasic.create_and_get_role-constant(1000-77)_PassRetry(1)-PASSED.html) `77` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
