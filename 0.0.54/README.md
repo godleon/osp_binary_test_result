@@ -295,3 +295,35 @@
 - [2017-03-08 15:52:43 KeystoneBasic.add_and_remove_user_role constant(1000-10)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_155243)KeystoneBasic.add_and_remove_user_role-constant(1000-10)_PassRetry(1)-FAILED.html) `10` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-08 15:55:49 KeystoneBasic.add_and_remove_user_role constant(1000-9)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_155549)KeystoneBasic.add_and_remove_user_role-constant(1000-9)_PassRetry(1)-PASSED.html) `5` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### KeystoneBasic.authenticate_user_and_validate_token
+
+- [2017-03-08 16:08:50 KeystoneBasic.authenticate_user_and_validate_token constant(1000-5)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_160850)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-5)-PASSED.html) `2` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 16:18:43 KeystoneBasic.authenticate_user_and_validate_token constant(1000-10)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_161843)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-10)-PASSED.html) `5` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 16:23:49 KeystoneBasic.authenticate_user_and_validate_token constant(1000-20)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_162349)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-20)-PASSED.html) `17` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 16:26:49 KeystoneBasic.authenticate_user_and_validate_token constant(1000-40)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_162649)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-40)-PASSED.html) `39` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 16:29:00 KeystoneBasic.authenticate_user_and_validate_token constant(1000-80)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_162900)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-80)-PASSED.html) `79` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 16:30:44 KeystoneBasic.authenticate_user_and_validate_token constant(1000-160)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_163044)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-160)-PASSED.html) `160` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 16:31:50 KeystoneBasic.authenticate_user_and_validate_token constant(1000-320)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_163150)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-320)-FAILED.html) `320` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 16:32:57 KeystoneBasic.authenticate_user_and_validate_token constant(1000-240)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_163257)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-240)-FAILED.html) `240` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 16:34:02 KeystoneBasic.authenticate_user_and_validate_token constant(1000-200)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_163402)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-200)-FAILED.html) `200` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 16:35:05 KeystoneBasic.authenticate_user_and_validate_token constant(1000-180)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_163505)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-180)-FAILED.html) `162` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 16:36:10 KeystoneBasic.authenticate_user_and_validate_token constant(1000-170)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_163610)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-170)-FAILED.html) `153` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 16:37:14 KeystoneBasic.authenticate_user_and_validate_token constant(1000-165)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_163714)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-165)-PASSED.html) `165` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 16:38:16 KeystoneBasic.authenticate_user_and_validate_token constant(1000-167)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_163816)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-167)-FAILED.html) `165` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 16:39:20 KeystoneBasic.authenticate_user_and_validate_token constant(1000-166)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_163920)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-166)-FAILED.html) `166` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 16:40:22 KeystoneBasic.authenticate_user_and_validate_token constant(1000-165)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170308_164022)KeystoneBasic.authenticate_user_and_validate_token-constant(1000-165)_PassRetry(1)-PASSED.html) `163` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
