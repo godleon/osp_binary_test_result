@@ -115,3 +115,27 @@
 - [2017-03-08 09:02:42 CinderVolumes.create_and_delete_volume constant(300-55)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_090242)CinderVolumes.create_and_delete_volume-constant(300-55)_PassRetry(1)-FAILED.html) `55` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-08 09:14:39 CinderVolumes.create_and_delete_volume constant(300-52)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_091439)CinderVolumes.create_and_delete_volume-constant(300-52)_PassRetry(1)-PASSED.html) `52` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### CinderVolumes.create_and_list_snapshots
+
+- [2017-03-08 09:18:44 CinderVolumes.create_and_list_snapshots constant(300-2)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_091844)CinderVolumes.create_and_list_snapshots-constant(300-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 09:32:36 CinderVolumes.create_and_list_snapshots constant(300-4)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_093236)CinderVolumes.create_and_list_snapshots-constant(300-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 09:44:24 CinderVolumes.create_and_list_snapshots constant(300-8)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_094424)CinderVolumes.create_and_list_snapshots-constant(300-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 09:55:15 CinderVolumes.create_and_list_snapshots constant(300-16)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_095515)CinderVolumes.create_and_list_snapshots-constant(300-16)-PASSED.html) `16` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 10:06:08 CinderVolumes.create_and_list_snapshots constant(300-32)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_100608)CinderVolumes.create_and_list_snapshots-constant(300-32)-FAILED.html) `32` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 10:17:13 CinderVolumes.create_and_list_snapshots constant(300-24)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_101713)CinderVolumes.create_and_list_snapshots-constant(300-24)-FAILED.html) `24` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 10:28:10 CinderVolumes.create_and_list_snapshots constant(300-20)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_102810)CinderVolumes.create_and_list_snapshots-constant(300-20)-PASSED.html) `20` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 10:39:04 CinderVolumes.create_and_list_snapshots constant(300-22)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_103904)CinderVolumes.create_and_list_snapshots-constant(300-22)-PASSED.html) `22` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 10:40:39 CinderVolumes.create_and_list_snapshots constant(300-23)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_104039)CinderVolumes.create_and_list_snapshots-constant(300-23)-FAILED.html) `23` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 10:51:39 CinderVolumes.create_and_list_snapshots constant(300-22)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_105139)CinderVolumes.create_and_list_snapshots-constant(300-22)_PassRetry(1)-FAILED.html) `22` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 10:53:19 CinderVolumes.create_and_list_snapshots constant(300-20)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_105319)CinderVolumes.create_and_list_snapshots-constant(300-20)_PassRetry(1)-PASSED.html) `20` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
