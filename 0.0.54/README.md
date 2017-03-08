@@ -139,3 +139,27 @@
 - [2017-03-08 10:51:39 CinderVolumes.create_and_list_snapshots constant(300-22)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_105139)CinderVolumes.create_and_list_snapshots-constant(300-22)_PassRetry(1)-FAILED.html) `22` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-08 10:53:19 CinderVolumes.create_and_list_snapshots constant(300-20)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_105319)CinderVolumes.create_and_list_snapshots-constant(300-20)_PassRetry(1)-PASSED.html) `20` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+## glance
+
+### GlanceImages.create_and_delete_image
+
+- [2017-03-08 10:56:50 GlanceImages.create_and_delete_image constant(300-2)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_105650)GlanceImages.create_and_delete_image-constant(300-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 11:09:50 GlanceImages.create_and_delete_image constant(300-4)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_110950)GlanceImages.create_and_delete_image-constant(300-4)-PASSED.html) `4` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 11:16:31 GlanceImages.create_and_delete_image constant(300-8)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_111631)GlanceImages.create_and_delete_image-constant(300-8)-PASSED.html) `8` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 11:20:05 GlanceImages.create_and_delete_image constant(300-16)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_112005)GlanceImages.create_and_delete_image-constant(300-16)-PASSED.html) `16` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 11:22:07 GlanceImages.create_and_delete_image constant(300-32)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_112207)GlanceImages.create_and_delete_image-constant(300-32)-PASSED.html) `32` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 11:23:22 GlanceImages.create_and_delete_image constant(300-64)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_112322)GlanceImages.create_and_delete_image-constant(300-64)-PASSED.html) `64` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 11:24:14 GlanceImages.create_and_delete_image constant(300-128)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_112414)GlanceImages.create_and_delete_image-constant(300-128)-PASSED.html) `128` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 11:24:57 GlanceImages.create_and_delete_image constant(300-256)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_112457)GlanceImages.create_and_delete_image-constant(300-256)-PASSED.html) `256` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 11:25:36 GlanceImages.create_and_delete_image constant(300-300)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_112536)GlanceImages.create_and_delete_image-constant(300-300)-PASSED.html) `300` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 11:26:16 GlanceImages.create_and_delete_image constant(300-300)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/glance/(20170308_112616)GlanceImages.create_and_delete_image-constant(300-300)_PassRetry(1)-PASSED.html) `300` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
