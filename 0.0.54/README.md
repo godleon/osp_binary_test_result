@@ -51,3 +51,39 @@
 - [2017-03-08 07:55:14 CinderVolumes.create_and_delete_snapshot constant(300-15)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_075514)CinderVolumes.create_and_delete_snapshot-constant(300-15)-PASSED.html) `15` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
 
 - [2017-03-08 07:56:47 CinderVolumes.create_and_delete_snapshot constant(300-15)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_075647)CinderVolumes.create_and_delete_snapshot-constant(300-15)_PassRetry(1)-PASSED.html) `15` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### CinderVolumeTypes.create_and_delete_volume_type
+
+- [2017-03-08 07:59:53 CinderVolumeTypes.create_and_delete_volume_type constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_075953)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 08:04:56 CinderVolumeTypes.create_and_delete_volume_type constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_080456)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 08:07:29 CinderVolumeTypes.create_and_delete_volume_type constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_080729)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 08:08:57 CinderVolumeTypes.create_and_delete_volume_type constant(1000-16)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_080857)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-16)-PASSED.html) `15` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 08:09:53 CinderVolumeTypes.create_and_delete_volume_type constant(1000-32)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_080953)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-32)-PASSED.html) `32` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 08:10:35 CinderVolumeTypes.create_and_delete_volume_type constant(1000-64)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_081035)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-64)-PASSED.html) `64` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 08:11:11 CinderVolumeTypes.create_and_delete_volume_type constant(1000-128)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_081111)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-128)-PASSED.html) `128` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 08:11:45 CinderVolumeTypes.create_and_delete_volume_type constant(1000-256)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_081145)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-256)-FAILED.html) `256` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 08:12:17 CinderVolumeTypes.create_and_delete_volume_type constant(1000-192)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_081217)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-192)-PASSED.html) `192` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 08:12:49 CinderVolumeTypes.create_and_delete_volume_type constant(1000-224)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_081249)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-224)-PASSED.html) `224` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-08 08:13:24 CinderVolumeTypes.create_and_delete_volume_type constant(1000-240)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_081324)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-240)-FAILED.html) `240` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 08:13:54 CinderVolumeTypes.create_and_delete_volume_type constant(1000-232)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_081354)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-232)-FAILED.html) `232` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 08:14:24 CinderVolumeTypes.create_and_delete_volume_type constant(1000-228)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_081424)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-228)-FAILED.html) `228` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 08:14:53 CinderVolumeTypes.create_and_delete_volume_type constant(1000-226)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_081453)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-226)-FAILED.html) `226` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 08:15:23 CinderVolumeTypes.create_and_delete_volume_type constant(1000-225)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_081523)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-225)-FAILED.html) `225` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 08:15:52 CinderVolumeTypes.create_and_delete_volume_type constant(1000-224)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_081552)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-224)_PassRetry(1)-FAILED.html) `224` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-08 08:16:25 CinderVolumeTypes.create_and_delete_volume_type constant(1000-212)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/cinder/(20170308_081625)CinderVolumeTypes.create_and_delete_volume_type-constant(1000-212)_PassRetry(1)-PASSED.html) `212` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
