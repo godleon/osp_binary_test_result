@@ -1063,3 +1063,41 @@
 - [2017-03-09 15:52:04 NeutronNetworks.list_agents constant(1000-159)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_155204)NeutronNetworks.list_agents-constant(1000-159)-PASSED.html) `159` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
 
 - [2017-03-09 15:52:36 NeutronNetworks.list_agents constant(1000-159)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_155236)NeutronNetworks.list_agents-constant(1000-159)_PassRetry(1)-PASSED.html) `159` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+## swift
+
+### SwiftObjects.create_container_and_object_then_list_objects
+
+- [2017-03-09 15:55:03 SwiftObjects.create_container_and_object_then_list_objects constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_155503)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 16:03:48 SwiftObjects.create_container_and_object_then_list_objects constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_160348)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 16:09:27 SwiftObjects.create_container_and_object_then_list_objects constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_160927)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 16:15:07 SwiftObjects.create_container_and_object_then_list_objects constant(1000-16)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_161507)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-16)-PASSED.html) `16` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 16:20:02 SwiftObjects.create_container_and_object_then_list_objects constant(1000-32)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_162002)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-32)-PASSED.html) `32` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 16:25:17 SwiftObjects.create_container_and_object_then_list_objects constant(1000-64)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_162517)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-64)-PASSED.html) `64` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 16:29:57 SwiftObjects.create_container_and_object_then_list_objects constant(1000-128)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_162957)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-128)-PASSED.html) `128` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 16:31:03 SwiftObjects.create_container_and_object_then_list_objects constant(1000-256)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_163103)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-256)-FAILED.html) `256` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 16:36:05 SwiftObjects.create_container_and_object_then_list_objects constant(1000-192)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_163605)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-192)-FAILED.html) `192` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 16:37:16 SwiftObjects.create_container_and_object_then_list_objects constant(1000-160)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_163716)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-160)-FAILED.html) `160` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 16:40:15 SwiftObjects.create_container_and_object_then_list_objects constant(1000-144)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_164015)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-144)-PASSED.html) `144` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 16:41:23 SwiftObjects.create_container_and_object_then_list_objects constant(1000-152)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_164123)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-152)-FAILED.html) `152` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 16:46:03 SwiftObjects.create_container_and_object_then_list_objects constant(1000-148)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_164603)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-148)-FAILED.html) `148` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 16:49:09 SwiftObjects.create_container_and_object_then_list_objects constant(1000-146)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_164909)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-146)-FAILED.html) `146` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 16:51:55 SwiftObjects.create_container_and_object_then_list_objects constant(1000-145)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_165155)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-145)-FAILED.html) `145` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 16:52:53 SwiftObjects.create_container_and_object_then_list_objects constant(1000-144)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_165253)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-144)_PassRetry(1)-FAILED.html) `144` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 16:55:41 SwiftObjects.create_container_and_object_then_list_objects constant(1000-136)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_165541)SwiftObjects.create_container_and_object_then_list_objects-constant(1000-136)_PassRetry(1)-PASSED.html) `136` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
