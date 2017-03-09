@@ -649,3 +649,39 @@
 - [2017-03-09 02:52:48 KeystoneBasic.create_and_update_user constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_025248)KeystoneBasic.create_and_update_user-constant(1000-2)-FAILED.html) `2` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-09 02:55:33 KeystoneBasic.create_and_update_user constant(1000-1)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_025533)KeystoneBasic.create_and_update_user-constant(1000-1)_PassRetry(1)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+### KeystoneBasic.create_tenant_with_users
+
+- [2017-03-09 03:00:48 KeystoneBasic.create_tenant_with_users constant(500-10)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_030048)KeystoneBasic.create_tenant_with_users-constant(500-10)-PASSED.html) `10` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 03:23:28 KeystoneBasic.create_tenant_with_users constant(500-20)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_032328)KeystoneBasic.create_tenant_with_users-constant(500-20)-PASSED.html) `20` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 03:44:13 KeystoneBasic.create_tenant_with_users constant(500-40)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_034413)KeystoneBasic.create_tenant_with_users-constant(500-40)-PASSED.html) `40` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 03:49:18 KeystoneBasic.create_tenant_with_users constant(500-80)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_034918)KeystoneBasic.create_tenant_with_users-constant(500-80)-FAILED.html) `80` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 03:55:07 KeystoneBasic.create_tenant_with_users constant(500-60)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_035507)KeystoneBasic.create_tenant_with_users-constant(500-60)-FAILED.html) `60` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 04:00:36 KeystoneBasic.create_tenant_with_users constant(500-50)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_040036)KeystoneBasic.create_tenant_with_users-constant(500-50)-FAILED.html) `50` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 04:05:57 KeystoneBasic.create_tenant_with_users constant(500-45)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_040557)KeystoneBasic.create_tenant_with_users-constant(500-45)-FAILED.html) `45` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 04:11:13 KeystoneBasic.create_tenant_with_users constant(500-42)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_041113)KeystoneBasic.create_tenant_with_users-constant(500-42)-FAILED.html) `42` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 04:16:38 KeystoneBasic.create_tenant_with_users constant(500-41)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_041638)KeystoneBasic.create_tenant_with_users-constant(500-41)-FAILED.html) `41` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 04:22:06 KeystoneBasic.create_tenant_with_users constant(500-40)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_042206)KeystoneBasic.create_tenant_with_users-constant(500-40)_PassRetry(1)-FAILED.html) `40` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 04:27:36 KeystoneBasic.create_tenant_with_users constant(500-38)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_042736)KeystoneBasic.create_tenant_with_users-constant(500-38)_PassRetry(1)-FAILED.html) `38` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 04:33:12 KeystoneBasic.create_tenant_with_users constant(500-36)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_043312)KeystoneBasic.create_tenant_with_users-constant(500-36)_PassRetry(1)-FAILED.html) `36` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 04:38:55 KeystoneBasic.create_tenant_with_users constant(500-34)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_043855)KeystoneBasic.create_tenant_with_users-constant(500-34)_PassRetry(1)-FAILED.html) `34` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 04:44:31 KeystoneBasic.create_tenant_with_users constant(500-32)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_044431)KeystoneBasic.create_tenant_with_users-constant(500-32)_PassRetry(1)-FAILED.html) `32` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 04:49:33 KeystoneBasic.create_tenant_with_users constant(500-30)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_044933)KeystoneBasic.create_tenant_with_users-constant(500-30)_PassRetry(1)-FAILED.html) `30` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 04:58:24 KeystoneBasic.create_tenant_with_users constant(500-28)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_045824)KeystoneBasic.create_tenant_with_users-constant(500-28)_PassRetry(1)-FAILED.html) `28` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 05:03:19 KeystoneBasic.create_tenant_with_users constant(500-26)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_050319)KeystoneBasic.create_tenant_with_users-constant(500-26)_PassRetry(1)-PASSED.html) `26` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
