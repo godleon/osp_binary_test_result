@@ -1029,3 +1029,37 @@
 - [2017-03-09 15:30:40 NeutronNetworks.create_and_update_subnets constant(500-308)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_153040)NeutronNetworks.create_and_update_subnets-constant(500-308)_PassRetry(1)-FAILED.html) `308` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-09 15:33:50 NeutronNetworks.create_and_update_subnets constant(500-292)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_153350)NeutronNetworks.create_and_update_subnets-constant(500-292)_PassRetry(1)-PASSED.html) `292` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### NeutronNetworks.list_agents
+
+- [2017-03-09 15:38:52 NeutronNetworks.list_agents constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_153852)NeutronNetworks.list_agents-constant(1000-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 15:42:42 NeutronNetworks.list_agents constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_154242)NeutronNetworks.list_agents-constant(1000-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 15:44:47 NeutronNetworks.list_agents constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_154447)NeutronNetworks.list_agents-constant(1000-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 15:46:00 NeutronNetworks.list_agents constant(1000-16)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_154600)NeutronNetworks.list_agents-constant(1000-16)-PASSED.html) `15` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 15:46:50 NeutronNetworks.list_agents constant(1000-32)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_154650)NeutronNetworks.list_agents-constant(1000-32)-PASSED.html) `32` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 15:47:29 NeutronNetworks.list_agents constant(1000-64)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_154729)NeutronNetworks.list_agents-constant(1000-64)-PASSED.html) `64` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 15:48:03 NeutronNetworks.list_agents constant(1000-128)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_154803)NeutronNetworks.list_agents-constant(1000-128)-PASSED.html) `128` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 15:48:34 NeutronNetworks.list_agents constant(1000-256)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_154834)NeutronNetworks.list_agents-constant(1000-256)-FAILED.html) `256` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 15:49:01 NeutronNetworks.list_agents constant(1000-192)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_154901)NeutronNetworks.list_agents-constant(1000-192)-FAILED.html) `192` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 15:49:28 NeutronNetworks.list_agents constant(1000-160)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_154928)NeutronNetworks.list_agents-constant(1000-160)-FAILED.html) `160` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 15:49:56 NeutronNetworks.list_agents constant(1000-144)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_154956)NeutronNetworks.list_agents-constant(1000-144)-PASSED.html) `144` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 15:50:29 NeutronNetworks.list_agents constant(1000-152)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_155029)NeutronNetworks.list_agents-constant(1000-152)-PASSED.html) `152` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 15:51:02 NeutronNetworks.list_agents constant(1000-156)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_155102)NeutronNetworks.list_agents-constant(1000-156)-PASSED.html) `156` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 15:51:33 NeutronNetworks.list_agents constant(1000-158)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_155133)NeutronNetworks.list_agents-constant(1000-158)-PASSED.html) `158` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 15:52:04 NeutronNetworks.list_agents constant(1000-159)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_155204)NeutronNetworks.list_agents-constant(1000-159)-PASSED.html) `159` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 15:52:36 NeutronNetworks.list_agents constant(1000-159)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_155236)NeutronNetworks.list_agents-constant(1000-159)_PassRetry(1)-PASSED.html) `159` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
