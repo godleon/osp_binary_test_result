@@ -1127,3 +1127,35 @@
 - [2017-03-09 17:16:37 SwiftObjects.list_and_download_objects_in_containers constant(1000-45)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_171637)SwiftObjects.list_and_download_objects_in_containers-constant(1000-45)-PASSED.html) `45` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
 
 - [2017-03-09 17:17:41 SwiftObjects.list_and_download_objects_in_containers constant(1000-45)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_171741)SwiftObjects.list_and_download_objects_in_containers-constant(1000-45)_PassRetry(1)-PASSED.html) `45` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### SwiftObjects.list_objects_in_containers
+
+- [2017-03-09 17:20:39 SwiftObjects.list_objects_in_containers constant(1000-3)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_172039)SwiftObjects.list_objects_in_containers-constant(1000-3)-PASSED.html) `2` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 17:23:20 SwiftObjects.list_objects_in_containers constant(1000-6)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_172320)SwiftObjects.list_objects_in_containers-constant(1000-6)-PASSED.html) `5` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 17:24:51 SwiftObjects.list_objects_in_containers constant(1000-12)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_172451)SwiftObjects.list_objects_in_containers-constant(1000-12)-PASSED.html) `11` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 17:25:49 SwiftObjects.list_objects_in_containers constant(1000-24)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_172549)SwiftObjects.list_objects_in_containers-constant(1000-24)-PASSED.html) `24` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 17:26:34 SwiftObjects.list_objects_in_containers constant(1000-48)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_172634)SwiftObjects.list_objects_in_containers-constant(1000-48)-PASSED.html) `48` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 17:27:13 SwiftObjects.list_objects_in_containers constant(1000-96)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_172713)SwiftObjects.list_objects_in_containers-constant(1000-96)-PASSED.html) `96` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 17:27:49 SwiftObjects.list_objects_in_containers constant(1000-192)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_172749)SwiftObjects.list_objects_in_containers-constant(1000-192)-FAILED.html) `192` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 17:28:19 SwiftObjects.list_objects_in_containers constant(1000-144)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_172819)SwiftObjects.list_objects_in_containers-constant(1000-144)-FAILED.html) `144` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 17:28:56 SwiftObjects.list_objects_in_containers constant(1000-120)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_172856)SwiftObjects.list_objects_in_containers-constant(1000-120)-PASSED.html) `120` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 17:29:32 SwiftObjects.list_objects_in_containers constant(1000-132)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_172932)SwiftObjects.list_objects_in_containers-constant(1000-132)-PASSED.html) `132` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 17:30:09 SwiftObjects.list_objects_in_containers constant(1000-138)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_173009)SwiftObjects.list_objects_in_containers-constant(1000-138)-FAILED.html) `138` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 17:30:44 SwiftObjects.list_objects_in_containers constant(1000-135)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_173044)SwiftObjects.list_objects_in_containers-constant(1000-135)-PASSED.html) `135` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 17:31:21 SwiftObjects.list_objects_in_containers constant(1000-136)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_173121)SwiftObjects.list_objects_in_containers-constant(1000-136)-FAILED.html) `136` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 17:31:57 SwiftObjects.list_objects_in_containers constant(1000-135)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_173157)SwiftObjects.list_objects_in_containers-constant(1000-135)_PassRetry(1)-FAILED.html) `135` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 17:32:34 SwiftObjects.list_objects_in_containers constant(1000-128)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/swift/(20170309_173234)SwiftObjects.list_objects_in_containers-constant(1000-128)_PassRetry(1)-PASSED.html) `128` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
