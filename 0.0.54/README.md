@@ -905,3 +905,33 @@
 - [2017-03-09 12:34:36 NeutronNetworks.create_and_delete_subnets constant(500-8)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_123436)NeutronNetworks.create_and_delete_subnets-constant(500-8)_PassRetry(1)-FAILED.html) `8` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-09 12:36:56 NeutronNetworks.create_and_delete_subnets constant(500-7)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_123656)NeutronNetworks.create_and_delete_subnets-constant(500-7)_PassRetry(1)-PASSED.html) `6` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### NeutronNetworks.create_and_show_network
+
+- [2017-03-09 12:44:36 NeutronNetworks.create_and_show_network constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_124436)NeutronNetworks.create_and_show_network-constant(1000-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 12:54:12 NeutronNetworks.create_and_show_network constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_125412)NeutronNetworks.create_and_show_network-constant(1000-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 12:59:42 NeutronNetworks.create_and_show_network constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_125942)NeutronNetworks.create_and_show_network-constant(1000-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 13:03:17 NeutronNetworks.create_and_show_network constant(1000-16)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_130317)NeutronNetworks.create_and_show_network-constant(1000-16)-PASSED.html) `15` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 13:06:03 NeutronNetworks.create_and_show_network constant(1000-32)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_130603)NeutronNetworks.create_and_show_network-constant(1000-32)-PASSED.html) `32` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 13:08:26 NeutronNetworks.create_and_show_network constant(1000-64)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_130826)NeutronNetworks.create_and_show_network-constant(1000-64)-PASSED.html) `64` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 13:10:39 NeutronNetworks.create_and_show_network constant(1000-128)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_131039)NeutronNetworks.create_and_show_network-constant(1000-128)-FAILED.html) `128` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 13:12:23 NeutronNetworks.create_and_show_network constant(1000-96)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_131223)NeutronNetworks.create_and_show_network-constant(1000-96)-PASSED.html) `96` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 13:14:32 NeutronNetworks.create_and_show_network constant(1000-112)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_131432)NeutronNetworks.create_and_show_network-constant(1000-112)-PASSED.html) `112` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 13:16:38 NeutronNetworks.create_and_show_network constant(1000-120)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_131638)NeutronNetworks.create_and_show_network-constant(1000-120)-PASSED.html) `120` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 13:18:45 NeutronNetworks.create_and_show_network constant(1000-124)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_131845)NeutronNetworks.create_and_show_network-constant(1000-124)-PASSED.html) `124` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 13:20:52 NeutronNetworks.create_and_show_network constant(1000-126)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_132052)NeutronNetworks.create_and_show_network-constant(1000-126)-PASSED.html) `126` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 13:23:01 NeutronNetworks.create_and_show_network constant(1000-127)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_132301)NeutronNetworks.create_and_show_network-constant(1000-127)-PASSED.html) `127` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 13:25:10 NeutronNetworks.create_and_show_network constant(1000-127)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_132510)NeutronNetworks.create_and_show_network-constant(1000-127)_PassRetry(1)-PASSED.html) `127` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
