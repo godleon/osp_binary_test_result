@@ -799,3 +799,27 @@
 - [2017-03-09 10:06:46 NeutronNetworks.create_and_delete_networks constant(1000-9)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_100646)NeutronNetworks.create_and_delete_networks-constant(1000-9)-PASSED.html) `8` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
 
 - [2017-03-09 10:10:31 NeutronNetworks.create_and_delete_networks constant(1000-9)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_101031)NeutronNetworks.create_and_delete_networks-constant(1000-9)_PassRetry(1)-PASSED.html) `8` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### NeutronNetworks.create_and_delete_ports
+
+- [2017-03-09 10:15:52 NeutronNetworks.create_and_delete_ports constant(300-10)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_101552)NeutronNetworks.create_and_delete_ports-constant(300-10)-PASSED.html) `10` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 10:24:08 NeutronNetworks.create_and_delete_ports constant(300-20)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_102408)NeutronNetworks.create_and_delete_ports-constant(300-20)-PASSED.html) `20` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 10:28:41 NeutronNetworks.create_and_delete_ports constant(300-40)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_102841)NeutronNetworks.create_and_delete_ports-constant(300-40)-PASSED.html) `40` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 10:32:10 NeutronNetworks.create_and_delete_ports constant(300-80)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_103210)NeutronNetworks.create_and_delete_ports-constant(300-80)-FAILED.html) `80` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 10:35:13 NeutronNetworks.create_and_delete_ports constant(300-60)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_103513)NeutronNetworks.create_and_delete_ports-constant(300-60)-PASSED.html) `60` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 10:38:31 NeutronNetworks.create_and_delete_ports constant(300-70)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_103831)NeutronNetworks.create_and_delete_ports-constant(300-70)-PASSED.html) `70` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 10:41:42 NeutronNetworks.create_and_delete_ports constant(300-75)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_104142)NeutronNetworks.create_and_delete_ports-constant(300-75)-PASSED.html) `75` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 10:44:41 NeutronNetworks.create_and_delete_ports constant(300-77)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_104441)NeutronNetworks.create_and_delete_ports-constant(300-77)-PASSED.html) `77` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 10:47:41 NeutronNetworks.create_and_delete_ports constant(300-78)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_104741)NeutronNetworks.create_and_delete_ports-constant(300-78)-PASSED.html) `78` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 10:50:36 NeutronNetworks.create_and_delete_ports constant(300-79)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_105036)NeutronNetworks.create_and_delete_ports-constant(300-79)-PASSED.html) `79` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 10:53:45 NeutronNetworks.create_and_delete_ports constant(300-79)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_105345)NeutronNetworks.create_and_delete_ports-constant(300-79)_PassRetry(1)-PASSED.html) `79` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
