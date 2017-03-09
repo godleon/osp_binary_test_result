@@ -739,3 +739,29 @@
 - [2017-03-09 07:22:57 KeystoneBasic.create_user_update_password constant(1000-11)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_072257)KeystoneBasic.create_user_update_password-constant(1000-11)-PASSED.html) `11` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
 
 - [2017-03-09 07:24:58 KeystoneBasic.create_user_update_password constant(1000-11)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_072458)KeystoneBasic.create_user_update_password-constant(1000-11)_PassRetry(1)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### KeystoneBasic.get_entities
+
+- [2017-03-09 07:38:45 KeystoneBasic.get_entities constant(500-10)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_073845)KeystoneBasic.get_entities-constant(500-10)-PASSED.html) `10` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 07:51:25 KeystoneBasic.get_entities constant(500-20)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_075125)KeystoneBasic.get_entities-constant(500-20)-PASSED.html) `20` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 08:00:30 KeystoneBasic.get_entities constant(500-40)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_080030)KeystoneBasic.get_entities-constant(500-40)-PASSED.html) `40` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 08:08:24 KeystoneBasic.get_entities constant(500-80)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_080824)KeystoneBasic.get_entities-constant(500-80)-PASSED.html) `80` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 08:15:46 KeystoneBasic.get_entities constant(500-160)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_081546)KeystoneBasic.get_entities-constant(500-160)-FAILED.html) `160` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 08:20:06 KeystoneBasic.get_entities constant(500-120)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_082006)KeystoneBasic.get_entities-constant(500-120)-FAILED.html) `120` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 08:24:09 KeystoneBasic.get_entities constant(500-100)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_082409)KeystoneBasic.get_entities-constant(500-100)-PASSED.html) `100` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 08:28:21 KeystoneBasic.get_entities constant(500-110)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_082821)KeystoneBasic.get_entities-constant(500-110)-FAILED.html) `110` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 08:32:31 KeystoneBasic.get_entities constant(500-105)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_083231)KeystoneBasic.get_entities-constant(500-105)-FAILED.html) `105` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 08:36:41 KeystoneBasic.get_entities constant(500-102)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_083641)KeystoneBasic.get_entities-constant(500-102)-FAILED.html) `102` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 08:40:54 KeystoneBasic.get_entities constant(500-101)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_084054)KeystoneBasic.get_entities-constant(500-101)-FAILED.html) `101` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 08:45:06 KeystoneBasic.get_entities constant(500-100)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_084506)KeystoneBasic.get_entities-constant(500-100)_PassRetry(1)-PASSED.html) `100` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
