@@ -643,3 +643,9 @@
 - [2017-03-09 02:45:26 KeystoneBasic.create_and_list_users constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_024526)KeystoneBasic.create_and_list_users-constant(1000-2)-FAILED.html) `2` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-09 02:47:39 KeystoneBasic.create_and_list_users constant(1000-1)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_024739)KeystoneBasic.create_and_list_users-constant(1000-1)_PassRetry(1)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+### KeystoneBasic.create_and_update_user
+
+- [2017-03-09 02:52:48 KeystoneBasic.create_and_update_user constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_025248)KeystoneBasic.create_and_update_user-constant(1000-2)-FAILED.html) `2` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 02:55:33 KeystoneBasic.create_and_update_user constant(1000-1)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_025533)KeystoneBasic.create_and_update_user-constant(1000-1)_PassRetry(1)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
