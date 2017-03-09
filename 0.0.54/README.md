@@ -685,3 +685,19 @@
 - [2017-03-09 04:58:24 KeystoneBasic.create_tenant_with_users constant(500-28)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_045824)KeystoneBasic.create_tenant_with_users-constant(500-28)_PassRetry(1)-FAILED.html) `28` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-09 05:03:19 KeystoneBasic.create_tenant_with_users constant(500-26)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_050319)KeystoneBasic.create_tenant_with_users-constant(500-26)_PassRetry(1)-PASSED.html) `26` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### KeystoneBasic.create_tenant
+
+- [2017-03-09 05:28:27 KeystoneBasic.create_tenant constant(1000-10)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_052827)KeystoneBasic.create_tenant-constant(1000-10)-PASSED.html) `4` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 05:41:39 KeystoneBasic.create_tenant constant(1000-20)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_054139)KeystoneBasic.create_tenant-constant(1000-20)-FAILED.html) `19` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 05:46:25 KeystoneBasic.create_tenant constant(1000-15)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_054625)KeystoneBasic.create_tenant-constant(1000-15)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 05:56:50 KeystoneBasic.create_tenant constant(1000-17)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_055650)KeystoneBasic.create_tenant-constant(1000-17)-PASSED.html) `9` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 06:06:48 KeystoneBasic.create_tenant constant(1000-18)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_060648)KeystoneBasic.create_tenant-constant(1000-18)-PASSED.html) `10` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 06:16:46 KeystoneBasic.create_tenant constant(1000-19)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_061646)KeystoneBasic.create_tenant-constant(1000-19)-PASSED.html) `11` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 06:26:25 KeystoneBasic.create_tenant constant(1000-19)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/keystone/(20170309_062625)KeystoneBasic.create_tenant-constant(1000-19)_PassRetry(1)-PASSED.html) `11` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
