@@ -889,3 +889,19 @@
 - [2017-03-09 12:08:45 NeutronSecurityGroup.create_and_delete_security_groups constant(1000-170)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_120845)NeutronSecurityGroup.create_and_delete_security_groups-constant(1000-170)_PassRetry(1)-FAILED.html) `170` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-09 12:09:22 NeutronSecurityGroup.create_and_delete_security_groups constant(1000-161)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_120922)NeutronSecurityGroup.create_and_delete_security_groups-constant(1000-161)_PassRetry(1)-PASSED.html) `161` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### NeutronNetworks.create_and_delete_subnets
+
+- [2017-03-09 12:12:06 NeutronNetworks.create_and_delete_subnets constant(500-10)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_121206)NeutronNetworks.create_and_delete_subnets-constant(500-10)-FAILED.html) `10` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 12:13:58 NeutronNetworks.create_and_delete_subnets constant(500-5)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_121358)NeutronNetworks.create_and_delete_subnets-constant(500-5)-PASSED.html) `4` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 12:20:47 NeutronNetworks.create_and_delete_subnets constant(500-7)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_122047)NeutronNetworks.create_and_delete_subnets-constant(500-7)-PASSED.html) `6` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 12:26:14 NeutronNetworks.create_and_delete_subnets constant(500-8)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_122614)NeutronNetworks.create_and_delete_subnets-constant(500-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 12:31:27 NeutronNetworks.create_and_delete_subnets constant(500-9)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_123127)NeutronNetworks.create_and_delete_subnets-constant(500-9)-FAILED.html) `9` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 12:34:36 NeutronNetworks.create_and_delete_subnets constant(500-8)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_123436)NeutronNetworks.create_and_delete_subnets-constant(500-8)_PassRetry(1)-FAILED.html) `8` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 12:36:56 NeutronNetworks.create_and_delete_subnets constant(500-7)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_123656)NeutronNetworks.create_and_delete_subnets-constant(500-7)_PassRetry(1)-PASSED.html) `6` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
