@@ -823,3 +823,29 @@
 - [2017-03-09 10:50:36 NeutronNetworks.create_and_delete_ports constant(300-79)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_105036)NeutronNetworks.create_and_delete_ports-constant(300-79)-PASSED.html) `79` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
 
 - [2017-03-09 10:53:45 NeutronNetworks.create_and_delete_ports constant(300-79)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_105345)NeutronNetworks.create_and_delete_ports-constant(300-79)_PassRetry(1)-PASSED.html) `79` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### NeutronNetworks.create_and_delete_routers
+
+- [2017-03-09 10:58:49 NeutronNetworks.create_and_delete_routers constant(300-10)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_105849)NeutronNetworks.create_and_delete_routers-constant(300-10)-PASSED.html) `10` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 11:08:50 NeutronNetworks.create_and_delete_routers constant(300-20)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_110850)NeutronNetworks.create_and_delete_routers-constant(300-20)-PASSED.html) `20` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 11:15:33 NeutronNetworks.create_and_delete_routers constant(300-40)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_111533)NeutronNetworks.create_and_delete_routers-constant(300-40)-PASSED.html) `40` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 11:20:29 NeutronNetworks.create_and_delete_routers constant(300-80)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_112029)NeutronNetworks.create_and_delete_routers-constant(300-80)-PASSED.html) `80` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 11:24:43 NeutronNetworks.create_and_delete_routers constant(300-160)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_112443)NeutronNetworks.create_and_delete_routers-constant(300-160)-FAILED.html) `160` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 11:27:44 NeutronNetworks.create_and_delete_routers constant(300-120)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_112744)NeutronNetworks.create_and_delete_routers-constant(300-120)-FAILED.html) `120` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 11:30:59 NeutronNetworks.create_and_delete_routers constant(300-100)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_113059)NeutronNetworks.create_and_delete_routers-constant(300-100)-FAILED.html) `100` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 11:34:10 NeutronNetworks.create_and_delete_routers constant(300-90)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_113410)NeutronNetworks.create_and_delete_routers-constant(300-90)-PASSED.html) `90` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 11:38:18 NeutronNetworks.create_and_delete_routers constant(300-95)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_113818)NeutronNetworks.create_and_delete_routers-constant(300-95)-PASSED.html) `95` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 11:42:22 NeutronNetworks.create_and_delete_routers constant(300-97)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_114222)NeutronNetworks.create_and_delete_routers-constant(300-97)-PASSED.html) `97` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-09 11:46:28 NeutronNetworks.create_and_delete_routers constant(300-98)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_114628)NeutronNetworks.create_and_delete_routers-constant(300-98)-FAILED.html) `98` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-09 11:50:04 NeutronNetworks.create_and_delete_routers constant(300-97)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.54/neutron/(20170309_115004)NeutronNetworks.create_and_delete_routers-constant(300-97)_PassRetry(1)-PASSED.html) `97` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
