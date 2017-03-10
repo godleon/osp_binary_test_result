@@ -115,3 +115,19 @@
 - [2017-03-10 20:29:25 NovaServers.boot_and_migrate_server rps(300-0.6)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_202925)NovaServers.boot_and_migrate_server-rps(300-0.6)-FAILED.html) `16` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-10 20:31:43 NovaServers.boot_and_migrate_server rps(300-0.5)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_203143)NovaServers.boot_and_migrate_server-rps(300-0.5)_PassRetry(1)-PASSED.html) `13` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### NovaServers.boot_and_rebuild_server
+
+- [2017-03-10 20:44:10 NovaServers.boot_and_rebuild_server rps(300-1.0)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_204410)NovaServers.boot_and_rebuild_server-rps(300-1.0)-PASSED.html) `25` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-10 20:49:59 NovaServers.boot_and_rebuild_server rps(300-2.0)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_204959)NovaServers.boot_and_rebuild_server-rps(300-2.0)-FAILED.html) `137` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 20:54:47 NovaServers.boot_and_rebuild_server rps(300-1.5)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_205447)NovaServers.boot_and_rebuild_server-rps(300-1.5)-PASSED.html) `66` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-10 20:59:12 NovaServers.boot_and_rebuild_server rps(300-1.7)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_205912)NovaServers.boot_and_rebuild_server-rps(300-1.7)-PASSED.html) `102` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-10 21:03:55 NovaServers.boot_and_rebuild_server rps(300-1.8)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_210355)NovaServers.boot_and_rebuild_server-rps(300-1.8)-PASSED.html) `117` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-10 21:08:38 NovaServers.boot_and_rebuild_server rps(300-1.9)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_210838)NovaServers.boot_and_rebuild_server-rps(300-1.9)-FAILED.html) `125` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 21:13:28 NovaServers.boot_and_rebuild_server rps(300-1.8)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_211328)NovaServers.boot_and_rebuild_server-rps(300-1.8)_PassRetry(1)-PASSED.html) `110` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
