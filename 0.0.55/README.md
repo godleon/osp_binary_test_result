@@ -119,3 +119,25 @@
 - [2017-03-10 07:57:18 KeystoneBasic.create_and_update_user constant(1000-13)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_075718)KeystoneBasic.create_and_update_user-constant(1000-13)_PassRetry(1)-FAILED.html) `13` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-10 08:01:51 KeystoneBasic.create_and_update_user constant(1000-12)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_080151)KeystoneBasic.create_and_update_user-constant(1000-12)_PassRetry(1)-PASSED.html) `9` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### KeystoneBasic.create_update_and_delete_tenant
+
+- [2017-03-10 08:23:16 KeystoneBasic.create_update_and_delete_tenant constant(1000-10)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_082316)KeystoneBasic.create_update_and_delete_tenant-constant(1000-10)-PASSED.html) `6` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-10 08:37:16 KeystoneBasic.create_update_and_delete_tenant constant(1000-20)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_083716)KeystoneBasic.create_update_and_delete_tenant-constant(1000-20)-PASSED.html) `19` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-10 08:45:17 KeystoneBasic.create_update_and_delete_tenant constant(1000-40)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_084517)KeystoneBasic.create_update_and_delete_tenant-constant(1000-40)-FAILED.html) `40` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 08:48:53 KeystoneBasic.create_update_and_delete_tenant constant(1000-30)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_084853)KeystoneBasic.create_update_and_delete_tenant-constant(1000-30)-FAILED.html) `30` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 08:51:31 KeystoneBasic.create_update_and_delete_tenant constant(1000-25)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_085131)KeystoneBasic.create_update_and_delete_tenant-constant(1000-25)-FAILED.html) `25` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 08:54:07 KeystoneBasic.create_update_and_delete_tenant constant(1000-22)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_085407)KeystoneBasic.create_update_and_delete_tenant-constant(1000-22)-FAILED.html) `22` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 08:56:50 KeystoneBasic.create_update_and_delete_tenant constant(1000-21)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_085650)KeystoneBasic.create_update_and_delete_tenant-constant(1000-21)-FAILED.html) `21` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 08:59:10 KeystoneBasic.create_update_and_delete_tenant constant(1000-20)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_085910)KeystoneBasic.create_update_and_delete_tenant-constant(1000-20)_PassRetry(1)-FAILED.html) `20` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 09:01:28 KeystoneBasic.create_update_and_delete_tenant constant(1000-19)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_090128)KeystoneBasic.create_update_and_delete_tenant-constant(1000-19)_PassRetry(1)-FAILED.html) `19` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 09:03:45 KeystoneBasic.create_update_and_delete_tenant constant(1000-18)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_090345)KeystoneBasic.create_update_and_delete_tenant-constant(1000-18)_PassRetry(1)-PASSED.html) `17` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
