@@ -103,3 +103,15 @@
 - [2017-03-10 19:44:01 NovaServers.boot_and_list_server rps(300-0.5)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_194401)NovaServers.boot_and_list_server-rps(300-0.5)_PassRetry(1)-FAILED.html) `34` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-10 19:47:58 NovaServers.boot_and_list_server rps(300-0.4)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_194758)NovaServers.boot_and_list_server-rps(300-0.4)_PassRetry(1)-PASSED.html) `5` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### NovaServers.boot_and_migrate_server
+
+- [2017-03-10 20:03:46 NovaServers.boot_and_migrate_server rps(300-1.0)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_200346)NovaServers.boot_and_migrate_server-rps(300-1.0)-FAILED.html) `206` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 20:10:44 NovaServers.boot_and_migrate_server rps(300-0.5)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_201044)NovaServers.boot_and_migrate_server-rps(300-0.5)-PASSED.html) `13` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-10 20:21:26 NovaServers.boot_and_migrate_server rps(300-0.7)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_202126)NovaServers.boot_and_migrate_server-rps(300-0.7)-FAILED.html) `20` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 20:29:25 NovaServers.boot_and_migrate_server rps(300-0.6)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_202925)NovaServers.boot_and_migrate_server-rps(300-0.6)-FAILED.html) `16` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 20:31:43 NovaServers.boot_and_migrate_server rps(300-0.5)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170310_203143)NovaServers.boot_and_migrate_server-rps(300-0.5)_PassRetry(1)-PASSED.html) `13` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
