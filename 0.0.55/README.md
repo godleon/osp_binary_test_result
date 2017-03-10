@@ -187,3 +187,17 @@
 - [2017-03-10 11:25:26 KeystoneBasic.create_user_update_password constant(1000-109)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_112526)KeystoneBasic.create_user_update_password-constant(1000-109)-PASSED.html) `109` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
 
 - [2017-03-10 11:29:27 KeystoneBasic.create_user_update_password constant(1000-109)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.55/keystone/(20170310_112927)KeystoneBasic.create_user_update_password-constant(1000-109)_PassRetry(1)-PASSED.html) `109` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+## nova
+
+### NovaServers.boot_and_associate_floating_ip
+
+- [2017-03-10 11:36:53 NovaServers.boot_and_associate_floating_ip rps(100-1.0)](https://godleon.github.io/osp_binary_test_result/0.0.55/nova/(20170310_113653)NovaServers.boot_and_associate_floating_ip-rps(100-1.0)-FAILED.html) `79` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 11:49:30 NovaServers.boot_and_associate_floating_ip rps(100-0.5)](https://godleon.github.io/osp_binary_test_result/0.0.55/nova/(20170310_114930)NovaServers.boot_and_associate_floating_ip-rps(100-0.5)-FAILED.html) `72` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 12:00:59 NovaServers.boot_and_associate_floating_ip rps(100-0.3)](https://godleon.github.io/osp_binary_test_result/0.0.55/nova/(20170310_120059)NovaServers.boot_and_associate_floating_ip-rps(100-0.3)-FAILED.html) `32` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 12:09:23 NovaServers.boot_and_associate_floating_ip rps(100-0.2)](https://godleon.github.io/osp_binary_test_result/0.0.55/nova/(20170310_120923)NovaServers.boot_and_associate_floating_ip-rps(100-0.2)-FAILED.html) `16` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-10 12:15:56 NovaServers.boot_and_associate_floating_ip rps(100-0.1)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.55/nova/(20170310_121556)NovaServers.boot_and_associate_floating_ip-rps(100-0.1)_PassRetry(1)-FAILED.html) `7` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
