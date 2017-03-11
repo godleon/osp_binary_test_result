@@ -1,0 +1,1044 @@
+<!doctype html>
+<html ng-app="App">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Rally version 0.8.2~dev107">
+  <title>Rally | Rally Task Report</title>
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.js"></script>
+  
+
+  <script type="text/javascript">
+    "use strict";
+    var widgetDirective = function($compile) {
+  var Chart = {
+    _render: function(node, data, chart, do_after){
+      nv.addGraph(function() {
+        d3.select(node)
+          .datum(data).transition().duration(0)
+          .call(chart);
+        if (typeof do_after === "function") {
+          do_after(node, chart)
+        }
+        nv.utils.windowResize(chart.update);
+      })
+    },
+    _widgets: {
+      Pie: "pie",
+      StackedArea: "stack",
+      Lines: "lines",
+      Histogram: "histogram"
+    },
+    get_chart: function(widget) {
+      if (widget in this._widgets) {
+        var name = this._widgets[widget];
+        return Chart[name]
+      }
+      return function() { console.log("Error: unexpected widget:", widget) }
+    },
+    pie: function(node, data, opts, do_after) {
+      var chart = nv.models.pieChart()
+        .x(function(d) { return d.key })
+        .y(function(d) { return d.values })
+        .showLabels(true)
+        .labelType("percent")
+        .donut(true)
+        .donutRatio(0.25)
+        .donutLabelsOutside(true)
+        .color(function(d){
+          if (d.data && d.data.color) { return d.data.color }
+        });
+      var colorizer = new Chart.colorizer("errors"), data_ = [];
+      for (var i in data) {
+        data_.push({key:data[i][0], values:data[i][1], color:colorizer.get_color(data[i][0])})
+      }
+      Chart._render(node, data_, chart)
+    },
+    colorizer: function(failure_key, failure_color) {
+      this.failure_key = failure_key || "failed_duration";
+      this.failure_color = failure_color || "#d62728";  // red
+      this.color_idx = -1;
+      /* NOTE(amaretskiy): this is actually a result of
+         d3.scale.category20().range(), excluding red color (#d62728)
+         which is reserved for errors */
+      this.colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c",
+                     "#98df8a", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b",
+                     "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7",
+                     "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"];
+      this.get_color = function(key) {
+        if (key === this.failure_key) {
+          return this.failure_color
+        }
+        if (this.color_idx > (this.colors.length - 2)) {
+          this.color_idx = 0
+        } else {
+          this.color_idx++
+        }
+        return this.colors[this.color_idx]
+      }
+    },
+    stack: function(node, data, opts, do_after) {
+      var chart = nv.models.stackedAreaChart()
+        .x(function(d) { return d[0] })
+        .y(function(d) { return d[1] })
+        .useInteractiveGuideline(opts.guide)
+        .showControls(opts.controls)
+        .clipEdge(true);
+      chart.xAxis
+        .axisLabel(opts.xname)
+        .tickFormat(opts.xformat)
+        .showMaxMin(opts.showmaxmin);
+      chart.yAxis
+        .orient("left")
+        .tickFormat(d3.format(opts.yformat || ",.3f"));
+      var colorizer = new Chart.colorizer(), data_ = [];
+      for (var i in data) {
+        data_.push({key:data[i][0], values:data[i][1], color:colorizer.get_color(data[i][0])})
+      }
+      Chart._render(node, data_, chart, do_after);
+    },
+    lines: function(node, data, opts, do_after) {
+      var chart = nv.models.lineChart()
+        .x(function(d) { return d[0] })
+        .y(function(d) { return d[1] })
+        .useInteractiveGuideline(opts.guide)
+        .clipEdge(true);
+      chart.xAxis
+        .axisLabel(opts.xname)
+        .tickFormat(opts.xformat)
+        .rotateLabels(opts.xrotate)
+        .showMaxMin(opts.showmaxmin);
+      chart.yAxis
+        .orient("left")
+        .tickFormat(d3.format(opts.yformat || ",.3f"));
+      var colorizer = new Chart.colorizer(), data_ = [];
+      for (var i in data) {
+        data_.push({key:data[i][0], values:data[i][1], color:colorizer.get_color(data[i][0])})
+      }
+      Chart._render(node, data_, chart, do_after)
+    },
+    histogram: function(node, data, opts) {
+      var chart = nv.models.multiBarChart()
+        .reduceXTicks(true)
+        .showControls(false)
+        .transitionDuration(0)
+        .groupSpacing(0.05);
+      chart
+        .legend.radioButtonMode(true);
+      chart.xAxis
+        .axisLabel("Duration (seconds)")
+        .tickFormat(d3.format(",.2f"));
+      chart.yAxis
+        .axisLabel("Iterations (frequency)")
+        .tickFormat(d3.format("d"));
+      Chart._render(node, data, chart)
+    }
+  };
+
+  return {
+    restrict: "A",
+    scope: { data: "=" },
+    link: function(scope, element, attrs) {
+      scope.$watch("data", function(data) {
+        if (! data) { return console.log("Chart has no data to render!") }
+        if (attrs.widget === "Table") {
+          var ng_class = attrs.lastrowClass ? " ng-class='{"+attrs.lastrowClass+":$last}'" : "";
+          var template = "<table class='striped'><thead>" +
+            "<tr><th ng-repeat='i in data.cols track by $index'>{{i}}<tr>" +
+            "</thead><tbody>" +
+            "<tr" + ng_class + " ng-repeat='row in data.rows track by $index'>" +
+            "<td ng-repeat='i in row track by $index'>{{i}}" +
+            "<tr>" +
+            "</tbody></table>";
+          var el = element.empty().append($compile(template)(scope)).children()[0]
+        } else if (attrs.widget === "TextArea") {
+          var template = "<div style='padding:0 0 5px' ng-repeat='str in data track by $index'>{{str}}</div><div style='height:10px'></div>";
+          var el = element.empty().append($compile(template)(scope)).children()[0]
+        } else {
+
+          var el_chart = element.addClass("chart").css({display:"block"});
+          var el = el_chart.html("<svg></svg>").children()[0];
+
+          var do_after = null;
+
+          if (attrs.widget in {StackedArea:0, Lines:0}) {
+
+            /* Hide widget if not enough data */
+            if ((! data.length) || (data[0].length < 1) || (data[0][1].length < 2)) {
+              return element.empty().css({display:"none"})
+            }
+
+            /* NOTE(amaretskiy): Dirty fix for changing chart width in case
+               if there are too long Y values that overlaps chart box. */
+            var do_after = function(node, chart){
+              var g_box = angular.element(el_chart[0].querySelector(".nv-y.nv-axis"));
+
+              if (g_box && g_box[0] && g_box[0].getBBox) {
+
+                try {
+                  // 30 is padding aroung graphs
+                  var width = g_box[0].getBBox().width + 30;
+                } catch (err) {
+                  // This happens sometimes, just skip silently
+                  return
+                }
+
+                // 890 is chart width (set by CSS)
+                if (typeof width === "number" && width > 890) {
+                  width = (890 * 2) - width;
+                  if (width > 0) {
+                    angular.element(node).css({width:width+"px"});
+                    chart.update()
+                  }
+                }
+              }
+            }
+          }
+          else if (attrs.widget === "Pie") {
+            if (! data.length) {
+              return element.empty().css({display:"none"})
+            }
+          }
+
+          var opts = {
+            xname: attrs.nameX || "",
+            xrotate: attrs.rotateX || 0,
+            yformat: attrs.formatY || ",.3f",
+            controls: attrs.controls === "true",
+            guide: attrs.guide === "true",
+            showmaxmin: attrs.showmaxmin === "true"
+          };
+          if (attrs.formatDateX) {
+            opts.xformat = function(d) { return d3.time.format(attrs.formatDateX)(new Date(d)) }
+          } else {
+            opts.xformat = d3.format(attrs.formatX || "d")
+          }
+          Chart.get_chart(attrs.widget)(el, data, opts, do_after);
+        }
+
+        if (attrs.nameY) {
+          /* NOTE(amaretskiy): Dirty fix for displaying Y-axis label correctly.
+             I believe sometimes NVD3 will allow doing this in normal way */
+          var label_y = angular.element("<div>").addClass("chart-label-y").text(attrs.nameY);
+          angular.element(el).parent().prepend(label_y)
+        }
+
+        if (attrs.description) {
+          var desc_el = angular.element("<div>").addClass(attrs.descriptionClass || "h3").text(attrs.description);
+          angular.element(el).parent().prepend(desc_el)
+        }
+
+        if (attrs.title) {
+          var title_el = angular.element("<div>").addClass(attrs.titleClass || "h2").text(attrs.title);
+          angular.element(el).parent().prepend(title_el)
+        }
+
+        angular.element(el).parent().append(angular.element("<div style='clear:both'>"))
+      });
+    }
+  }
+};
+
+    var controllerFunction = function($scope, $location) {
+        $scope.source = "{\n  \"NovaServers.boot_and_get_console_output\": [\n    {\n      \"args\": {\n        \"flavor\": {\n          \"name\": \"m1.medium\"\n        }, \n        \"image\": {\n          \"name\": \"^cirros.*-disk$\"\n        }\n      }, \n      \"context\": {\n        \"quotas\": {\n          \"cinder\": {\n            \"gigabytes\": -1, \n            \"snapshots\": -1, \n            \"volumes\": -1\n          }, \n          \"neutron\": {\n            \"floatingip\": -1, \n            \"network\": -1, \n            \"port\": -1, \n            \"router\": -1, \n            \"security_group\": -1, \n            \"security_group_rule\": -1, \n            \"subnet\": -1\n          }, \n          \"nova\": {\n            \"cores\": -1, \n            \"fixed_ips\": -1, \n            \"floating_ips\": -1, \n            \"injected_file_content_bytes\": -1, \n            \"injected_file_path_bytes\": -1, \n            \"injected_files\": -1, \n            \"instances\": -1, \n            \"key_pairs\": -1, \n            \"metadata_items\": -1, \n            \"ram\": -1, \n            \"security_group_rules\": -1, \n            \"security_groups\": -1, \n            \"server_group_members\": -1, \n            \"server_groups\": -1\n          }\n        }, \n        \"users\": {\n          \"tenants\": 1, \n          \"users_per_tenant\": 1\n        }\n      }, \n      \"hooks\": [], \n      \"runner\": {\n        \"concurrency\": 110, \n        \"times\": 300, \n        \"type\": \"constant\"\n      }, \n      \"sla\": {\n        \"failure_rate\": {\n          \"max\": 0\n        }, \n        \"max_avg_duration\": 45\n      }\n    }\n  ]\n}";
+        $scope.scenarios = [{"runner": "constant", "hooks": [], "pos": "0", "atomic": {"pie": [["nova.boot_server", 208.95495492873653], ["nova.get_console_output_server", 0.21114794515794325]], "iter": [["nova.boot_server", [[1, 28.599020957946777], [2, 236.61634302139282], [3, 17.1158390045166], [4, 271.42961597442627], [5, 304.75786805152893], [6, 42.82421398162842], [7, 248.25763487815857], [8, 16.889463901519775], [9, 27.451992988586426], [10, 248.4919090270996], [11, 30.22298312187195], [12, 260.39943408966064], [13, 304.9810800552368], [14, 306.62716794013977], [15, 236.24260711669922], [16, 28.208367824554443], [17, 308.09254002571106], [18, 41.98327088356018], [19, 306.9381630420685], [20, 14.410198211669922], [21, 249.23301601409912], [22, 303.95999479293823], [23, 307.78710985183716], [24, 306.6084928512573], [25, 27.890666961669922], [26, 248.11500310897827], [27, 235.89901304244995], [28, 248.46626996994019], [29, 17.93632698059082], [30, 273.94101905822754], [31, 249.13411712646484], [32, 306.7961869239807], [33, 248.22705912590027], [34, 14.899038076400757], [35, 236.85149502754211], [36, 236.42216396331787], [37, 39.12092185020447], [38, 307.4140338897705], [39, 248.404776096344], [40, 236.11881494522095], [41, 18.012695789337158], [42, 303.3022150993347], [43, 27.53764295578003], [44, 13.908416986465454], [45, 46.78335094451904], [46, 303.3458149433136], [47, 262.1412138938904], [48, 260.1048550605774], [49, 304.8521349430084], [50, 27.480072021484375], [51, 59.09348106384277], [52, 260.7058639526367], [53, 305.5085389614105], [54, 13.66939091682434], [55, 305.67327189445496], [56, 28.08341097831726], [57, 307.04570293426514], [58, 303.4159469604492], [59, 42.73311996459961], [60, 304.0518090724945], [61, 54.02766513824463], [62, 307.2540280818939], [63, 235.50054788589478], [64, 28.410927057266235], [65, 271.3549520969391], [66, 307.03718304634094], [67, 58.89963889122009], [68, 57.98537302017212], [69, 59.01103711128235], [70, 307.3784849643707], [71, 274.44875502586365], [72, 42.499237060546875], [73, 58.12229681015015], [74, 306.92640590667725], [75, 15.171986103057861], [76, 27.95479106903076], [77, 43.116374015808105], [78, 271.30617904663086], [79, 236.44482803344727], [80, 260.2750539779663], [81, 235.66916298866272], [82, 260.70180201530457], [83, 307.66725182533264], [84, 47.16562104225159], [85, 248.1306471824646], [86, 270.4078760147095], [87, 235.76124596595764], [88, 307.5868191719055], [89, 260.8787491321564], [90, 306.76232290267944], [91, 260.40965390205383], [92, 58.625385999679565], [93, 259.46261191368103], [94, 307.732449054718], [95, 270.3582899570465], [96, 273.3421320915222], [97, 308.1526710987091], [98, 307.5604190826416], [99, 15.41398000717163], [100, 307.48233914375305], [101, 248.00780606269836], [102, 259.40787386894226], [103, 42.35080409049988], [104, 41.627341985702515], [105, 42.540313959121704], [106, 273.9956328868866], [107, 273.7556040287018], [108, 306.84659004211426], [109, 38.90488314628601], [110, 307.24059200286865], [111, 40.64873909950256], [112, 43.75641083717346], [113, 44.37738299369812], [114, 266.55499601364136], [115, 303.2121410369873], [116, 303.74153304100037], [117, 303.2616639137268], [118, 269.21929001808167], [119, 263.9249939918518], [120, 264.0856170654297], [121, 258.77959418296814], [122, 254.0625388622284], [123, 258.31787490844727], [124, 258.51132011413574], [125, 257.6054210662842], [126, 258.4115629196167], [127, 261.92400097846985], [128, 262.2932720184326], [129, 261.8299241065979], [130, 260.1531331539154], [131, 260.06523513793945], [132, 260.7344899177551], [133, 257.513778924942], [134, 257.0713400840759], [135, 256.8750650882721], [136, 260.2797050476074], [137, 256.94995617866516], [138, 260.4335961341858], [139, 260.1445851325989], [140, 260.7293031215668], [141, 260.00266194343567], [142, 260.0350868701935], [143, 303.2888219356537], [144, 304.0634059906006], [145, 303.89803886413574], [146, 303.23594093322754], [147, 303.28540778160095], [148, 302.92135095596313], [149, 304.28182196617126], [150, 303.0987660884857], [151, 304.12840390205383], [152, 304.18406987190247], [153, 172.19444394111633], [154, 172.6636779308319], [155, 172.9788498878479]]], ["nova.get_console_output_server", [[1, 0.20884990692138672], [2, 0.21512699127197266], [3, 0.808729887008667], [4, 0.6839749813079834], [5, 0], [6, 0.5074501037597656], [7, 0.19741201400756836], [8, 0.34316587448120117], [9, 0.21840715408325195], [10, 0.24185609817504883], [11, 0.25805115699768066], [12, 0.21499300003051758], [13, 0], [14, 0], [15, 0.23839902877807617], [16, 0.21167302131652832], [17, 0], [18, 0.2408430576324463], [19, 0], [20, 0.21502208709716797], [21, 0.2102799415588379], [22, 0], [23, 0], [24, 0], [25, 0.21387004852294922], [26, 0.21981287002563477], [27, 0.20679807662963867], [28, 0.2511899471282959], [29, 0.22754979133605957], [30, 0.265531063079834], [31, 0.2301769256591797], [32, 0], [33, 0.2283010482788086], [34, 0.38851094245910645], [35, 0.24642181396484375], [36, 0.2565579414367676], [37, 0.22410082817077637], [38, 0], [39, 0.33388280868530273], [40, 0.23192095756530762], [41, 0.32005906105041504], [42, 0], [43, 0.22956299781799316], [44, 0.21752595901489258], [45, 0.5179588794708252], [46, 0], [47, 0.4919130802154541], [48, 0.20415496826171875], [49, 0], [50, 0.24498915672302246], [51, 0.2048659324645996], [52, 0.21329879760742188], [53, 0], [54, 0.23105812072753906], [55, 0], [56, 0.19701910018920898], [57, 0], [58, 0], [59, 0.25414180755615234], [60, 0], [61, 0.23353981971740723], [62, 0], [63, 0.2259979248046875], [64, 0.23469996452331543], [65, 0.6987118721008301], [66, 0], [67, 0.24805688858032227], [68, 0.2406749725341797], [69, 0.1994340419769287], [70, 0], [71, 0.8070220947265625], [72, 0.3367750644683838], [73, 0.20403194427490234], [74, 0], [75, 0.8032140731811523], [76, 0.25366997718811035], [77, 0.25409603118896484], [78, 0.8463180065155029], [79, 0.2076420783996582], [80, 0.20410490036010742], [81, 0.19520115852355957], [82, 0.27339792251586914], [83, 0], [84, 0.3105180263519287], [85, 0.20340609550476074], [86, 0.21259593963623047], [87, 0.1983640193939209], [88, 0], [89, 0.25030994415283203], [90, 0], [91, 0.22500896453857422], [92, 0.21463990211486816], [93, 0.2664651870727539], [94, 0], [95, 0.2363109588623047], [96, 0.30696892738342285], [97, 0], [98, 0], [99, 0.611656904220581], [100, 0], [101, 0.24636316299438477], [102, 0.29120898246765137], [103, 0.2552638053894043], [104, 0.2195901870727539], [105, 0.25327396392822266], [106, 0.27122998237609863], [107, 0.26078295707702637], [108, 0], [109, 0.24774813652038574], [110, 0], [111, 0.23237109184265137], [112, 0.20817899703979492], [113, 0.21654415130615234], [114, 0.21021103858947754], [115, 0], [116, 0], [117, 0], [118, 0.8072988986968994], [119, 0.22628211975097656], [120, 0.409282922744751], [121, 0.4610869884490967], [122, 0.21780610084533691], [123, 0.21880006790161133], [124, 0.21959495544433594], [125, 0.22395896911621094], [126, 0.9908111095428467], [127, 0.21438097953796387], [128, 0.545691967010498], [129, 0.24349093437194824], [130, 0.2749030590057373], [131, 0.2539660930633545], [132, 0.22565889358520508], [133, 0.221390962600708], [134, 0.24632596969604492], [135, 0.20505380630493164], [136, 0.21242403984069824], [137, 0.30083394050598145], [138, 0.23964214324951172], [139, 0.217210054397583], [140, 0.2067420482635498], [141, 0.2400820255279541], [142, 0.20859098434448242], [143, 0], [144, 0], [145, 0], [146, 0], [147, 0], [148, 0], [149, 0], [150, 0], [151, 0], [152, 0], [153, 0.21386504173278809], [154, 0.20295000076293945], [155, 0.19879913330078125]]], ["failed_duration", [[1, 0], [2, 0], [3, 0], [4, 0], [5, 9.012222290039062e-05], [6, 0], [7, 0], [8, 0], [9, 0], [10, 0], [11, 0], [12, 0], [13, 7.700920104980469e-05], [14, 0.00014019012451171875], [15, 0], [16, 0], [17, 7.104873657226562e-05], [18, 0], [19, 9.107589721679688e-05], [20, 0], [21, 0], [22, 0.00016021728515625], [23, 7.200241088867188e-05], [24, 7.224082946777344e-05], [25, 0], [26, 0], [27, 0], [28, 0], [29, 0], [30, 0], [31, 0], [32, 7.009506225585938e-05], [33, 0], [34, 0], [35, 0], [36, 0], [37, 0], [38, 6.413459777832031e-05], [39, 0], [40, 0], [41, 0], [42, 0.00018405914306640625], [43, 0], [44, 0], [45, 0], [46, 0.00021314620971679688], [47, 0], [48, 0], [49, 0.0001220703125], [50, 0], [51, 0], [52, 0], [53, 8.392333984375e-05], [54, 0], [55, 8.0108642578125e-05], [56, 0], [57, 0.00011014938354492188], [58, 7.891654968261719e-05], [59, 0], [60, 8.7738037109375e-05], [61, 0], [62, 0.00010991096496582031], [63, 0], [64, 0], [65, 0], [66, 0.0001308917999267578], [67, 0], [68, 0], [69, 0], [70, 0.00013589859008789062], [71, 0], [72, 0], [73, 0], [74, 0.00012302398681640625], [75, 0], [76, 0], [77, 0], [78, 0], [79, 0], [80, 0], [81, 0], [82, 0], [83, 7.915496826171875e-05], [84, 0], [85, 0], [86, 0], [87, 0], [88, 0.00014090538024902344], [89, 0], [90, 0.00015211105346679688], [91, 0], [92, 0], [93, 0], [94, 0.00011682510375976562], [95, 0], [96, 0], [97, 0.00010895729064941406], [98, 5.2928924560546875e-05], [99, 0], [100, 9.274482727050781e-05], [101, 0], [102, 0], [103, 0], [104, 0], [105, 0], [106, 0], [107, 0], [108, 7.081031799316406e-05], [109, 0], [110, 6.794929504394531e-05], [111, 0], [112, 0], [113, 0], [114, 0], [115, 0.00013685226440429688], [116, 7.390975952148438e-05], [117, 8.916854858398438e-05], [118, 0], [119, 0], [120, 0], [121, 0], [122, 0], [123, 0], [124, 0], [125, 0], [126, 0], [127, 0], [128, 0], [129, 0], [130, 0], [131, 0], [132, 0], [133, 0], [134, 0], [135, 0], [136, 0], [137, 0], [138, 0], [139, 0], [140, 0], [141, 0], [142, 0], [143, 0.00013208389282226562], [144, 6.723403930664062e-05], [145, 6.699562072753906e-05], [146, 0.00013303756713867188], [147, 7.104873657226562e-05], [148, 8.821487426757812e-05], [149, 7.390975952148438e-05], [150, 8.58306884765625e-05], [151, 8.106231689453125e-05], [152, 6.628036499023438e-05], [153, 0], [154, 0], [155, 0]]]], "histogram": {"data": [[{"disabled": 0, "values": [{"y": 20, "x": 36.321950930815476}, {"y": 20, "x": 58.97451094480661}, {"y": 2, "x": 81.62707095879774}, {"y": 0, "x": 104.27963097278888}, {"y": 0, "x": 126.93219098678001}, {"y": 0, "x": 149.58475100077115}, {"y": 1, "x": 172.23731101476227}, {"y": 2, "x": 194.88987102875342}, {"y": 0, "x": 217.54243104274457}, {"y": 10, "x": 240.1949910567357}, {"y": 42, "x": 262.8475510707268}, {"y": 14, "x": 285.50011108471796}, {"y": 44, "x": 308.1526710987091}], "key": "nova.boot_server", "view": "Square Root Choice"}, {"disabled": 1, "values": [{"y": 123, "x": 0.2564019239865817}, {"y": 12, "x": 0.31760268944960374}, {"y": 4, "x": 0.3788034549126258}, {"y": 2, "x": 0.4400042203756479}, {"y": 2, "x": 0.50120498583867}, {"y": 3, "x": 0.562405751301692}, {"y": 1, "x": 0.6236065167647141}, {"y": 1, "x": 0.6848072822277362}, {"y": 1, "x": 0.7460080476907583}, {"y": 2, "x": 0.8072088131537805}, {"y": 3, "x": 0.8684095786168025}, {"y": 0, "x": 0.9296103440798246}, {"y": 1, "x": 0.9908111095428467}], "key": "nova.get_console_output_server", "view": "Square Root Choice"}], [{"disabled": 0, "values": [{"y": 33, "x": 46.3897553814782}, {"y": 9, "x": 79.11011984613206}, {"y": 0, "x": 111.83048431078592}, {"y": 0, "x": 144.5508487754398}, {"y": 3, "x": 177.27121324009366}, {"y": 0, "x": 209.9915777047475}, {"y": 10, "x": 242.71194216940137}, {"y": 56, "x": 275.43230663405524}, {"y": 44, "x": 308.1526710987091}], "key": "nova.boot_server", "view": "Sturges Formula"}, {"disabled": 1, "values": [{"y": 131, "x": 0.2836022641923692}, {"y": 8, "x": 0.37200336986117893}, {"y": 2, "x": 0.46040447552998864}, {"y": 5, "x": 0.5488055811987983}, {"y": 1, "x": 0.637206686867608}, {"y": 2, "x": 0.7256077925364177}, {"y": 4, "x": 0.8140088982052274}, {"y": 1, "x": 0.902410003874037}, {"y": 1, "x": 0.9908111095428467}], "key": "nova.get_console_output_server", "view": "Sturges Formula"}], [{"disabled": 0, "values": [{"y": 22, "x": 40.44059820608659}, {"y": 20, "x": 67.21180549534884}, {"y": 0, "x": 93.98301278461109}, {"y": 0, "x": 120.75422007387334}, {"y": 0, "x": 147.52542736313558}, {"y": 3, "x": 174.29663465239784}, {"y": 0, "x": 201.0678419416601}, {"y": 0, "x": 227.83904923092234}, {"y": 21, "x": 254.61025652018458}, {"y": 45, "x": 281.3814638094468}, {"y": 44, "x": 308.1526710987091}], "key": "nova.boot_server", "view": "Rice Rule"}, {"disabled": 1, "values": [{"y": 128, "x": 0.26752933588894934}, {"y": 10, "x": 0.33985751325433905}, {"y": 3, "x": 0.41218569061972876}, {"y": 1, "x": 0.48451386798511853}, {"y": 4, "x": 0.5568420453505083}, {"y": 1, "x": 0.629170222715898}, {"y": 2, "x": 0.7014984000812877}, {"y": 0, "x": 0.7738265774466775}, {"y": 4, "x": 0.8461547548120673}, {"y": 1, "x": 0.918482932177457}, {"y": 1, "x": 0.9908111095428467}], "key": "nova.get_console_output_server", "view": "Rice Rule"}]], "views": [{"id": 0, "name": "Square Root Choice"}, {"id": 1, "name": "Sturges Formula"}, {"id": 2, "name": "Rice Rule"}]}}, "iterations": {"pie": [["success", 111], ["errors", 44]], "iter": [["duration", [[1, 27.808019876480103], [2, 235.83169102668762], [3, 16.924705982208252], [4, 271.11379194259644], [5, 0], [6, 42.3320050239563], [7, 247.45529007911682], [8, 16.232741117477417], [9, 26.670501947402954], [10, 247.73403906822205], [11, 29.481180906295776], [12, 259.614648103714], [13, 0], [14, 0], [15, 235.48120880126953], [16, 27.420176029205322], [17, 0], [18, 41.22441816329956], [19, 0], [20, 13.62535309791565], [21, 248.44579005241394], [22, 0], [23, 0], [24, 0], [25, 27.104658126831055], [26, 247.3349471092224], [27, 235.10600304603577], [28, 247.717698097229], [29, 17.164005994796753], [30, 273.20670795440674], [31, 248.36445999145508], [32, 0], [33, 247.45556902885437], [34, 14.287662029266357], [35, 236.09827399253845], [36, 235.6789629459381], [37, 38.345130920410156], [38, 0], [39, 247.73892784118652], [40, 235.35083603858948], [41, 17.332851886749268], [42, 0], [43, 26.767308950424194], [44, 13.126049995422363], [45, 46.30159306526184], [46, 0], [47, 261.6334140300751], [48, 259.30926394462585], [49, 0], [50, 26.725199937820435], [51, 58.298495054244995], [52, 259.9194869995117], [53, 0], [54, 12.900561809539795], [55, 0], [56, 27.280524969100952], [57, 0], [58, 0], [59, 41.98737812042236], [60, 0], [61, 53.261451959609985], [62, 0], [63, 234.72678184509277], [64, 27.645745992660522], [65, 271.05400490760803], [66, 0], [67, 58.14800000190735], [68, 57.22623586654663], [69, 58.21075677871704], [70, 0], [71, 274.2559611797333], [72, 41.836206912994385], [73, 57.32659316062927], [74, 0], [75, 14.975336074829102], [76, 27.208563089370728], [77, 42.37062907218933], [78, 271.1527259349823], [79, 235.65274286270142], [80, 259.47938203811646], [81, 234.8645269870758], [82, 259.97542905807495], [83, 0], [84, 46.476391077041626], [85, 247.33427691459656], [86, 269.6206250190735], [87, 234.9598319530487], [88, 0], [89, 260.12928795814514], [90, 0], [91, 259.63482093811035], [92, 57.84030604362488], [93, 258.72930693626404], [94, 0], [95, 269.5948522090912], [96, 272.6493899822235], [97, 0], [98, 0], [99, 15.025739908218384], [100, 0], [101, 247.25447392463684], [102, 258.6993570327759], [103, 41.60634899139404], [104, 40.847063064575195], [105, 41.79373502731323], [106, 273.2669689655304], [107, 273.01657009124756], [108, 0], [109, 38.152780055999756], [110, 0], [111, 39.88133716583252], [112, 42.964725971221924], [113, 43.594146966934204], [114, 265.76531195640564], [115, 0], [116, 0], [117, 0], [118, 269.02673506736755], [119, 263.1514780521393], [120, 263.4950170516968], [121, 258.2408039569855], [122, 253.28055596351624], [123, 257.5367958545685], [124, 257.7310838699341], [125, 256.8296229839325], [126, 258.4024848937988], [127, 261.13848996162415], [128, 261.83907890319824], [129, 261.073606967926], [130, 259.42816400527954], [131, 259.31943798065186], [132, 259.9602539539337], [133, 256.73539900779724], [134, 256.3177800178528], [135, 256.080472946167], [136, 259.4922730922699], [137, 256.2509889602661], [138, 259.6734471321106], [139, 259.3619029521942], [140, 259.93614411354065], [141, 259.2428729534149], [142, 259.24378490448], [143, 0], [144, 0], [145, 0], [146, 0], [147, 0], [148, 0], [149, 0], [150, 0], [151, 0], [152, 0], [153, 171.40841388702393], [154, 171.86674213409424], [155, 172.17775893211365]]], ["idle_duration", [[1, 1.0], [2, 1.0], [3, 1.0], [4, 1.0], [5, 0], [6, 1.0], [7, 1.0], [8, 1.0], [9, 1.0], [10, 1.0], [11, 1.0], [12, 1.0], [13, 0], [14, 0], [15, 1.0], [16, 1.0], [17, 0], [18, 1.0], [19, 0], [20, 1.0], [21, 1.0], [22, 0], [23, 0], [24, 0], [25, 1.0], [26, 1.0], [27, 1.0], [28, 1.0], [29, 1.0], [30, 1.0], [31, 1.0], [32, 0], [33, 1.0], [34, 1.0], [35, 1.0], [36, 1.0], [37, 1.0], [38, 0], [39, 1.0], [40, 1.0], [41, 1.0], [42, 0], [43, 1.0], [44, 1.0], [45, 1.0], [46, 0], [47, 1.0], [48, 1.0], [49, 0], [50, 1.0], [51, 1.0], [52, 1.0], [53, 0], [54, 1.0], [55, 0], [56, 1.0], [57, 0], [58, 0], [59, 1.0], [60, 0], [61, 1.0], [62, 0], [63, 1.0], [64, 1.0], [65, 1.0], [66, 0], [67, 1.0], [68, 1.0], [69, 1.0], [70, 0], [71, 1.0], [72, 1.0], [73, 1.0], [74, 0], [75, 1.0], [76, 1.0], [77, 1.0], [78, 1.0], [79, 1.0], [80, 1.0], [81, 1.0], [82, 1.0], [83, 0], [84, 1.0], [85, 1.0], [86, 1.0], [87, 1.0], [88, 0], [89, 1.0], [90, 0], [91, 1.0], [92, 1.0], [93, 1.0], [94, 0], [95, 1.0], [96, 1.0], [97, 0], [98, 0], [99, 1.0], [100, 0], [101, 1.0], [102, 1.0], [103, 1.0], [104, 1.0], [105, 1.0], [106, 1.0], [107, 1.0], [108, 0], [109, 1.0], [110, 0], [111, 1.0], [112, 1.0], [113, 1.0], [114, 1.0], [115, 0], [116, 0], [117, 0], [118, 1.0], [119, 1.0], [120, 1.0], [121, 1.0], [122, 1.0], [123, 1.0], [124, 1.0], [125, 1.0], [126, 1.0], [127, 1.0], [128, 1.0], [129, 1.0], [130, 1.0], [131, 1.0], [132, 1.0], [133, 1.0], [134, 1.0], [135, 1.0], [136, 1.0], [137, 1.0], [138, 1.0], [139, 1.0], [140, 1.0], [141, 1.0], [142, 1.0], [143, 0], [144, 0], [145, 0], [146, 0], [147, 0], [148, 0], [149, 0], [150, 0], [151, 0], [152, 0], [153, 1.0], [154, 1.0], [155, 1.0]]], ["failed_duration", [[1, 0], [2, 0], [3, 0], [4, 0], [5, 304.75795817375183], [6, 0], [7, 0], [8, 0], [9, 0], [10, 0], [11, 0], [12, 0], [13, 304.98115706443787], [14, 306.6273081302643], [15, 0], [16, 0], [17, 308.09261107444763], [18, 0], [19, 306.9382541179657], [20, 0], [21, 0], [22, 303.9601550102234], [23, 307.78718185424805], [24, 306.6085650920868], [25, 0], [26, 0], [27, 0], [28, 0], [29, 0], [30, 0], [31, 0], [32, 306.79625701904297], [33, 0], [34, 0], [35, 0], [36, 0], [37, 0], [38, 307.4140980243683], [39, 0], [40, 0], [41, 0], [42, 303.3023991584778], [43, 0], [44, 0], [45, 0], [46, 303.3460280895233], [47, 0], [48, 0], [49, 304.8522570133209], [50, 0], [51, 0], [52, 0], [53, 305.50862288475037], [54, 0], [55, 305.67335200309753], [56, 0], [57, 307.0458130836487], [58, 303.4160258769989], [59, 0], [60, 304.0518968105316], [61, 0], [62, 307.2541379928589], [63, 0], [64, 0], [65, 0], [66, 307.03731393814087], [67, 0], [68, 0], [69, 0], [70, 307.3786208629608], [71, 0], [72, 0], [73, 0], [74, 306.92652893066406], [75, 0], [76, 0], [77, 0], [78, 0], [79, 0], [80, 0], [81, 0], [82, 0], [83, 307.6673309803009], [84, 0], [85, 0], [86, 0], [87, 0], [88, 307.58696007728577], [89, 0], [90, 306.7624750137329], [91, 0], [92, 0], [93, 0], [94, 307.7325658798218], [95, 0], [96, 0], [97, 308.15278005599976], [98, 307.56047201156616], [99, 0], [100, 307.4824318885803], [101, 0], [102, 0], [103, 0], [104, 0], [105, 0], [106, 0], [107, 0], [108, 306.84666085243225], [109, 0], [110, 307.2406599521637], [111, 0], [112, 0], [113, 0], [114, 0], [115, 303.2122778892517], [116, 303.7416069507599], [117, 303.2617530822754], [118, 0], [119, 0], [120, 0], [121, 0], [122, 0], [123, 0], [124, 0], [125, 0], [126, 0], [127, 0], [128, 0], [129, 0], [130, 0], [131, 0], [132, 0], [133, 0], [134, 0], [135, 0], [136, 0], [137, 0], [138, 0], [139, 0], [140, 0], [141, 0], [142, 0], [143, 303.2889540195465], [144, 304.0634732246399], [145, 303.89810585975647], [146, 303.2360739707947], [147, 303.2854788303375], [148, 302.9214391708374], [149, 304.2818958759308], [150, 303.0988519191742], [151, 304.1284849643707], [152, 304.18413615226746], [153, 0], [154, 0], [155, 0]]]], "histogram": {"data": [[{"disabled": null, "values": [{"y": 64, "x": 33.00482329955468}, {"y": 15, "x": 53.109084789569565}, {"y": 7, "x": 73.21334627958444}, {"y": 0, "x": 93.31760776959933}, {"y": 0, "x": 113.42186925961423}, {"y": 0, "x": 133.5261307496291}, {"y": 0, "x": 153.63039223964398}, {"y": 3, "x": 173.73465372965887}, {"y": 0, "x": 193.83891521967377}, {"y": 0, "x": 213.94317670968866}, {"y": 0, "x": 234.04743819970352}, {"y": 21, "x": 254.1516996897184}, {"y": 45, "x": 274.2559611797333}], "key": "task", "view": "Square Root Choice"}], [{"disabled": null, "values": [{"y": 72, "x": 41.94005062845018}, {"y": 14, "x": 70.97953944736057}, {"y": 0, "x": 100.01902826627095}, {"y": 0, "x": 129.05851708518134}, {"y": 0, "x": 158.09800590409174}, {"y": 3, "x": 187.1374947230021}, {"y": 0, "x": 216.17698354191248}, {"y": 10, "x": 245.21647236082288}, {"y": 56, "x": 274.2559611797333}], "key": "task", "view": "Sturges Formula"}], [{"disabled": null, "values": [{"y": 64, "x": 36.660143570466474}, {"y": 22, "x": 60.41972533139315}, {"y": 0, "x": 84.17930709231983}, {"y": 0, "x": 107.93888885324651}, {"y": 0, "x": 131.69847061417317}, {"y": 0, "x": 155.45805237509987}, {"y": 3, "x": 179.21763413602656}, {"y": 0, "x": 202.97721589695323}, {"y": 0, "x": 226.7367976578799}, {"y": 20, "x": 250.49637941880658}, {"y": 46, "x": 274.2559611797333}], "key": "task", "view": "Rice Rule"}]], "views": [{"id": 0, "name": "Square Root Choice"}, {"id": 1, "name": "Sturges Formula"}, {"id": 2, "name": "Rice Rule"}]}}, "table": {"rows": [["nova.boot_server", 13.669, 248.008, 266.555, 271.392, 274.449, 170.672, "71.6%", 155], ["nova.get_console_output_server", 0.195, 0.234, 0.507, 0.751, 0.991, 0.295, "100.0%", 111], ["total", 12.901, 247.254, 265.765, 271.133, 274.256, 169.967, "71.6%", 155]], "cols": ["Action", "Min (sec)", "Median (sec)", "90%ile (sec)", "95%ile (sec)", "Max (sec)", "Avg (sec)", "Success", "Count"]}, "errors": [{"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_PvKjEkeD:b1fda45b-1a34-4179-bd9d-d49b5708b825 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_PvKjEkeD:b1fda45b-1a34-4179-bd9d-d49b5708b825 to become ('ACTIVE') current status BUILD\n", "iteration": 5}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_HHFXHh2v:087db943-3464-48a0-b1e9-61bf84bddce2 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_HHFXHh2v:087db943-3464-48a0-b1e9-61bf84bddce2 to become ('ACTIVE') current status BUILD\n", "iteration": 13}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_ZmsNlVnP:4383c2b2-f8bc-4406-a484-b99f3b7a4444 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_ZmsNlVnP:4383c2b2-f8bc-4406-a484-b99f3b7a4444 to become ('ACTIVE') current status BUILD\n", "iteration": 14}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_g3ZTPrtg:f58b7fba-0ed6-41b5-b410-e5f7dd6ebf20 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_g3ZTPrtg:f58b7fba-0ed6-41b5-b410-e5f7dd6ebf20 to become ('ACTIVE') current status BUILD\n", "iteration": 17}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_5CFJriu5:43b8fb30-6637-4d81-8ef4-7c7443f1204f to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_5CFJriu5:43b8fb30-6637-4d81-8ef4-7c7443f1204f to become ('ACTIVE') current status BUILD\n", "iteration": 19}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_XUYh3PBI:7abccd3a-94e2-4de8-91c8-6def6a004b70 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_XUYh3PBI:7abccd3a-94e2-4de8-91c8-6def6a004b70 to become ('ACTIVE') current status BUILD\n", "iteration": 22}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_GIE16NnM:23f560e8-6f5a-4664-aea1-fc4a7c3ad03e to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_GIE16NnM:23f560e8-6f5a-4664-aea1-fc4a7c3ad03e to become ('ACTIVE') current status BUILD\n", "iteration": 23}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_cmRrh8ZV:92585872-153b-4649-a1a2-2905ce7e40fe to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_cmRrh8ZV:92585872-153b-4649-a1a2-2905ce7e40fe to become ('ACTIVE') current status BUILD\n", "iteration": 24}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_arWGXSAz:ebc90774-7583-41d8-829e-af24c89d219a to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_arWGXSAz:ebc90774-7583-41d8-829e-af24c89d219a to become ('ACTIVE') current status BUILD\n", "iteration": 32}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_HXgquRRh:77865687-5690-475e-b08e-ce6af3b51d29 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_HXgquRRh:77865687-5690-475e-b08e-ce6af3b51d29 to become ('ACTIVE') current status BUILD\n", "iteration": 38}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_jG2Ibv3C:6c9c6d94-9472-46e3-a199-3dc0fa5176c0 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_jG2Ibv3C:6c9c6d94-9472-46e3-a199-3dc0fa5176c0 to become ('ACTIVE') current status BUILD\n", "iteration": 42}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_0Ih8g8Jd:23b39727-5888-492d-a0a2-fddff4ab3711 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_0Ih8g8Jd:23b39727-5888-492d-a0a2-fddff4ab3711 to become ('ACTIVE') current status BUILD\n", "iteration": 46}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_gTDyeEZ5:995a54d2-d935-49e2-a25f-d9830577abc8 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_gTDyeEZ5:995a54d2-d935-49e2-a25f-d9830577abc8 to become ('ACTIVE') current status BUILD\n", "iteration": 49}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_ysui7cTW:c8778293-ab7a-4536-a72a-536e79e44e3b to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_ysui7cTW:c8778293-ab7a-4536-a72a-536e79e44e3b to become ('ACTIVE') current status BUILD\n", "iteration": 53}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_ocfB6Cuh:44999d9d-978a-4387-8c5b-2f4fb05e3538 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_ocfB6Cuh:44999d9d-978a-4387-8c5b-2f4fb05e3538 to become ('ACTIVE') current status BUILD\n", "iteration": 55}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_jrg5aRtR:ec9528f7-4554-4dd7-9f06-851c2d6ad305 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_jrg5aRtR:ec9528f7-4554-4dd7-9f06-851c2d6ad305 to become ('ACTIVE') current status BUILD\n", "iteration": 57}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_say0vlTi:feb8c698-7b3c-4fea-9e51-0d22e80eaeff to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_say0vlTi:feb8c698-7b3c-4fea-9e51-0d22e80eaeff to become ('ACTIVE') current status BUILD\n", "iteration": 58}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_BJX5ksAn:f038c392-fa6c-4588-bfc0-8af675a28695 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_BJX5ksAn:f038c392-fa6c-4588-bfc0-8af675a28695 to become ('ACTIVE') current status BUILD\n", "iteration": 60}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_x6KhHRqw:e3275882-d1dc-4163-a6aa-9366bfeaed88 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_x6KhHRqw:e3275882-d1dc-4163-a6aa-9366bfeaed88 to become ('ACTIVE') current status BUILD\n", "iteration": 62}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_UFlY6cBf:83dafbce-6d17-42ca-97e8-dcdeb78e8b83 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_UFlY6cBf:83dafbce-6d17-42ca-97e8-dcdeb78e8b83 to become ('ACTIVE') current status BUILD\n", "iteration": 66}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_CztvVvqp:2d619036-82c8-413c-9609-5cb799c300ba to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_CztvVvqp:2d619036-82c8-413c-9609-5cb799c300ba to become ('ACTIVE') current status BUILD\n", "iteration": 70}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_woO3B6ch:3113b1f0-b0e2-401a-a70b-4c37c556d6d5 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_woO3B6ch:3113b1f0-b0e2-401a-a70b-4c37c556d6d5 to become ('ACTIVE') current status BUILD\n", "iteration": 74}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_FFTSwoyN:0c9a1747-7c7d-4dc7-a2cb-42f7b103dd44 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_FFTSwoyN:0c9a1747-7c7d-4dc7-a2cb-42f7b103dd44 to become ('ACTIVE') current status BUILD\n", "iteration": 83}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_v0ZzgHKb:a28290a1-8ad2-4de4-9dc3-b2a9921bd443 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_v0ZzgHKb:a28290a1-8ad2-4de4-9dc3-b2a9921bd443 to become ('ACTIVE') current status BUILD\n", "iteration": 88}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_GmdFuene:1cd5fe85-ab31-451a-b8dd-45a92c7ee45e to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_GmdFuene:1cd5fe85-ab31-451a-b8dd-45a92c7ee45e to become ('ACTIVE') current status BUILD\n", "iteration": 90}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_vxfiQZhB:59f3658d-ff46-456e-88c1-7bf5aafe1ac0 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_vxfiQZhB:59f3658d-ff46-456e-88c1-7bf5aafe1ac0 to become ('ACTIVE') current status BUILD\n", "iteration": 94}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_VcKEcpmp:5e7f3628-3465-4ea3-96a5-ef8b3652fb0f to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_VcKEcpmp:5e7f3628-3465-4ea3-96a5-ef8b3652fb0f to become ('ACTIVE') current status BUILD\n", "iteration": 97}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_9hTO90eo:f14d7783-73eb-41e9-a1c2-6192f1a1d9e9 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_9hTO90eo:f14d7783-73eb-41e9-a1c2-6192f1a1d9e9 to become ('ACTIVE') current status BUILD\n", "iteration": 98}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_1NEkNkcA:b6305df7-f8e8-4898-bb31-6cf509a5eab7 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_1NEkNkcA:b6305df7-f8e8-4898-bb31-6cf509a5eab7 to become ('ACTIVE') current status BUILD\n", "iteration": 100}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_isj8b3cH:ff9c4660-1f6b-405a-afb7-adf88f3af4cf to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_isj8b3cH:ff9c4660-1f6b-405a-afb7-adf88f3af4cf to become ('ACTIVE') current status BUILD\n", "iteration": 108}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_kMHUVOib:97e17902-5dff-4e6b-bf47-5bf4958a75ba to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_kMHUVOib:97e17902-5dff-4e6b-bf47-5bf4958a75ba to become ('ACTIVE') current status BUILD\n", "iteration": 110}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_dfxpu0oS:490ce3c6-bc6d-4e02-a21b-0bcfab63310b to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_dfxpu0oS:490ce3c6-bc6d-4e02-a21b-0bcfab63310b to become ('ACTIVE') current status BUILD\n", "iteration": 115}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_UE6MDrDL:395dfeba-2abb-4011-b717-5031989e843e to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_UE6MDrDL:395dfeba-2abb-4011-b717-5031989e843e to become ('ACTIVE') current status BUILD\n", "iteration": 116}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_tMSjLdag:5728fc22-6164-440f-8332-e2eb60f20a6a to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_tMSjLdag:5728fc22-6164-440f-8332-e2eb60f20a6a to become ('ACTIVE') current status BUILD\n", "iteration": 117}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_fX2KUmBz:66cba7a9-e98b-4551-8855-e6f77f343fbe to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_fX2KUmBz:66cba7a9-e98b-4551-8855-e6f77f343fbe to become ('ACTIVE') current status BUILD\n", "iteration": 143}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_VzPNAgA8:49d87eeb-69d8-4ef1-85e8-e992afbbc801 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_VzPNAgA8:49d87eeb-69d8-4ef1-85e8-e992afbbc801 to become ('ACTIVE') current status BUILD\n", "iteration": 144}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_WTSepZbU:de9a6efa-3eac-42fb-a3ed-1900e0616b3c to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_WTSepZbU:de9a6efa-3eac-42fb-a3ed-1900e0616b3c to become ('ACTIVE') current status BUILD\n", "iteration": 145}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_ZFbu7CF4:015caacc-9b1c-4911-a73a-3f06bc8577f3 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_ZFbu7CF4:015caacc-9b1c-4911-a73a-3f06bc8577f3 to become ('ACTIVE') current status BUILD\n", "iteration": 146}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_yrEjSeRg:491ecc24-ab17-4564-a70a-5dbf520c716a to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_yrEjSeRg:491ecc24-ab17-4564-a70a-5dbf520c716a to become ('ACTIVE') current status BUILD\n", "iteration": 147}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_od0Hqvh3:5babb2bc-ad6f-4a19-b686-3aae4dca30c7 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_od0Hqvh3:5babb2bc-ad6f-4a19-b686-3aae4dca30c7 to become ('ACTIVE') current status BUILD\n", "iteration": 148}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_70HDfF9V:af1d6f1a-8145-4104-b733-cc50fb9bc017 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_70HDfF9V:af1d6f1a-8145-4104-b733-cc50fb9bc017 to become ('ACTIVE') current status BUILD\n", "iteration": 149}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_O2YDdxDf:5d3df8d0-ba1d-400b-85d6-ec745007f29f to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_O2YDdxDf:5d3df8d0-ba1d-400b-85d6-ec745007f29f to become ('ACTIVE') current status BUILD\n", "iteration": 150}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_cE7dT1UL:7e3e7abc-1a38-4618-ba66-7c4cff6874b5 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_cE7dT1UL:7e3e7abc-1a38-4618-ba66-7c4cff6874b5 to become ('ACTIVE') current status BUILD\n", "iteration": 151}, {"type": "TimeoutException", "message": "Rally tired waiting for Server s_rally_86fac207_TOYVs88M:c8b648e2-c25c-46c5-b002-53e4deb511f0 to become ('ACTIVE') current status BUILD", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 880, in run\n    server = self._boot_server(image, flavor, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 251, in wait_for_status\n    resource_status=get_status(resource, status_attr))\nTimeoutException: Rally tired waiting for Server s_rally_86fac207_TOYVs88M:c8b648e2-c25c-46c5-b002-53e4deb511f0 to become ('ACTIVE') current status BUILD\n", "iteration": 152}], "iterations_count": 155, "load_duration": 408.2391369342804, "complete_output": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []], "config": "{\n  \"NovaServers.boot_and_get_console_output\": [\n    {\n      \"runner\": {\n        \"type\": \"constant\", \n        \"times\": 300, \n        \"concurrency\": 110\n      }, \n      \"hooks\": [], \n      \"args\": {\n        \"image\": {\n          \"name\": \"^cirros.*-disk$\"\n        }, \n        \"flavor\": {\n          \"name\": \"m1.medium\"\n        }\n      }, \n      \"sla\": {\n        \"max_avg_duration\": 45, \n        \"failure_rate\": {\n          \"max\": 0\n        }\n      }, \n      \"context\": {\n        \"users\": {\n          \"users_per_tenant\": 1, \n          \"tenants\": 1\n        }, \n        \"quotas\": {\n          \"neutron\": {\n            \"network\": -1, \n            \"subnet\": -1, \n            \"security_group\": -1, \n            \"floatingip\": -1, \n            \"port\": -1, \n            \"security_group_rule\": -1, \n            \"router\": -1\n          }, \n          \"nova\": {\n            \"injected_files\": -1, \n            \"fixed_ips\": -1, \n            \"ram\": -1, \n            \"security_group_rules\": -1, \n            \"server_group_members\": -1, \n            \"instances\": -1, \n            \"floating_ips\": -1, \n            \"injected_file_content_bytes\": -1, \n            \"security_groups\": -1, \n            \"server_groups\": -1, \n            \"key_pairs\": -1, \n            \"metadata_items\": -1, \n            \"cores\": -1, \n            \"injected_file_path_bytes\": -1\n          }, \n          \"cinder\": {\n            \"volumes\": -1, \n            \"gigabytes\": -1, \n            \"snapshots\": -1\n          }\n        }\n      }\n    }\n  ]\n}", "sla_success": false, "output_errors": [], "cls": "NovaServers", "met": "boot_and_get_console_output", "has_output": false, "full_duration": 448.63168716430664, "load_profile": [["parallel iterations", [[0.0, 0], [4.16403919672966, 108.2998406343856], [8.32807839345932, 110], [12.492117590188979, 110], [16.65615678691864, 108.45406279215292], [20.8201959836483, 109.13383185443467], [24.984235180377958, 110], [29.14827437710762, 107.82908906993157], [33.31231357383728, 109.75883557909586], [37.47635277056694, 110], [41.6403919672966, 109.26184194663979], [45.80443116402626, 108.32188007054886], [49.968470360755916, 109.51667838661879], [54.13250955748558, 109.73954225056197], [58.29654875421524, 108.96744421724333], [62.4605879509449, 108.8768484020721], [66.62462714767456, 110], [70.78866634440422, 110], [74.95270554113388, 110], [79.11674473786354, 110], [83.2807839345932, 110], [87.44482313132286, 110], [91.60886232805252, 110], [95.77290152478218, 110], [99.93694072151183, 110], [104.10097991824149, 110], [108.26501911497115, 110], [112.42905831170081, 110], [116.59309750843047, 110], [120.75713670516014, 110], [124.9211759018898, 110], [129.08521509861947, 110], [133.24925429534912, 110], [137.41329349207876, 110], [141.57733268880844, 110], [145.7413718855381, 110], [149.90541108226776, 110], [154.0694502789974, 110], [158.23348947572708, 110], [162.39752867245673, 110], [166.5615678691864, 110], [170.72560706591605, 110], [174.88964626264573, 110], [179.05368545937537, 110], [183.21772465610505, 110], [187.3817638528347, 110], [191.54580304956437, 110], [195.70984224629402, 110], [199.87388144302366, 110], [204.03792063975334, 110], [208.20195983648298, 110], [212.36599903321266, 110], [216.5300382299423, 110], [220.69407742667198, 110], [224.85811662340163, 110], [229.0221558201313, 110], [233.18619501686095, 110], [237.35023421359062, 106.40622952518315], [241.51427341032027, 103], [245.67831260704995, 103], [249.8423518037796, 97.93109458136726], [254.00639100050927, 93], [258.17043019723894, 93], [262.33446939396856, 86.88903765871598], [266.49850859069824, 83], [270.6625477874279, 82.54017878987182], [274.82658698415753, 76.61162908238381], [278.9906261808872, 73], [283.1546653776169, 71.27243899109344], [287.31870457434655, 67.10218116970898], [291.4827437710762, 61.56710943843096], [295.64678296780585, 59], [299.8108221645355, 57.64525277587729], [303.9748613612652, 50.25180983621882], [308.1389005579948, 29.6609738494268], [312.3029397547245, 16], [316.46697895145417, 16], [320.63101814818384, 14.744363720740592], [324.79505734491346, 13], [328.95909654164313, 13], [333.1231357383728, 13], [337.2871749351024, 13], [341.4512141318321, 13], [345.6152533285618, 13], [349.77929252529145, 13], [353.94333172202107, 13], [358.10737091875075, 12.59903694204191], [362.2714101154804, 9.359607403174397], [366.4354493122101, 3.159857431129052], [370.5994885089397, 3], [374.7635277056694, 3], [378.92756690239906, 3], [383.09160609912874, 3], [387.25564529585836, 3], [391.41968449258803, 3], [395.5837236893177, 3], [399.7477628860473, 3], [403.911802082777, 3], [408.0758412795067, 2.7319259806264027], [412.23988047623635, 0.03921568627451155], [416.403919672966, 0]]]], "name": "boot_and_get_console_output", "created_at": "2017-11-03T18:15:25", "additive_output": [], "sla": [{"criterion": "max_avg_duration", "detail": "Average duration of one iteration 169.97s <= 45.00s - Failed", "success": false}, {"criterion": "failure_rate", "detail": "Failure rate criteria 0.00% <= 28.39% <= 0.00% - Failed", "success": false}, {"criterion": "aborted_on_sla", "detail": "Task was aborted due to SLA failure(s).", "success": false}]}];
+
+      $scope.location = {
+        /* #/path/hash/sub/div */
+        normalize: function(str) {
+          /* Remove unwanted characters from string */
+          if (typeof str !== "string") { return "" }
+          return str.replace(/[^\w\-\.]/g, "")
+        },
+        uri: function(obj) {
+          /* Getter/Setter */
+          if (! obj) {
+            var uri = {path: "", hash: "", sub: "", div: ""};
+            var arr = ["div", "sub", "hash", "path"];
+            angular.forEach($location.url().split("/"), function(value){
+              var v = $scope.location.normalize(value);
+              if (v) { var k = arr.pop(); if (k) { this[k] = v }}
+            }, uri);
+            return uri
+          }
+          var arr = [obj.path, obj.hash, obj.sub, obj.div], res = [];
+          for (var i in arr) { if (! arr[i]) { break }; res.push(arr[i]) }
+          return $location.url("/" + res.join("/"))
+        },
+        path: function(path, hash) {
+          /* Getter/Setter */
+          if (path === "") { return this.uri({}) }
+          path = this.normalize(path);
+          var uri = this.uri();
+          if (! path) { return uri.path }
+          uri.path = path;
+          var _hash = this.normalize(hash);
+          if (_hash || hash === "") { uri.hash = _hash }
+          return this.uri(uri)
+        },
+        hash: function(hash) {
+          /* Getter/Setter */
+          if (hash) { this.uri({path:this.uri().path, hash:hash}) }
+          return this.uri().hash
+        }
+      }
+
+      /* Dispatch */
+
+      $scope.route = function(uri) {
+        if (! $scope.scenarios_map) { return }
+
+        // Expand menu if there is only one menu group
+        if ($scope.nav.length === 1) {
+          $scope.nav_idx = $scope.nav[0].idx;
+        }
+
+        if (uri.path in $scope.scenarios_map) {
+          $scope.view = {is_scenario:true};
+          $scope.scenario = $scope.scenarios_map[uri.path];
+          $scope.nav_idx = $scope.nav_map[uri.path];
+          if ($scope.scenario.iterations.histogram.views.length) {
+            $scope.mainHistogram = $scope.scenario.iterations.histogram.views[0]
+          }
+          if ($scope.scenario.atomic.histogram.views.length) {
+            $scope.atomicHistogram = $scope.scenario.atomic.histogram.views[0]
+          }
+          $scope.outputIteration = 0;
+          $scope.showTab(uri);
+        } else {
+          $scope.scenario = null;
+          if (uri.path === "source") {
+            $scope.view = {is_source:true}
+          } else {
+            $scope.view = {is_main:true}
+          }
+        }
+      }
+
+      $scope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
+        $scope.route($scope.location.uri())
+      });
+
+      $scope.showNav = function(nav_idx) { $scope.nav_idx = nav_idx }
+
+      /* Tabs */
+
+      $scope.tabs = [
+        {
+          id: "overview",
+          name: "Overview",
+          visible: function(){ return !! $scope.scenario.iterations.pie.length }
+        },{
+          id: "details",
+          name: "Details",
+          visible: function(){ return !! $scope.scenario.atomic.pie.length }
+        },{
+          id: "output",
+          name: "Scenario Data",
+          visible: function(){ return $scope.scenario.has_output }
+        },{
+          id: "hooks",
+          name: "Hooks",
+          visible: function(){ return $scope.scenario.hooks.length }
+        },{
+          id: "failures",
+          name: "Failures",
+          visible: function(){ return !! $scope.scenario.errors.length }
+        },{
+          id: "task",
+          name: "Input task",
+          visible: function(){ return !! $scope.scenario.config }
+        }
+      ];
+      $scope.tabs_map = {};
+      angular.forEach($scope.tabs,
+                      function(tab){ this[tab.id] = tab }, $scope.tabs_map);
+
+      $scope.showTab = function(uri) {
+        $scope.tab = uri.hash in $scope.tabs_map ? uri.hash : "overview";
+        if (uri.hash === "output") {
+          if (typeof $scope.scenario.output === "undefined") {
+            var has_additive = !! $scope.scenario.additive_output.length;
+            var has_complete = !! ($scope.scenario.complete_output.length
+                                   && $scope.scenario.complete_output[0].length);
+            $scope.scenario.output = {
+              has_additive: has_additive,
+              has_complete: has_complete,
+              length: has_additive + has_complete,
+              active: has_additive ? "additive" : (has_complete ? "complete" : "")
+            }
+          }
+          if (uri.sub && $scope.scenario.output["has_" + uri.sub]) {
+            $scope.scenario.output.active = uri.sub
+          }
+        }
+        else if (uri.hash === "hooks") {
+          if ($scope.scenario.hooks.length) {
+            var hook_idx = parseInt(uri.sub);
+
+            if (isNaN(hook_idx) || ($scope.scenario.hooks.length - hook_idx) <= 0) {
+              hook_idx = 0
+            }
+
+            if ($scope.scenario.hook_idx === hook_idx) {
+              return
+            }
+
+            $scope.scenario.hooks.cur = $scope.scenario.hooks[hook_idx];
+            $scope.scenario.hook_idx = hook_idx;
+            if (typeof $scope.scenario.hooks.cur.active === "undefined") {
+              if ($scope.scenario.hooks.cur.additive.length) {
+                $scope.scenario.hooks.cur.active = "additive"
+              }
+              if ($scope.scenario.hooks.cur.complete.length) {
+                if (typeof $scope.scenario.hooks.cur.active === "undefined") {
+                  $scope.scenario.hooks.cur.active = "complete"
+                }
+                $scope.set_hook_run()
+              }
+            }
+          }
+        }
+      }
+
+      for (var i in $scope.tabs) {
+        if ($scope.tabs[i].id === $scope.location.hash()) {
+          $scope.tab = $scope.tabs[i].id
+        }
+        $scope.tabs[i].isVisible = function() {
+          if ($scope.scenario) {
+            if (this.visible()) { return true }
+            /* If tab should be hidden but is selected - show another one */
+            if (this.id === $scope.location.hash()) {
+              for (var i in $scope.tabs) {
+                var tab = $scope.tabs[i];
+                if (tab.id != this.id && tab.visible()) {
+                  $scope.tab = tab.id;
+                  return false
+                }
+              }
+            }
+          }
+          return false
+        }
+      }
+
+      $scope.set_hook_run = function(idx) {
+        if (typeof idx !== "undefined") {
+          $scope.scenario.hooks.cur.run_idx = idx
+        }
+        else if (typeof $scope.scenario.hooks.cur.run_idx === "undefined") {
+          $scope.scenario.hooks.cur.run_idx = 0
+        }
+        idx = $scope.scenario.hooks.cur.run_idx;
+        if (($scope.scenario.hooks.cur.complete.length - idx) > 0) {
+          $scope.scenario.hooks.cur.run = $scope.scenario.hooks.cur.complete[idx]
+        }
+      }
+
+      $scope.complete_hooks_as_dropdown = function() {
+        return $scope.scenario.hooks.cur.complete.length > 10
+      }
+
+      /* Other helpers */
+
+      $scope.showError = function(message) {
+          return (function (e) {
+            e.style.display = "block";
+            e.textContent = message
+          })(document.getElementById("page-error"))
+      }
+
+      $scope.compact_atomics = function() {
+        return ($scope.scenario && $scope.scenario.atomic.iter.length < 9)
+      }
+
+      /* Initialization */
+
+      angular.element(document).ready(function(){
+        if (! $scope.scenarios.length) {
+          return $scope.showError("No data...")
+        }
+
+        /* Compose data mapping */
+
+        $scope.nav = [];
+        $scope.nav_map = {};
+        $scope.scenarios_map = {};
+        var met = [], itr = 0, cls_idx = 0;
+        var prev_cls, prev_met;
+
+        for (var idx in $scope.scenarios) {
+          var sc = $scope.scenarios[idx];
+          if (! prev_cls) {
+            prev_cls = sc.cls
+          }
+          else if (prev_cls !== sc.cls) {
+            $scope.nav.push({cls:prev_cls, met:met, idx:cls_idx});
+            prev_cls = sc.cls;
+            met = [];
+            itr = 1;
+            cls_idx += 1
+          }
+
+          if (prev_met !== sc.met) { itr = 1 };
+          sc.ref = $scope.location.normalize(sc.cls+"."+sc.met+(itr > 1 ? "-"+itr : ""));
+          $scope.scenarios_map[sc.ref] = sc;
+          $scope.nav_map[sc.ref] = cls_idx;
+          met.push({name:sc.name, itr:itr, idx:idx, ref:sc.ref});
+          prev_met = sc.met;
+          itr += 1;
+        }
+
+        if (met.length) {
+          $scope.nav.push({cls:prev_cls, met:met, idx:cls_idx})
+        }
+
+        /* Start */
+
+        var uri = $scope.location.uri();
+        uri.path = $scope.location.path();
+        $scope.route(uri);
+        $scope.$digest()
+      })
+    };
+
+    if (typeof angular === "object") {
+      angular.module("App", [])
+        .controller("Controller", ["$scope", "$location", controllerFunction])
+        .directive("widget", widgetDirective)
+    }
+
+
+</script>
+  <style>
+    body { margin:0; padding:0 0 50px; font-size:14px; font-family:Helvetica,Arial,sans-serif }
+    a, a:active, a:focus, a:visited { text-decoration:none; outline:none }
+    p { margin:0; padding:5px 0 }
+    p.thesis { padding:10px 0 }
+    h1 { color:#666; margin:0 0 20px; font-size:30px; font-weight:normal }
+    h2, .h2 { color:#666; margin:24px 0 6px; font-size:25px; font-weight:normal }
+    h3, .h3 { color:#777; margin:12px 0 4px; font-size:18px; font-weight:normal }
+    table { border-collapse:collapse; border-spacing:0; width:100%; font-size:12px; margin:0 0 10px }
+    table th { text-align:left; padding:8px; color:#000; border:2px solid #ddd; border-width:0 0 2px 0 }
+    table th.sortable { cursor:pointer }
+    table td { text-align:left; border-top:1px solid #ddd; padding:8px; color:#333 }
+    table.compact td { padding:4px 8px }
+    table.striped tr:nth-child(odd) td { background:#f9f9f9 }
+    table.linked tbody tr:hover { background:#f9f9f9; cursor:pointer }
+    .pointer { cursor:pointer }
+    .rich, .rich td { font-weight:bold }
+    .code { padding:10px; font-size:13px; color:#333; background:#f6f6f6; border:1px solid #e5e5e5; border-radius:4px }
+
+    .header { text-align:left; background:#333; font-size:18px; padding:13px 0; margin-bottom:20px; color:#fff; background-image:linear-gradient(to bottom, #444 0px, #222 100%) }
+    .header a, .header a:visited, .header a:focus { color:#999 }
+
+    .notify-error { padding:5px 10px; background:#fee; color:red }
+    .status-skip, .status-skip td { color:grey }
+    .status-pass, .status-pass td { color:green }
+    .status-fail, .status-fail td { color:red }
+    .capitalize { text-transform:capitalize }
+    
+    .aside { margin:0 20px 0 0; display:block; width:255px; float:left }
+    .aside > div { margin-bottom: 15px }
+    .aside > div div:first-child { border-top-left-radius:4px; border-top-right-radius:4px }
+    .aside > div div:last-child { border-bottom-left-radius:4px; border-bottom-right-radius:4px }
+    .navcls { color:#678; background:#eee; border:1px solid #ddd; margin-bottom:-1px; display:block; padding:8px 9px; font-weight:bold; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer }
+    .navcls.expanded { color:#469 }
+    .navcls.active { background:#428bca; background-image:linear-gradient(to bottom, #428bca 0px, #3278b3 100%); border-color:#3278b3; color:#fff }
+    .navmet { color:#555; background:#fff; border:1px solid #ddd; font-size:12px; display:block; margin-bottom:-1px; padding:8px 10px; text-align:left; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; cursor:pointer }
+    .navmet:hover { background:#f8f8f8 }
+    .navmet.active, .navmet.active:hover { background:#428bca; background-image:linear-gradient(to bottom, #428bca 0px, #3278b3 100%); border-color:#3278b3; color:#fff }
+
+    .buttn { color:#555; background:#fff; border:1px solid #ddd; border-radius:5px; font-size:12px; margin-bottom:-1px; padding:5px 7px; text-align:left; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; cursor:pointer }
+    .buttn:hover { background:#f8f8f8 }
+    .buttn.active, .bttn.active:hover { background:#428bca; background-image:linear-gradient(to bottom, #428bca 0px, #3278b3 100%); border-color:#3278b3; color:#fff; cursor:default }
+
+    .tabs { list-style:outside none none; margin:0 0 5px; padding:0; border-bottom:1px solid #ddd }
+    .tabs:after { clear:both }
+    .tabs li { float:left; margin-bottom:-1px; display:block; position:relative }
+    .tabs li div { border:1px solid transparent; border-radius:4px 4px 0 0; line-height:20px; margin-right:2px; padding:10px 15px; color:#428bca }
+    .tabs li div:hover { border-color:#eee #eee #ddd; background:#eee; cursor:pointer; }
+    .tabs li.active div { background:#fff; border-color:#ddd #ddd transparent; border-style:solid; border-width:1px; color:#555; cursor:default }
+    .failure-mesg { color:#900 }
+    .failure-trace { color:#333; white-space:pre; overflow:auto }
+
+    .link { color:#428BCA; padding:5px 15px 5px 5px; text-decoration:underline; cursor:pointer }
+    .link.active { color:#333; text-decoration:none; cursor:default }
+
+    .chart { padding:0; margin:0; width:890px }
+    .chart svg { height:300px; padding:0; margin:0; overflow:visible; float:right }
+    .chart.lower svg { height:180px }
+    .chart-label-y { font-size:12px; position:relative; top:5px; padding:0; margin:0 }
+
+    .expandable { cursor:pointer }
+    .clearfix { clear:both }
+    .sortable > .arrow { display:inline-block; width:12px; height:inherit; color:#c90 }
+    .content-main { margin:0 5px; display:block; float:left }
+
+    .content-wrap {  margin:0 auto; padding:0 5px;  }
+    
+    @media only screen and (min-width: 320px)  { .content-wrap { width:900px  } .content-main { width:600px } }
+    @media only screen and (min-width: 900px)  { .content-wrap { width:880px  } .content-main { width:590px } }
+    @media only screen and (min-width: 1000px) { .content-wrap { width:980px  } .content-main { width:690px } }
+    @media only screen and (min-width: 1100px) { .content-wrap { width:1080px } .content-main { width:790px } }
+    @media only screen and (min-width: 1200px) { .content-wrap { width:1180px } .content-main { width:890px } }
+
+  </style>
+</head>
+<body ng-controller="Controller">
+
+  <div class="header" id="page-header">
+    <div class="content-wrap">
+      <a href="https://github.com/openstack/rally">Rally</a>&nbsp;
+      <span>task results</span>
+    </div>
+  </div>
+
+  <div class="content-wrap" id="page-content">
+    
+
+    <p id="page-error" class="notify-error" style="display:none"></p>
+
+    <div id="content-nav" class="aside" ng-show="scenarios.length" ng-cloack>
+      <div>
+        <div class="navcls"
+             ng-class="{active:view.is_main}"
+             ng-click="location.path('')">Task overview</div>
+        <div class="navcls"
+             ng-class="{active:view.is_source}"
+             ng-click="location.path('source', '')">Input file</div>
+      </div>
+      <div>
+        <div class="navcls" title="{{n.cls}}"
+             ng-repeat-start="n in nav track by $index"
+             ng-click="showNav(n.idx)"
+             ng-class="{expanded:n.idx==nav_idx}">
+                <span ng-hide="n.idx==nav_idx">&#9658;</span>
+                <span ng-show="n.idx==nav_idx">&#9660;</span>
+                {{n.cls}}</div>
+        <div class="navmet" title="{{m.name}}"
+             ng-show="n.idx==nav_idx"
+             ng-class="{active:m.ref==scenario.ref}"
+             ng-click="location.path(m.ref)"
+             ng-repeat="m in n.met track by $index"
+             ng-repeat-end>{{m.name}}</div>
+      </div>
+    </div>
+
+    <div id="content-main" class="content-main" ng-show="scenarios.length" ng-cloak>
+
+      <div ng-show="view.is_main">
+        <h1>Task overview</h1>
+        <table class="linked compact"
+               ng-init="ov_srt='ref'; ov_dir=false">
+          <thead>
+            <tr>
+              <th class="sortable"
+                  title="Scenario name, with optional suffix of call number"
+                  ng-click="ov_srt='ref'; ov_dir=!ov_dir">
+                Scenario
+                <span class="arrow">
+                  <b ng-show="ov_srt=='ref' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='ref' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable"
+                  title="How long the scenario run, without context duration"
+                  ng-click="ov_srt='load_duration'; ov_dir=!ov_dir">
+                Load duration (s)
+                <span class="arrow">
+                  <b ng-show="ov_srt=='load_duration' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='load_duration' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable"
+                  title="Scenario duration plus context duration"
+                  ng-click="ov_srt='full_duration'; ov_dir=!ov_dir">
+                Full duration (s)
+                <span class="arrow">
+                  <b ng-show="ov_srt=='full_duration' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='full_duration' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Number of iterations"
+                  ng-click="ov_srt='iterations_count'; ov_dir=!ov_dir">
+                Iterations
+                <span class="arrow">
+                  <b ng-show="ov_srt=='iterations_count' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='iterations_count' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Scenario runner type"
+                  ng-click="ov_srt='runner'; ov_dir=!ov_dir">
+                Runner
+                <span class="arrow">
+                  <b ng-show="ov_srt=='runner' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='runner' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Number of errors occurred"
+                  ng-click="ov_srt='errors.length'; ov_dir=!ov_dir">
+                Errors
+                <span class="arrow">
+                  <b ng-show="ov_srt=='errors.length' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='errors.length' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Number of hooks"
+                  ng-click="ov_srt='hooks.length'; ov_dir=!ov_dir">
+                Hooks
+                <span class="arrow">
+                  <b ng-show="ov_srt=='hooks.length' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='hooks.length' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Whether SLA check is successful"
+                  ng-click="ov_srt='sla_success'; ov_dir=!ov_dir">
+                Success (SLA)
+                <span class="arrow">
+                  <b ng-show="ov_srt=='sla_success' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='sla_success' && ov_dir">&#x25be;</b>
+                </span>
+            <tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sc in scenarios | orderBy:ov_srt:ov_dir"
+                ng-click="location.path(sc.ref)">
+              <td>{{sc.ref}}
+              <td>{{sc.load_duration | number:3}}
+              <td>{{sc.full_duration | number:3}}
+              <td>{{sc.iterations_count}}
+              <td>{{sc.runner}}
+              <td>{{sc.errors.length}}
+              <td>{{sc.hooks.length}}
+              <td>
+                <span ng-show="sc.sla_success" class="status-pass">&#x2714;</span>
+                <span ng-hide="sc.sla_success" class="status-fail">&#x2716;</span>
+            <tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div ng-show="view.is_source">
+        <h1>Input file</h1>
+        <pre class="code">{{source}}</pre>
+      </div>
+
+      <div ng-show="view.is_scenario">
+        <h1>{{scenario.cls}}.<wbr>{{scenario.name}} ({{scenario.full_duration | number:3}}s)</h1>
+        <ul class="tabs">
+          <li ng-repeat="t in tabs"
+              ng-show="t.isVisible()"
+              ng-class="{active:t.id == tab}"
+              ng-click="location.hash(t.id)">
+            <div>{{t.name}}</div>
+          </li>
+          <div class="clearfix"></div>
+        </ul>
+        <div ng-include="tab"></div>
+
+        <script type="text/ng-template" id="overview">
+          <p class="thesis">
+            Load duration: <b>{{scenario.load_duration | number:3}} s</b> &nbsp;
+            Full duration: <b>{{scenario.full_duration | number:3}} s</b> &nbsp;
+            Iterations: <b>{{scenario.iterations_count}}</b> &nbsp;
+            Failures: <b>{{scenario.errors.length}}</b> &nbsp;
+            Started at: <b>{{scenario.created_at}}</b>
+          </p>
+
+          <div ng-show="scenario.sla.length">
+            <h2>Service-level agreement</h2>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Criterion
+                  <th>Detail
+                  <th>Success
+                <tr>
+              </thead>
+              <tbody>
+                <tr class="rich"
+                    ng-repeat="row in scenario.sla track by $index"
+                    ng-class="{'status-fail':!row.success, 'status-pass':row.success}">
+                  <td>{{row.criterion}}
+                  <td>{{row.detail}}
+                  <td class="capitalize">{{row.success}}
+                <tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div widget="Table"
+               data="scenario.table"
+               lastrow-class="rich"
+               title="Total durations">
+          </div>
+
+          <div widget="StackedArea"
+               data="scenario.iterations.iter"
+               name-x="Iteration sequence number"
+               controls="true"
+               guide="true">
+          </div>
+
+          <div widget="StackedArea"
+               data="scenario.load_profile"
+               title="Load Profile"
+               title-class="h3"
+               name-x="Timeline (seconds)"
+               format-y="d"
+               format-x=",.2f"
+               class="lower">
+          </div>
+
+          <div widget="Pie"
+               data="scenario.iterations.pie"
+               title="Distribution"
+               title-class="h3"
+               style="float:left; width:40%; margin-top:15px">
+          </div>
+
+          <div widget="Histogram"
+               ng-if="scenario.iterations.histogram.data.length"
+               data="scenario.iterations.histogram.data[mainHistogram.id]"
+               style="float:left; width:59%; margin-top:15px; position:relative; top:40px">
+          </div>
+
+          <select ng-model="mainHistogram"
+                  ng-show="scenario.iterations.histogram.data.length"
+                  ng-options="i.name for i in scenario.iterations.histogram.views track by i.id"
+                  style="float:right; margin:45px 35px 0">
+          </select>
+
+          <div class="clearfix"></div>
+
+        </script>
+
+        <script type="text/ng-template" id="details">
+
+          <div widget="StackedArea"
+               data="scenario.atomic.iter"
+               title="Atomic Action Durations"
+               name-x="Iteration sequence number"
+               controls="true"
+               guide="true">
+          </div>
+
+          <div widget="Pie"
+               data="scenario.atomic.pie"
+               title="Distribution"
+               title-class="h3"
+               style="float:left; margin-top:15px"
+               ng-style="compact_atomics() ? {width:'40%'} : {}">
+          </div>
+
+          <div widget="Histogram" data="scenario.atomic.histogram.data[atomicHistogram.id]"
+               ng-if="scenario.atomic.histogram.data.length"
+               style="float:left; position:relative; top:40px"
+               ng-style="compact_atomics() ? {width:'59%', 'margin-top':'15px'} : {}">
+          </div>
+
+          <select ng-show="scenario.atomic.histogram.data.length"
+                  ng-model="atomicHistogram"
+                  ng-options="i.name for i in scenario.atomic.histogram.views track by i.id"
+                  style="float:right; margin:45px 35px 0">
+          </select>
+
+          <div class="clearfix"></div>
+
+        </script>
+
+        <script type="text/ng-template" id="output">
+
+          <div style="padding:10px 0 0">
+            <span class="link"
+                  ng-click="location.hash('output/additive')"
+                  ng-class="{active:scenario.output.active === 'additive'}"
+                  ng-if="scenario.output.has_additive">Aggregated</span>
+            <span class="link"
+                  ng-click="location.hash('output/complete')"
+                  ng-class="{active:scenario.output.active === 'complete'}"
+                  ng-if="scenario.output.has_complete">Per iteration</span>
+          </div>
+
+          <div ng-repeat="chart in scenario.additive_output"
+               ng-if="scenario.output.active === 'additive'">
+            <div widget="{{chart.widget}}"
+                 title="{{chart.title}}"
+                 description="{{chart.description}}"
+                 name-x="{{chart.axis_label}}"
+                 name-y="{{chart.label}}"
+                 data="chart.data">
+            </div>
+          </div>
+
+          <div ng-if="scenario.output.active === 'complete'" style="padding:10px 0 0">
+            <select ng-model="outputIteration">
+              <option ng-repeat="i in scenario.complete_output track by $index"
+                      value="{{$index}}">
+                Iteration {{$index}}
+            </select>
+
+            <div ng-repeat="chart in scenario.complete_output[outputIteration]">
+              <div widget="{{chart.widget}}"
+                   title="{{chart.title}}"
+                   description="{{chart.description}}"
+                   name-x="{{chart.axis_label}}"
+                   name-y="{{chart.label}}"
+                   data="chart.data">
+              </div>
+            </div>
+          </div>
+        </script>
+
+        <script type="text/ng-template" id="hooks">
+
+          <div style="padding:15px 0">
+            <span ng-repeat="h in scenario.hooks track by $index"
+                  class="buttn"
+                  title="{{h.desc}}"
+                  style="margin:0 10px 0 0"
+                  ng-click="location.hash('hooks/'+$index)"
+                  ng-class="{active:scenario.hook_idx===$index}">
+              {{h.name}}
+            </span>
+          </div>
+
+          <table class="striped" style="margin:5px 0 25px">
+            <thead>
+              <tr>
+                <th>Plugin
+                <th>Description
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{scenario.hooks.cur.name}}
+                <td>{{scenario.hooks.cur.desc}}
+            </tbody>
+          </table>
+
+          <div>
+            <span class="link"
+                  ng-click="scenario.hooks.cur.active = 'additive'"
+                  ng-class="{active:scenario.hooks.cur.active === 'additive'}"
+                  ng-if="scenario.hooks.cur.additive.length">Aggregated</span>
+            <span class="link"
+                  ng-click="scenario.hooks.cur.active = 'complete'"
+                  ng-class="{active:scenario.hooks.cur.active === 'complete'}"
+                  ng-if="scenario.hooks.cur.complete.length">Per hook run</span>
+          </div>
+
+          <div ng-repeat="chart in scenario.hooks.cur.additive"
+               ng-if="scenario.hooks.cur.active === 'additive'">
+            <div widget="{{chart.widget}}"
+                 title="{{chart.title}}"
+                 description="{{chart.description}}"
+                 name-x="{{chart.axis_label}}"
+                 name-y="{{chart.label}}"
+                 data="chart.data">
+            </div>
+          </div>
+
+          <div ng-if="scenario.hooks.cur.active === 'complete'" style="padding:10px 0 0">
+
+            <select ng-if="complete_hooks_as_dropdown()"
+                    ng-model="scenario.hooks.cur.run_idx"
+                    ng-change="set_hook_run()">
+              <option ng-repeat="h in scenario.hooks.cur.complete track by $index"
+                      ng-selected="scenario.hooks.cur.run_idx == $index"
+                      value="{{$index}}">
+                {{h.triggered_by}}
+            </select>
+
+            <div ng-if="! complete_hooks_as_dropdown()"
+                 style="border:#ccc solid; border-width:1px 0 0; padding:5px 0 0">
+              <span ng-repeat="h in scenario.hooks.cur.complete track by $index"
+                    class="link"
+                    ng-class="{active:scenario.hooks.cur.run_idx == $index}"
+                    ng-click="set_hook_run($index)">
+                {{h.triggered_by}}
+              </span>
+            </div>
+
+            <table class="striped" style="margin:15px 0 15px">
+              <thead>
+                <tr>
+                  <th>Status
+                  <th>Triggered by
+                  <th>Started at
+                  <th>Finished at
+              </thead>
+              <tbody>
+                <tr>
+                  <td ng-style="scenario.hooks.cur.run.status === 'success' ? {color:'green'} : {color:'red'}">
+                    <b>{{scenario.hooks.cur.run.status}}</b>
+                  <td>{{scenario.hooks.cur.run.triggered_by}}
+                  <td>{{scenario.hooks.cur.run.started_at}}
+                  <td>{{scenario.hooks.cur.run.finished_at}}
+              </tbody>
+            </table>
+
+            <div ng-repeat="chart in scenario.hooks.cur.run.charts">
+              <div widget="{{chart.widget}}"
+                   title="{{chart.title}}"
+                   description="{{chart.description}}"
+                   name-x="{{chart.axis_label}}"
+                   name-y="{{chart.label}}"
+                   data="chart.data">
+              </div>
+            </div>
+          </div>
+        </script>
+
+        <script type="text/ng-template" id="failures">
+          <h2>Task failures (<ng-pluralize
+            count="scenario.errors.length"
+            when="{'1': '1 iteration', 'other': '{} iterations'}"></ng-pluralize> failed)
+          </h2>
+          <table class="striped">
+            <thead>
+              <tr>
+                <th>
+                <th>Iteration
+                <th>Exception type
+                <th>Exception message
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="expandable"
+                  ng-repeat-start="i in scenario.errors track by $index"
+                  ng-click="i.expanded = ! i.expanded">
+                <td>
+                  <span ng-hide="i.expanded">&#9658;</span>
+                  <span ng-show="i.expanded">&#9660;</span>
+                <td>{{i.iteration}}
+                <td>{{i.type}}
+                <td class="failure-mesg">{{i.message}}
+              </tr>
+              <tr ng-show="i.expanded" ng-repeat-end>
+                <td colspan="4" class="failure-trace">{{i.traceback}}
+              </tr>
+            </tbody>
+          </table>
+        </script>
+
+        <script type="text/ng-template" id="task">
+          <h2>Subtask Configuration</h2>
+          <pre class="code">{{scenario.config}}</pre>
+        </script>
+      </div>
+
+    </div>
+    <div class="clearfix"></div>
+
+
+  </div>
+
+  <script type="text/javascript">
+    if (! window.angular) {(function(f){
+      f(document.getElementById("content-nav"), "none");
+      f(document.getElementById("content-main"), "none");
+      f(document.getElementById("page-error"), "block").textContent = "Failed to load AngularJS framework"
+    })(function(e, s){e.style.display = s; return e})}
+</script>
+</body>
+</html>
