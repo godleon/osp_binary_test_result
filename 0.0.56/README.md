@@ -257,3 +257,15 @@
 - [2017-03-11 07:08:37 NovaServers.boot_lock_unlock_and_delete rps(300-3.6)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_070837)NovaServers.boot_lock_unlock_and_delete-rps(300-3.6)_PassRetry(1)-FAILED.html) `185` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-11 07:12:26 NovaServers.boot_lock_unlock_and_delete rps(300-3.4)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_071226)NovaServers.boot_lock_unlock_and_delete-rps(300-3.4)_PassRetry(1)-PASSED.html) `156` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### NovaServers.boot_server_associate_and_dissociate_floating_ip
+
+- [2017-03-11 07:18:21 NovaServers.boot_server_associate_and_dissociate_floating_ip rps(100-1.0)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_071821)NovaServers.boot_server_associate_and_dissociate_floating_ip-rps(100-1.0)-FAILED.html) `2` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 07:19:29 NovaServers.boot_server_associate_and_dissociate_floating_ip rps(100-0.5)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_071929)NovaServers.boot_server_associate_and_dissociate_floating_ip-rps(100-0.5)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 07:20:36 NovaServers.boot_server_associate_and_dissociate_floating_ip rps(100-0.3)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_072036)NovaServers.boot_server_associate_and_dissociate_floating_ip-rps(100-0.3)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 07:21:44 NovaServers.boot_server_associate_and_dissociate_floating_ip rps(100-0.2)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_072144)NovaServers.boot_server_associate_and_dissociate_floating_ip-rps(100-0.2)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 07:22:55 NovaServers.boot_server_associate_and_dissociate_floating_ip rps(100-0.1)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_072255)NovaServers.boot_server_associate_and_dissociate_floating_ip-rps(100-0.1)_PassRetry(1)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
