@@ -189,3 +189,15 @@
 - [2017-03-11 00:37:58 NovaServers.boot_server_from_volume_and_delete rps(300-0.8)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_003758)NovaServers.boot_server_from_volume_and_delete-rps(300-0.8)_PassRetry(1)-FAILED.html) `131` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-11 00:46:16 NovaServers.boot_server_from_volume_and_delete rps(300-0.7)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_004616)NovaServers.boot_server_from_volume_and_delete-rps(300-0.7)_PassRetry(1)-PASSED.html) `52` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### NovaServers.boot_server_from_volume_and_resize
+
+- [2017-03-11 00:56:34 NovaServers.boot_server_from_volume_and_resize rps(300-1.0)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_005634)NovaServers.boot_server_from_volume_and_resize-rps(300-1.0)-FAILED.html) `117` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 01:03:17 NovaServers.boot_server_from_volume_and_resize rps(300-0.5)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_010317)NovaServers.boot_server_from_volume_and_resize-rps(300-0.5)-PASSED.html) `19` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-11 01:14:22 NovaServers.boot_server_from_volume_and_resize rps(300-0.7)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_011422)NovaServers.boot_server_from_volume_and_resize-rps(300-0.7)-PASSED.html) `76` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-11 01:23:44 NovaServers.boot_server_from_volume_and_resize rps(300-0.8)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_012344)NovaServers.boot_server_from_volume_and_resize-rps(300-0.8)-FAILED.html) `129` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 01:32:49 NovaServers.boot_server_from_volume_and_resize rps(300-0.7)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.56/nova/(20170311_013249)NovaServers.boot_server_from_volume_and_resize-rps(300-0.7)_PassRetry(1)-PASSED.html) `75` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
