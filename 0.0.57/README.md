@@ -47,3 +47,39 @@
 - [2017-03-11 14:43:07 NovaServers.boot_and_live_migrate_server rps(300-0.8)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_144307)NovaServers.boot_and_live_migrate_server-rps(300-0.8)_FailRetry(3)-FAILED.html) `59` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-11 14:49:08 NovaServers.boot_and_live_migrate_server rps(300-0.7)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_144908)NovaServers.boot_and_live_migrate_server-rps(300-0.7)_PassRetry(1)-PASSED.html) `45` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### NovaSecGroup.boot_and_delete_server_with_secgroups
+
+- [2017-03-11 14:59:33 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-1.0)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_145933)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-1.0)-FAILED.html) `3` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:00:41 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-1.0)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_150041)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-1.0)_FailRetry(1)-FAILED.html) `3` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:01:50 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-1.0)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_150150)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-1.0)_FailRetry(2)-FAILED.html) `3` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:02:58 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-1.0)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_150258)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-1.0)_FailRetry(3)-FAILED.html) `3` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:04:07 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.5)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_150407)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.5)-FAILED.html) `2` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:05:17 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.5)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_150517)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.5)_FailRetry(1)-FAILED.html) `2` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:06:29 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.5)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_150629)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.5)_FailRetry(2)-FAILED.html) `2` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:07:39 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.5)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_150739)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.5)_FailRetry(3)-FAILED.html) `2` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:08:54 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.3)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_150854)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.3)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:10:05 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.3)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_151005)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.3)_FailRetry(1)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:11:15 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.3)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_151115)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.3)_FailRetry(2)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:12:26 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.3)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_151226)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.3)_FailRetry(3)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:13:37 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.2)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_151337)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.2)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:14:49 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.2)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_151449)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.2)_FailRetry(1)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:16:05 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.2)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_151605)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.2)_FailRetry(2)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:17:20 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.2)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_151720)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.2)_FailRetry(3)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-11 15:18:35 NovaSecGroup.boot_and_delete_server_with_secgroups rps(300-0.1)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.57/nova/(20170311_151835)NovaSecGroup.boot_and_delete_server_with_secgroups-rps(300-0.1)_PassRetry(1)-FAILED.html) `1` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
