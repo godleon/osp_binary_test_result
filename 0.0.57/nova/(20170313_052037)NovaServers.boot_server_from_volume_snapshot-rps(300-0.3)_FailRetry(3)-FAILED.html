@@ -1,0 +1,1044 @@
+<!doctype html>
+<html ng-app="App">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Rally version 0.8.2~dev107">
+  <title>Rally | Rally Task Report</title>
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.1.15-beta/nv.d3.min.js"></script>
+  
+
+  <script type="text/javascript">
+    "use strict";
+    var widgetDirective = function($compile) {
+  var Chart = {
+    _render: function(node, data, chart, do_after){
+      nv.addGraph(function() {
+        d3.select(node)
+          .datum(data).transition().duration(0)
+          .call(chart);
+        if (typeof do_after === "function") {
+          do_after(node, chart)
+        }
+        nv.utils.windowResize(chart.update);
+      })
+    },
+    _widgets: {
+      Pie: "pie",
+      StackedArea: "stack",
+      Lines: "lines",
+      Histogram: "histogram"
+    },
+    get_chart: function(widget) {
+      if (widget in this._widgets) {
+        var name = this._widgets[widget];
+        return Chart[name]
+      }
+      return function() { console.log("Error: unexpected widget:", widget) }
+    },
+    pie: function(node, data, opts, do_after) {
+      var chart = nv.models.pieChart()
+        .x(function(d) { return d.key })
+        .y(function(d) { return d.values })
+        .showLabels(true)
+        .labelType("percent")
+        .donut(true)
+        .donutRatio(0.25)
+        .donutLabelsOutside(true)
+        .color(function(d){
+          if (d.data && d.data.color) { return d.data.color }
+        });
+      var colorizer = new Chart.colorizer("errors"), data_ = [];
+      for (var i in data) {
+        data_.push({key:data[i][0], values:data[i][1], color:colorizer.get_color(data[i][0])})
+      }
+      Chart._render(node, data_, chart)
+    },
+    colorizer: function(failure_key, failure_color) {
+      this.failure_key = failure_key || "failed_duration";
+      this.failure_color = failure_color || "#d62728";  // red
+      this.color_idx = -1;
+      /* NOTE(amaretskiy): this is actually a result of
+         d3.scale.category20().range(), excluding red color (#d62728)
+         which is reserved for errors */
+      this.colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c",
+                     "#98df8a", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b",
+                     "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7",
+                     "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"];
+      this.get_color = function(key) {
+        if (key === this.failure_key) {
+          return this.failure_color
+        }
+        if (this.color_idx > (this.colors.length - 2)) {
+          this.color_idx = 0
+        } else {
+          this.color_idx++
+        }
+        return this.colors[this.color_idx]
+      }
+    },
+    stack: function(node, data, opts, do_after) {
+      var chart = nv.models.stackedAreaChart()
+        .x(function(d) { return d[0] })
+        .y(function(d) { return d[1] })
+        .useInteractiveGuideline(opts.guide)
+        .showControls(opts.controls)
+        .clipEdge(true);
+      chart.xAxis
+        .axisLabel(opts.xname)
+        .tickFormat(opts.xformat)
+        .showMaxMin(opts.showmaxmin);
+      chart.yAxis
+        .orient("left")
+        .tickFormat(d3.format(opts.yformat || ",.3f"));
+      var colorizer = new Chart.colorizer(), data_ = [];
+      for (var i in data) {
+        data_.push({key:data[i][0], values:data[i][1], color:colorizer.get_color(data[i][0])})
+      }
+      Chart._render(node, data_, chart, do_after);
+    },
+    lines: function(node, data, opts, do_after) {
+      var chart = nv.models.lineChart()
+        .x(function(d) { return d[0] })
+        .y(function(d) { return d[1] })
+        .useInteractiveGuideline(opts.guide)
+        .clipEdge(true);
+      chart.xAxis
+        .axisLabel(opts.xname)
+        .tickFormat(opts.xformat)
+        .rotateLabels(opts.xrotate)
+        .showMaxMin(opts.showmaxmin);
+      chart.yAxis
+        .orient("left")
+        .tickFormat(d3.format(opts.yformat || ",.3f"));
+      var colorizer = new Chart.colorizer(), data_ = [];
+      for (var i in data) {
+        data_.push({key:data[i][0], values:data[i][1], color:colorizer.get_color(data[i][0])})
+      }
+      Chart._render(node, data_, chart, do_after)
+    },
+    histogram: function(node, data, opts) {
+      var chart = nv.models.multiBarChart()
+        .reduceXTicks(true)
+        .showControls(false)
+        .transitionDuration(0)
+        .groupSpacing(0.05);
+      chart
+        .legend.radioButtonMode(true);
+      chart.xAxis
+        .axisLabel("Duration (seconds)")
+        .tickFormat(d3.format(",.2f"));
+      chart.yAxis
+        .axisLabel("Iterations (frequency)")
+        .tickFormat(d3.format("d"));
+      Chart._render(node, data, chart)
+    }
+  };
+
+  return {
+    restrict: "A",
+    scope: { data: "=" },
+    link: function(scope, element, attrs) {
+      scope.$watch("data", function(data) {
+        if (! data) { return console.log("Chart has no data to render!") }
+        if (attrs.widget === "Table") {
+          var ng_class = attrs.lastrowClass ? " ng-class='{"+attrs.lastrowClass+":$last}'" : "";
+          var template = "<table class='striped'><thead>" +
+            "<tr><th ng-repeat='i in data.cols track by $index'>{{i}}<tr>" +
+            "</thead><tbody>" +
+            "<tr" + ng_class + " ng-repeat='row in data.rows track by $index'>" +
+            "<td ng-repeat='i in row track by $index'>{{i}}" +
+            "<tr>" +
+            "</tbody></table>";
+          var el = element.empty().append($compile(template)(scope)).children()[0]
+        } else if (attrs.widget === "TextArea") {
+          var template = "<div style='padding:0 0 5px' ng-repeat='str in data track by $index'>{{str}}</div><div style='height:10px'></div>";
+          var el = element.empty().append($compile(template)(scope)).children()[0]
+        } else {
+
+          var el_chart = element.addClass("chart").css({display:"block"});
+          var el = el_chart.html("<svg></svg>").children()[0];
+
+          var do_after = null;
+
+          if (attrs.widget in {StackedArea:0, Lines:0}) {
+
+            /* Hide widget if not enough data */
+            if ((! data.length) || (data[0].length < 1) || (data[0][1].length < 2)) {
+              return element.empty().css({display:"none"})
+            }
+
+            /* NOTE(amaretskiy): Dirty fix for changing chart width in case
+               if there are too long Y values that overlaps chart box. */
+            var do_after = function(node, chart){
+              var g_box = angular.element(el_chart[0].querySelector(".nv-y.nv-axis"));
+
+              if (g_box && g_box[0] && g_box[0].getBBox) {
+
+                try {
+                  // 30 is padding aroung graphs
+                  var width = g_box[0].getBBox().width + 30;
+                } catch (err) {
+                  // This happens sometimes, just skip silently
+                  return
+                }
+
+                // 890 is chart width (set by CSS)
+                if (typeof width === "number" && width > 890) {
+                  width = (890 * 2) - width;
+                  if (width > 0) {
+                    angular.element(node).css({width:width+"px"});
+                    chart.update()
+                  }
+                }
+              }
+            }
+          }
+          else if (attrs.widget === "Pie") {
+            if (! data.length) {
+              return element.empty().css({display:"none"})
+            }
+          }
+
+          var opts = {
+            xname: attrs.nameX || "",
+            xrotate: attrs.rotateX || 0,
+            yformat: attrs.formatY || ",.3f",
+            controls: attrs.controls === "true",
+            guide: attrs.guide === "true",
+            showmaxmin: attrs.showmaxmin === "true"
+          };
+          if (attrs.formatDateX) {
+            opts.xformat = function(d) { return d3.time.format(attrs.formatDateX)(new Date(d)) }
+          } else {
+            opts.xformat = d3.format(attrs.formatX || "d")
+          }
+          Chart.get_chart(attrs.widget)(el, data, opts, do_after);
+        }
+
+        if (attrs.nameY) {
+          /* NOTE(amaretskiy): Dirty fix for displaying Y-axis label correctly.
+             I believe sometimes NVD3 will allow doing this in normal way */
+          var label_y = angular.element("<div>").addClass("chart-label-y").text(attrs.nameY);
+          angular.element(el).parent().prepend(label_y)
+        }
+
+        if (attrs.description) {
+          var desc_el = angular.element("<div>").addClass(attrs.descriptionClass || "h3").text(attrs.description);
+          angular.element(el).parent().prepend(desc_el)
+        }
+
+        if (attrs.title) {
+          var title_el = angular.element("<div>").addClass(attrs.titleClass || "h2").text(attrs.title);
+          angular.element(el).parent().prepend(title_el)
+        }
+
+        angular.element(el).parent().append(angular.element("<div style='clear:both'>"))
+      });
+    }
+  }
+};
+
+    var controllerFunction = function($scope, $location) {
+        $scope.source = "{\n  \"NovaServers.boot_server_from_volume_snapshot\": [\n    {\n      \"args\": {\n        \"flavor\": {\n          \"name\": \"m1.medium\"\n        }, \n        \"image\": {\n          \"name\": \"^cirros.*-disk$\"\n        }, \n        \"volume_size\": 10, \n        \"volume_type\": \"\"\n      }, \n      \"context\": {\n        \"quotas\": {\n          \"cinder\": {\n            \"gigabytes\": -1, \n            \"snapshots\": -1, \n            \"volumes\": -1\n          }, \n          \"neutron\": {\n            \"floatingip\": -1, \n            \"network\": -1, \n            \"port\": -1, \n            \"router\": -1, \n            \"security_group\": -1, \n            \"security_group_rule\": -1, \n            \"subnet\": -1\n          }, \n          \"nova\": {\n            \"cores\": -1, \n            \"fixed_ips\": -1, \n            \"floating_ips\": -1, \n            \"injected_file_content_bytes\": -1, \n            \"injected_file_path_bytes\": -1, \n            \"injected_files\": -1, \n            \"instances\": -1, \n            \"key_pairs\": -1, \n            \"metadata_items\": -1, \n            \"ram\": -1, \n            \"security_group_rules\": -1, \n            \"security_groups\": -1, \n            \"server_group_members\": -1, \n            \"server_groups\": -1\n          }\n        }, \n        \"users\": {\n          \"tenants\": 3, \n          \"users_per_tenant\": 2\n        }\n      }, \n      \"hooks\": [], \n      \"runner\": {\n        \"max_cpu_count\": 1, \n        \"rps\": 0.3, \n        \"times\": 300, \n        \"type\": \"rps\"\n      }, \n      \"sla\": {\n        \"failure_rate\": {\n          \"max\": 0\n        }, \n        \"max_avg_duration\": 180\n      }\n    }\n  ]\n}";
+        $scope.scenarios = [{"runner": "rps", "hooks": [], "pos": "0", "atomic": {"pie": [["cinder.create_volume", 112.34028786484913], ["cinder.create_snapshot", 27.122295120710966], ["nova.boot_server", 76.572750852954]], "iter": [["cinder.create_volume", [[1, 8.096038103103638], [2, 8.17576813697815], [3, 20.63341498374939], [4, 18.643425941467285], [5, 20.610251903533936], [6, 35.81843304634094], [7, 31.373033046722412], [8, 12.352946996688843], [9, 28.962519884109497], [10, 31.548079013824463], [11, 29.29264497756958], [12, 34.030694007873535], [13, 29.67957615852356], [14, 27.154295921325684], [15, 23.1038601398468], [16, 20.99143409729004], [17, 30.044981002807617], [18, 35.6820809841156], [19, 33.71414303779602], [20, 55.5024299621582], [21, 59.264760971069336], [22, 66.21584892272949], [23, 63.20685291290283], [24, 59.45669078826904], [25, 55.49392294883728], [26, 53.24023199081421], [27, 48.85184097290039], [28, 46.253928899765015], [29, 83.09444880485535], [30, 79.5941710472107], [31, 78.45965600013733], [32, 81.46284294128418], [33, 100.05321002006531], [34, 89.47032189369202], [35, 83.75894212722778], [36, 106.86294102668762], [37, 81.02801704406738], [38, 100.68971705436707], [39, 81.20810389518738], [40, 82.74993300437927], [41, 142.9111249446869], [42, 87.53835606575012], [43, 83.52351212501526], [44, 123.43798398971558], [45, 104.32073783874512], [46, 99.9858648777008], [47, 120.97077703475952], [48, 113.11081218719482], [49, 109.56342816352844], [50, 113.40798306465149], [51, 102.09262084960938], [52, 107.1384871006012], [53, 135.01904702186584], [54, 132.1553430557251], [55, 132.72366285324097], [56, 130.62128710746765], [57, 147.62040495872498], [58, 143.33017992973328], [59, 146.16481590270996], [60, 168.48061108589172], [61, 164.83326315879822], [62, 161.82184410095215], [63, 158.13992500305176], [64, 156.4687249660492], [65, 186.96736001968384], [66, 183.34939789772034], [67, 181.32084107398987], [68, 178.8348081111908], [69, 196.8115940093994], [70, 192.53953886032104], [71, 189.44582104682922], [72, 173.815034866333], [73, 185.68238282203674], [74, 240.91093707084656], [75, 154.67891001701355], [76, 177.44904398918152], [77, 175.7702431678772], [78, 203.31161618232727], [79, 169.35453295707703], [80, 188.07624793052673], [81, 177.24605703353882], [82, 189.33737802505493], [83, 185.67676901817322], [84, 183.29923105239868], [85, 178.82362699508667], [86, 177.65023517608643], [87, 173.39751315116882], [88, 190.0691258907318], [89, 167.15785598754883], [90, 186.33601307868958], [91, 182.08490300178528], [92, 180.33788299560547], [93, 176.70463800430298]]], ["cinder.create_snapshot", [[1, 2.547358989715576], [2, 10.844691038131714], [3, 6.762088060379028], [4, 6.801996946334839], [5, 2.5520238876342773], [6, 4.710738897323608], [7, 4.620177984237671], [8, 15.559800148010254], [9, 4.456847906112671], [10, 6.791232109069824], [11, 6.917042970657349], [12, 23.21926212310791], [13, 21.627645015716553], [14, 21.272068977355957], [15, 23.547046899795532], [16, 21.17396092414856], [17, 9.114524126052856], [18, 4.452829122543335], [19, 6.9629881381988525], [20, 15.436617136001587], [21, 8.781161069869995], [22, 38.44212198257446], [23, 38.40208911895752], [24, 38.20508408546448], [25, 37.95543909072876], [26, 39.984313011169434], [27, 37.90221309661865], [28, 38.050960063934326], [29, 15.33634901046753], [30, 14.92775297164917], [31, 13.209163904190063], [32, 8.864232063293457], [33, 17.508275985717773], [34, 19.211527109146118], [35, 17.467360973358154], [36, 46.10829401016235], [37, 21.62254786491394], [38, 46.72030305862427], [39, 15.14566707611084], [40, 10.814046144485474], [41, 31.488996982574463], [42, 48.31702399253845], [43, 46.26678109169006], [44, 32.282735109329224], [45, 21.606430053710938], [46, 25.095178842544556], [47, 34.39253497123718], [48, 37.65570688247681], [49, 35.96616005897522], [50, 31.867383003234863], [51, 35.473756074905396], [52, 32.154131174087524], [53, 17.418673038482666], [54, 17.195246934890747], [55, 21.237966060638428], [56, 21.4727840423584], [57, 20.05889081954956], [58, 17.757431983947754], [59, 15.14781403541565], [60, 36.05067801475525], [61, 36.129546880722046], [62, 35.80627393722534], [63, 35.75462889671326], [64, 33.72797989845276], [65, 21.740721940994263], [66, 21.136632919311523], [67, 20.640260219573975], [68, 21.181843996047974], [69, 36.020630836486816], [70, 35.796650886535645], [71, 35.90738081932068], [72, 12.875311851501465], [73, 34.05479097366333], [74, 36.109419107437134], [75, 21.243415117263794], [76, 31.97635507583618], [77, 29.53351092338562], [78, 59.089784145355225], [79, 29.725877046585083], [80, 8.54691195487976], [81, 17.292722940444946], [82, 57.54215884208679], [83, 56.612154960632324], [84, 59.04103684425354], [85, 56.54922103881836], [86, 56.54874801635742], [87, 59.136322021484375], [88, 38.4350700378418], [89, 56.83449196815491], [90, 36.32434606552124], [91, 36.063270807266235], [92, 35.82360792160034], [93, 36.23622107505798]]], ["nova.boot_server", [[1, 28.97440505027771], [2, 16.116759061813354], [3, 33.61659288406372], [4, 32.86164402961731], [5, 37.307223081588745], [6, 41.59736895561218], [7, 42.08956599235535], [8, 23.57281494140625], [9, 40.427903175354004], [10, 61.4362530708313], [11, 82.54623889923096], [12, 88.11719989776611], [13, 100.97204113006592], [14, 88.20293593406677], [15, 87.60507082939148], [16, 86.255774974823], [17, 86.66187500953674], [18, 89.15485095977783], [19, 91.93125081062317], [20, 70.48790693283081], [21, 67.40078687667847], [22, 56.43153405189514], [23, 135.49098205566406], [24, 135.45300388336182], [25, 83.32717204093933], [26, 82.6980209350586], [27, 58.625187158584595], [28, 135.3236858844757], [29, 138.0915069580078], [30, 140.4834020137787], [31, 141.02783513069153], [32, 121.55884003639221], [33, 137.3206980228424], [34, 121.47708582878113], [35, 116.01770281791687], [36, 88.44358086585999], [37, 119.4230740070343], [38, 95.45949006080627], [39, 122.38285279273987], [40, 122.17658495903015], [41, 63.93631601333618], [42, 91.50773096084595], [43, 87.2863929271698], [44, 59.907459020614624], [45, 91.37639093399048], [46, 83.35574507713318], [47, 54.37837100028992], [48, 64.47274398803711], [49, 58.29114103317261], [50, 53.816617012023926], [51, 67.03095412254333], [52, 61.741297006607056], [53, 43.60325503349304], [54, 38.22350001335144], [55, 38.97767090797424], [56, 36.009958028793335], [57, 68.66184687614441], [58, 58.178061962127686], [59, 72.9749710559845], [60, 127.11627411842346], [61, 126.00543904304504], [62, 127.17554783821106], [63, 127.83092188835144], [64, 131.7283420562744], [65, 108.20054602622986], [66, 113.03675508499146], [67, 107.43013119697571], [68, 113.59245085716248], [69, 89.4712769985199], [70, 88.2138409614563], [71, 78.96776795387268], [72, 108.92184615135193], [73, 89.62241291999817], [74, 30.281054973602295], [75, 110.08611392974854], [76, 91.46695399284363], [77, 87.11187195777893], [78, 22.7495219707489], [79, 87.71548295021057], [80, 77.5621268749237], [81, 88.83398580551147], [82, 31.898113012313843], [83, 35.34331393241882], [84, 20.88399600982666], [85, 35.906813859939575], [86, 31.618954181671143], [87, 23.821857929229736], [88, 31.862639904022217], [89, 32.20769000053406], [90, 22.90610694885254], [91, 33.10025501251221], [92, 23.26969814300537], [93, 23.046599864959717]]], ["failed_duration", [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0], [9, 0], [10, 0], [11, 0], [12, 0], [13, 0], [14, 0], [15, 0], [16, 0], [17, 0], [18, 0], [19, 0], [20, 0], [21, 0], [22, 0], [23, 0.00012087821960449219], [24, 0.00012111663818359375], [25, 0], [26, 0], [27, 0], [28, 0.00012612342834472656], [29, 0.00012922286987304688], [30, 0.0001270771026611328], [31, 0.0001277923583984375], [32, 0], [33, 0], [34, 0], [35, 0], [36, 0], [37, 0], [38, 0], [39, 0], [40, 0], [41, 0], [42, 0], [43, 0], [44, 0], [45, 0], [46, 0], [47, 0], [48, 0], [49, 0], [50, 0], [51, 0], [52, 0], [53, 0], [54, 0], [55, 0], [56, 0], [57, 0], [58, 0], [59, 0], [60, 0.00011968612670898438], [61, 0.00011897087097167969], [62, 0.00011801719665527344], [63, 0.00011229515075683594], [64, 0], [65, 0], [66, 0], [67, 0], [68, 0], [69, 0], [70, 0], [71, 0], [72, 0], [73, 0], [74, 0], [75, 0], [76, 0], [77, 0], [78, 0], [79, 0], [80, 0], [81, 0], [82, 0], [83, 0], [84, 0], [85, 0], [86, 0], [87, 0], [88, 0], [89, 0], [90, 0], [91, 0], [92, 0], [93, 0]]]], "histogram": {"data": [[{"disabled": 0, "values": [{"y": 14, "x": 31.37752799987793}, {"y": 8, "x": 54.65901789665222}, {"y": 6, "x": 77.94050779342652}, {"y": 14, "x": 101.22199769020081}, {"y": 9, "x": 124.5034875869751}, {"y": 8, "x": 147.7849774837494}, {"y": 8, "x": 171.06646738052368}, {"y": 23, "x": 194.34795727729798}, {"y": 2, "x": 217.62944717407228}, {"y": 1, "x": 240.91093707084656}], "key": "cinder.create_volume", "view": "Square Root Choice"}, {"disabled": 1, "values": [{"y": 11, "x": 8.206255292892456}, {"y": 8, "x": 13.865151596069335}, {"y": 13, "x": 19.524047899246213}, {"y": 16, "x": 25.182944202423094}, {"y": 2, "x": 30.841840505599976}, {"y": 22, "x": 36.50073680877685}, {"y": 9, "x": 42.15963311195373}, {"y": 3, "x": 47.81852941513061}, {"y": 1, "x": 53.477425718307494}, {"y": 8, "x": 59.136322021484375}], "key": "cinder.create_snapshot", "view": "Square Root Choice"}, {"disabled": 2, "values": [{"y": 8, "x": 28.60786666870117}, {"y": 16, "x": 41.098974275588986}, {"y": 3, "x": 53.59008188247681}, {"y": 11, "x": 66.08118948936462}, {"y": 6, "x": 78.57229709625244}, {"y": 19, "x": 91.06340470314026}, {"y": 6, "x": 103.55451231002807}, {"y": 7, "x": 116.0456199169159}, {"y": 9, "x": 128.53672752380373}, {"y": 8, "x": 141.02783513069153}], "key": "nova.boot_server", "view": "Square Root Choice"}], [{"disabled": 0, "values": [{"y": 19, "x": 37.1979004740715}, {"y": 9, "x": 66.29976284503937}, {"y": 11, "x": 95.40162521600723}, {"y": 12, "x": 124.5034875869751}, {"y": 8, "x": 153.60534995794296}, {"y": 20, "x": 182.70721232891083}, {"y": 13, "x": 211.8090746998787}, {"y": 1, "x": 240.91093707084656}], "key": "cinder.create_volume", "view": "Sturges Formula"}, {"disabled": 1, "values": [{"y": 15, "x": 9.620979368686676}, {"y": 10, "x": 16.694599747657776}, {"y": 22, "x": 23.768220126628876}, {"y": 3, "x": 30.841840505599976}, {"y": 24, "x": 37.915460884571075}, {"y": 7, "x": 44.989081263542175}, {"y": 4, "x": 52.062701642513275}, {"y": 8, "x": 59.136322021484375}], "key": "cinder.create_snapshot", "view": "Sturges Formula"}, {"disabled": 2, "values": [{"y": 11, "x": 31.730643570423126}, {"y": 16, "x": 47.3445280790329}, {"y": 9, "x": 62.95841258764267}, {"y": 8, "x": 78.57229709625244}, {"y": 23, "x": 94.18618160486221}, {"y": 5, "x": 109.80006611347198}, {"y": 9, "x": 125.41395062208176}, {"y": 12, "x": 141.02783513069153}], "key": "nova.boot_server", "view": "Sturges Formula"}], [{"disabled": 0, "values": [{"y": 14, "x": 31.37752799987793}, {"y": 8, "x": 54.65901789665222}, {"y": 6, "x": 77.94050779342652}, {"y": 14, "x": 101.22199769020081}, {"y": 9, "x": 124.5034875869751}, {"y": 8, "x": 147.7849774837494}, {"y": 8, "x": 171.06646738052368}, {"y": 23, "x": 194.34795727729798}, {"y": 2, "x": 217.62944717407228}, {"y": 1, "x": 240.91093707084656}], "key": "cinder.create_volume", "view": "Rice Rule"}, {"disabled": 1, "values": [{"y": 11, "x": 8.206255292892456}, {"y": 8, "x": 13.865151596069335}, {"y": 13, "x": 19.524047899246213}, {"y": 16, "x": 25.182944202423094}, {"y": 2, "x": 30.841840505599976}, {"y": 22, "x": 36.50073680877685}, {"y": 9, "x": 42.15963311195373}, {"y": 3, "x": 47.81852941513061}, {"y": 1, "x": 53.477425718307494}, {"y": 8, "x": 59.136322021484375}], "key": "cinder.create_snapshot", "view": "Rice Rule"}, {"disabled": 2, "values": [{"y": 8, "x": 28.60786666870117}, {"y": 16, "x": 41.098974275588986}, {"y": 3, "x": 53.59008188247681}, {"y": 11, "x": 66.08118948936462}, {"y": 6, "x": 78.57229709625244}, {"y": 19, "x": 91.06340470314026}, {"y": 6, "x": 103.55451231002807}, {"y": 7, "x": 116.0456199169159}, {"y": 9, "x": 128.53672752380373}, {"y": 8, "x": 141.02783513069153}], "key": "nova.boot_server", "view": "Rice Rule"}]], "views": [{"id": 0, "name": "Square Root Choice"}, {"id": 1, "name": "Sturges Formula"}, {"id": 2, "name": "Rice Rule"}]}}, "iterations": {"pie": [["success", 83], ["errors", 10]], "iter": [["duration", [[1, 34.61811089515686], [2, 30.137423038482666], [3, 56.012279987335205], [4, 53.30725812911987], [5, 55.46972608566284], [6, 77.12723994255066], [7, 73.08309602737427], [8, 46.48574495315552], [9, 68.84765601158142], [10, 94.77577710151672], [11, 113.75611305236816], [12, 140.36732816696167], [13, 147.27945184707642], [14, 131.62948203086853], [15, 129.2561469078064], [16, 123.42135405540466], [17, 120.8215708732605], [18, 124.28994297981262], [19, 127.60856103897095], [20, 136.4271538257599], [21, 130.44687008857727], [22, 156.08966898918152], [23, 0], [24, 0], [25, 171.7766978740692], [26, 170.9227159023285], [27, 140.3794069290161], [28, 0], [29, 0], [30, 0], [31, 0], [32, 206.88609290122986], [33, 249.88240480422974], [34, 225.15909790992737], [35, 212.24417400360107], [36, 236.41499590873718], [37, 217.07379817962646], [38, 237.86968111991882], [39, 213.7368140220642], [40, 210.74070596694946], [41, 233.33660006523132], [42, 222.363285779953], [43, 212.0768449306488], [44, 210.6283609867096], [45, 212.30373811721802], [46, 203.43697595596313], [47, 204.7418429851532], [48, 210.2394449710846], [49, 198.8209149837494], [50, 194.09216022491455], [51, 199.5975239276886], [52, 196.03408002853394], [53, 191.0411558151245], [54, 182.57425808906555], [55, 187.9394588470459], [56, 183.1041979789734], [57, 231.34130191802979], [58, 214.26583814620972], [59, 229.28774619102478], [60, 0], [61, 0], [62, 0], [63, 0], [64, 316.9251968860626], [65, 311.9087870121002], [66, 312.52296900749207], [67, 304.3913879394531], [68, 308.60925793647766], [69, 317.3036639690399], [70, 311.55020213127136], [71, 299.32113218307495], [72, 290.6123631000519], [73, 304.3597569465637], [74, 302.30158591270447], [75, 281.0085880756378], [76, 295.8925540447235], [77, 287.4158000946045], [78, 280.1510910987854], [79, 281.7960469722748], [80, 269.1854510307312], [81, 278.3729918003082], [82, 273.77781891822815], [83, 272.63240003585815], [84, 258.2256660461426], [85, 266.2798330783844], [86, 260.81810903549194], [87, 251.35585188865662], [88, 255.36699295043945], [89, 251.2001929283142], [90, 240.56664395332336], [91, 246.2485818862915], [92, 234.43134903907776], [93, 230.9876148700714]]], ["idle_duration", [[1, 5.0], [2, 5.0], [3, 5.0], [4, 5.0], [5, 5.0], [6, 5.0], [7, 5.0], [8, 5.0], [9, 5.0], [10, 5.0], [11, 5.0], [12, 5.0], [13, 5.0], [14, 5.0], [15, 5.0], [16, 5.0], [17, 5.0], [18, 5.0], [19, 5.0], [20, 5.0], [21, 5.0], [22, 5.0], [23, 0], [24, 0], [25, 5.0], [26, 5.0], [27, 5.0], [28, 0], [29, 0], [30, 0], [31, 0], [32, 5.0], [33, 5.0], [34, 5.0], [35, 5.0], [36, 5.0], [37, 5.0], [38, 5.0], [39, 5.0], [40, 5.0], [41, 5.0], [42, 5.0], [43, 5.0], [44, 5.0], [45, 5.0], [46, 5.0], [47, 5.0], [48, 5.0], [49, 5.0], [50, 5.0], [51, 5.0], [52, 5.0], [53, 5.0], [54, 5.0], [55, 5.0], [56, 5.0], [57, 5.0], [58, 5.0], [59, 5.0], [60, 0], [61, 0], [62, 0], [63, 0], [64, 5.0], [65, 5.0], [66, 5.0], [67, 5.0], [68, 5.0], [69, 5.0], [70, 5.0], [71, 5.0], [72, 5.0], [73, 5.0], [74, 5.0], [75, 5.0], [76, 5.0], [77, 5.0], [78, 5.0], [79, 5.0], [80, 5.0], [81, 5.0], [82, 5.0], [83, 5.0], [84, 5.0], [85, 5.0], [86, 5.0], [87, 5.0], [88, 5.0], [89, 5.0], [90, 5.0], [91, 5.0], [92, 5.0], [93, 5.0]]], ["failed_duration", [[1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0], [9, 0], [10, 0], [11, 0], [12, 0], [13, 0], [14, 0], [15, 0], [16, 0], [17, 0], [18, 0], [19, 0], [20, 0], [21, 0], [22, 0], [23, 237.10004496574402], [24, 233.11489987373352], [25, 0], [26, 0], [27, 0], [28, 219.6287009716034], [29, 236.52243399620056], [30, 235.0054531097412], [31, 232.69678282737732], [32, 0], [33, 0], [34, 0], [35, 0], [36, 0], [37, 0], [38, 0], [39, 0], [40, 0], [41, 0], [42, 0], [43, 0], [44, 0], [45, 0], [46, 0], [47, 0], [48, 0], [49, 0], [50, 0], [51, 0], [52, 0], [53, 0], [54, 0], [55, 0], [56, 0], [57, 0], [58, 0], [59, 0], [60, 331.64768290519714], [61, 326.9683680534363], [62, 324.8037838935852], [63, 321.7255880832672], [64, 0], [65, 0], [66, 0], [67, 0], [68, 0], [69, 0], [70, 0], [71, 0], [72, 0], [73, 0], [74, 0], [75, 0], [76, 0], [77, 0], [78, 0], [79, 0], [80, 0], [81, 0], [82, 0], [83, 0], [84, 0], [85, 0], [86, 0], [87, 0], [88, 0], [89, 0], [90, 0], [91, 0], [92, 0], [93, 0]]]], "histogram": {"data": [[{"disabled": null, "values": [{"y": 16, "x": 58.854047131538394}, {"y": 3, "x": 87.57067122459412}, {"y": 2, "x": 116.28729531764984}, {"y": 10, "x": 145.00391941070558}, {"y": 4, "x": 173.7205435037613}, {"y": 8, "x": 202.437167596817}, {"y": 16, "x": 231.15379168987275}, {"y": 12, "x": 259.8704157829285}, {"y": 10, "x": 288.5870398759842}, {"y": 12, "x": 317.3036639690399}], "key": "task", "view": "Square Root Choice"}], [{"disabled": null, "values": [{"y": 16, "x": 66.03320315480232}, {"y": 4, "x": 101.92898327112198}, {"y": 9, "x": 137.82476338744164}, {"y": 6, "x": 173.7205435037613}, {"y": 11, "x": 209.61632362008095}, {"y": 19, "x": 245.5121037364006}, {"y": 14, "x": 281.40788385272026}, {"y": 14, "x": 317.3036639690399}], "key": "task", "view": "Sturges Formula"}], [{"disabled": null, "values": [{"y": 16, "x": 58.854047131538394}, {"y": 3, "x": 87.57067122459412}, {"y": 2, "x": 116.28729531764984}, {"y": 10, "x": 145.00391941070558}, {"y": 4, "x": 173.7205435037613}, {"y": 8, "x": 202.437167596817}, {"y": 16, "x": 231.15379168987275}, {"y": 12, "x": 259.8704157829285}, {"y": 10, "x": 288.5870398759842}, {"y": 12, "x": 317.3036639690399}], "key": "task", "view": "Rice Rule"}]], "views": [{"id": 0, "name": "Square Root Choice"}, {"id": 1, "name": "Sturges Formula"}, {"id": 2, "name": "Rice Rule"}]}}, "table": {"rows": [["cinder.create_volume", 8.096, 113.111, 186.841, 190.007, 240.911, 113.064, "89.2%", 93], ["cinder.create_snapshot", 2.547, 21.741, 47.998, 56.812, 59.136, 26.753, "89.2%", 93], ["nova.boot_server", 16.117, 70.488, 113.481, 121.551, 137.321, 69.726, "89.2%", 93], ["total", 30.137, 212.304, 301.705, 311.256, 317.304, 204.543, "89.2%", 93]], "cols": ["Action", "Min (sec)", "Median (sec)", "90%ile (sec)", "95%ile (sec)", "Max (sec)", "Avg (sec)", "Success", "Count"]}, "errors": [{"type": "GetResourceErrorStatus", "message": "Resource <Server: s_rally_85a5a41f_eVBQUwkd> has ERROR status.\nFault: {u'message': u'Build of instance 16398048-19cd-44a9-8c04-cc093acb8a6f aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:26:10Z'}", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 941, in run\n    **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 214, in wait_for_status\n    resource = update_resource(resource)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 90, in _get_from_manager\n    fault=getattr(res, \"fault\", \"n/a\"))\nGetResourceErrorStatus: Resource <Server: s_rally_85a5a41f_eVBQUwkd> has ERROR status.\nFault: {u'message': u'Build of instance 16398048-19cd-44a9-8c04-cc093acb8a6f aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:26:10Z'}\n", "iteration": 23}, {"type": "GetResourceErrorStatus", "message": "Resource <Server: s_rally_85a5a41f_djo4Vttj> has ERROR status.\nFault: {u'message': u'Build of instance 1f0c6484-6209-4eb2-99b0-91ffd99c161d aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:26:10Z'}", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 941, in run\n    **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 214, in wait_for_status\n    resource = update_resource(resource)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 90, in _get_from_manager\n    fault=getattr(res, \"fault\", \"n/a\"))\nGetResourceErrorStatus: Resource <Server: s_rally_85a5a41f_djo4Vttj> has ERROR status.\nFault: {u'message': u'Build of instance 1f0c6484-6209-4eb2-99b0-91ffd99c161d aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:26:10Z'}\n", "iteration": 24}, {"type": "GetResourceErrorStatus", "message": "Resource <Server: s_rally_85a5a41f_mMtqOSuA> has ERROR status.\nFault: {u'message': u'Build of instance f1e3f6a0-5ef8-4172-b2d0-92337808becb aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:26:10Z'}", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 941, in run\n    **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 214, in wait_for_status\n    resource = update_resource(resource)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 90, in _get_from_manager\n    fault=getattr(res, \"fault\", \"n/a\"))\nGetResourceErrorStatus: Resource <Server: s_rally_85a5a41f_mMtqOSuA> has ERROR status.\nFault: {u'message': u'Build of instance f1e3f6a0-5ef8-4172-b2d0-92337808becb aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:26:10Z'}\n", "iteration": 28}, {"type": "GetResourceErrorStatus", "message": "Resource <Server: s_rally_85a5a41f_XR13KCWt> has ERROR status.\nFault: {u'message': u'Build of instance 820fffbf-6586-4ef4-87c0-2f6d8a245ecd aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:26:29Z'}", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 941, in run\n    **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 214, in wait_for_status\n    resource = update_resource(resource)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 90, in _get_from_manager\n    fault=getattr(res, \"fault\", \"n/a\"))\nGetResourceErrorStatus: Resource <Server: s_rally_85a5a41f_XR13KCWt> has ERROR status.\nFault: {u'message': u'Build of instance 820fffbf-6586-4ef4-87c0-2f6d8a245ecd aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:26:29Z'}\n", "iteration": 29}, {"type": "GetResourceErrorStatus", "message": "Resource <Server: s_rally_85a5a41f_2mPc1oQY> has ERROR status.\nFault: {u'message': u'Build of instance 68be8992-0a62-4ab2-aab3-b9d279ddb841 aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:26:31Z'}", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 941, in run\n    **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 214, in wait_for_status\n    resource = update_resource(resource)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 90, in _get_from_manager\n    fault=getattr(res, \"fault\", \"n/a\"))\nGetResourceErrorStatus: Resource <Server: s_rally_85a5a41f_2mPc1oQY> has ERROR status.\nFault: {u'message': u'Build of instance 68be8992-0a62-4ab2-aab3-b9d279ddb841 aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:26:31Z'}\n", "iteration": 30}, {"type": "GetResourceErrorStatus", "message": "Resource <Server: s_rally_85a5a41f_IQrmnXz1> has ERROR status.\nFault: {u'message': u'Build of instance 8f26418e-998c-43d3-a00c-8adcde165d99 aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:26:32Z'}", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 941, in run\n    **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 214, in wait_for_status\n    resource = update_resource(resource)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 90, in _get_from_manager\n    fault=getattr(res, \"fault\", \"n/a\"))\nGetResourceErrorStatus: Resource <Server: s_rally_85a5a41f_IQrmnXz1> has ERROR status.\nFault: {u'message': u'Build of instance 8f26418e-998c-43d3-a00c-8adcde165d99 aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:26:32Z'}\n", "iteration": 31}, {"type": "GetResourceErrorStatus", "message": "Resource <Server: s_rally_85a5a41f_KoZ3z0bG> has ERROR status.\nFault: {u'message': u'Build of instance 03aa3aee-9c32-4efe-81b2-c99cc490f4cf aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:29:47Z'}", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 941, in run\n    **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 214, in wait_for_status\n    resource = update_resource(resource)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 90, in _get_from_manager\n    fault=getattr(res, \"fault\", \"n/a\"))\nGetResourceErrorStatus: Resource <Server: s_rally_85a5a41f_KoZ3z0bG> has ERROR status.\nFault: {u'message': u'Build of instance 03aa3aee-9c32-4efe-81b2-c99cc490f4cf aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:29:47Z'}\n", "iteration": 60}, {"type": "GetResourceErrorStatus", "message": "Resource <Server: s_rally_85a5a41f_aMkUCD1X> has ERROR status.\nFault: {u'message': u'Build of instance 83d1ead9-c41b-4712-829c-5105e2dfb84f aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:29:46Z'}", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 941, in run\n    **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 214, in wait_for_status\n    resource = update_resource(resource)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 90, in _get_from_manager\n    fault=getattr(res, \"fault\", \"n/a\"))\nGetResourceErrorStatus: Resource <Server: s_rally_85a5a41f_aMkUCD1X> has ERROR status.\nFault: {u'message': u'Build of instance 83d1ead9-c41b-4712-829c-5105e2dfb84f aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:29:46Z'}\n", "iteration": 61}, {"type": "GetResourceErrorStatus", "message": "Resource <Server: s_rally_85a5a41f_ujjXS7Al> has ERROR status.\nFault: {u'message': u'Build of instance c1bd1626-8fba-47fc-b2c0-ff1c85649407 aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:29:48Z'}", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 941, in run\n    **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 214, in wait_for_status\n    resource = update_resource(resource)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 90, in _get_from_manager\n    fault=getattr(res, \"fault\", \"n/a\"))\nGetResourceErrorStatus: Resource <Server: s_rally_85a5a41f_ujjXS7Al> has ERROR status.\nFault: {u'message': u'Build of instance c1bd1626-8fba-47fc-b2c0-ff1c85649407 aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:29:48Z'}\n", "iteration": 62}, {"type": "GetResourceErrorStatus", "message": "Resource <Server: s_rally_85a5a41f_ahFlsNuP> has ERROR status.\nFault: {u'message': u'Build of instance 8f4b9bd2-e27d-491e-a2dd-f171f73c78c3 aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:29:48Z'}", "traceback": "Traceback (most recent call last):\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/runner.py\", line 72, in _run_scenario_once\n    getattr(scenario_inst, method_name)(**scenario_kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/servers.py\", line 941, in run\n    **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/atomic.py\", line 84, in func_atomic_actions\n    f = func(self, *args, **kwargs)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/plugins/openstack/scenarios/nova/utils.py\", line 146, in _boot_server\n    check_interval=CONF.benchmark.nova_server_boot_poll_interval\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 214, in wait_for_status\n    resource = update_resource(resource)\n  File \"/opt/rh/python27/root/usr/lib/python2.7/site-packages/rally/task/utils.py\", line 90, in _get_from_manager\n    fault=getattr(res, \"fault\", \"n/a\"))\nGetResourceErrorStatus: Resource <Server: s_rally_85a5a41f_ahFlsNuP> has ERROR status.\nFault: {u'message': u'Build of instance 8f4b9bd2-e27d-491e-a2dd-f171f73c78c3 aborted: Block Device Mapping is Invalid.', u'code': 500, u'created': u'2017-03-13T05:29:48Z'}\n", "iteration": 63}], "iterations_count": 93, "load_duration": 546.2767059803009, "complete_output": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []], "config": "{\n  \"NovaServers.boot_server_from_volume_snapshot\": [\n    {\n      \"runner\": {\n        \"type\": \"rps\", \n        \"max_cpu_count\": 1, \n        \"times\": 300, \n        \"rps\": 0.3\n      }, \n      \"hooks\": [], \n      \"args\": {\n        \"image\": {\n          \"name\": \"^cirros.*-disk$\"\n        }, \n        \"flavor\": {\n          \"name\": \"m1.medium\"\n        }, \n        \"volume_size\": 10, \n        \"volume_type\": \"\"\n      }, \n      \"sla\": {\n        \"max_avg_duration\": 180, \n        \"failure_rate\": {\n          \"max\": 0\n        }\n      }, \n      \"context\": {\n        \"users\": {\n          \"users_per_tenant\": 2, \n          \"tenants\": 3\n        }, \n        \"quotas\": {\n          \"neutron\": {\n            \"network\": -1, \n            \"subnet\": -1, \n            \"security_group\": -1, \n            \"floatingip\": -1, \n            \"port\": -1, \n            \"security_group_rule\": -1, \n            \"router\": -1\n          }, \n          \"nova\": {\n            \"cores\": -1, \n            \"injected_file_path_bytes\": -1, \n            \"instances\": -1, \n            \"server_group_members\": -1, \n            \"security_group_rules\": -1, \n            \"ram\": -1, \n            \"fixed_ips\": -1, \n            \"injected_files\": -1, \n            \"metadata_items\": -1, \n            \"key_pairs\": -1, \n            \"server_groups\": -1, \n            \"security_groups\": -1, \n            \"injected_file_content_bytes\": -1, \n            \"floating_ips\": -1\n          }, \n          \"cinder\": {\n            \"volumes\": -1, \n            \"gigabytes\": -1, \n            \"snapshots\": -1\n          }\n        }\n      }\n    }\n  ]\n}", "sla_success": false, "output_errors": [], "cls": "NovaServers", "met": "boot_server_from_volume_snapshot", "has_output": false, "full_duration": 949.3070931434631, "load_profile": [["parallel iterations", [[0.0, 0], [5.572022400999069, 1.402466009535302], [11.144044801998138, 3.010449791843443], [16.71606720299721, 4.6170654540868075], [22.288089603996276, 6.411276658842889], [27.860112004995344, 8.027412275651667], [33.43213440599442, 9.634888714505502], [39.004156806993485, 9.639275591955323], [44.57617920799255, 11.04575883964177], [50.14820160899162, 12.652969433435162], [55.72022400999069, 14.428929364230049], [61.29224641098976, 16.063272824654565], [66.86426881198884, 16.27927910795868], [72.4362912129879, 16.31513190731919], [78.00831361398697, 17.080946881512055], [83.58033601498603, 18.688312925990232], [89.1523584159851, 20.446786513154755], [94.72438081698418, 21.636448649710097], [100.29640321798324, 20.846627391042286], [105.86842561898231, 22.455560193183054], [111.44044801998137, 24.115807462856417], [117.01247042098045, 25.72347033128185], [122.58449282197952, 27.464555560521532], [128.15651522297858, 28.527056099841378], [133.72853762397767, 29.74170671483889], [139.30056002497673, 31.472949107358627], [144.8725824259758, 33.15191729776341], [150.44460482697485, 34.156571692782684], [156.01662722797394, 35.482100224901515], [161.588649628973, 37.17008851440799], [167.16067202997206, 38.77624154719803], [172.73269443097115, 40.490774164895065], [178.3047168319702, 39.306516342699084], [183.87673923296927, 38.270054760477855], [189.44876163396836, 38.778976523021036], [195.02078403496742, 39.20529889188452], [200.59280643596648, 40.03702730051839], [206.16482883696557, 40.5089616839649], [211.73685123796463, 42.222584215058745], [217.3088736389637, 43.82938763331776], [222.88089603996275, 45.51772192839863], [228.45291844096184, 46.56200706931928], [234.0249408419609, 46.84724140194957], [239.59696324295996, 48.52672927652206], [245.16898564395905, 50.25876691881137], [250.7410080449581, 51.86575933395304], [256.31303044595717, 52.35066529501628], [261.8850528469562, 53.27631000001619], [267.45707524795534, 54.88157033596159], [273.0290976489544, 56.544289216402866], [278.60112004995347, 58.29411759983742], [284.1731424509525, 59.90087039927999], [289.7451648519516, 61.553297120777025], [295.31718725295065, 63.311374982109584], [300.8892096539497, 64.91792209714761], [306.4612320549488, 65.74517273015903], [312.0332544559479, 64.63707387553065], [317.60527685694694, 64], [323.177299257946, 64], [328.74932165894506, 62.16859349307312], [334.3213440599441, 60], [339.89336646094324, 58.643456794807726], [345.4653888619423, 56.241966541279254], [351.03741126294136, 56], [356.6094336639404, 53.49502370991878], [362.1814560649395, 46.957811680496945], [367.75347846593854, 42.23192498623671], [373.3255008669376, 37.03260635905262], [378.8975232679367, 37], [384.4695456689358, 37], [390.04156806993484, 37], [395.6135904709339, 37], [401.18561287193296, 37], [406.757635272932, 36.55213114520563], [412.32965767393114, 36], [417.9016800749302, 36], [423.47370247592926, 34.86461706435006], [429.0457248769283, 34], [434.6177472779274, 34], [440.18976967892644, 34], [445.7617920799255, 34], [451.3338144809246, 34], [456.9058368819237, 34], [462.47785928292274, 34], [468.0498816839218, 34], [473.62190408492086, 34], [479.1939264859199, 34], [484.76594888691903, 34], [490.3379712879181, 34], [495.90999368891715, 34], [501.4820160899162, 34], [507.0540384909153, 34], [512.6260608919143, 34], [518.1980832929135, 34], [523.7701056939125, 33.41143142048705], [529.3421280949116, 27.241369648004117], [534.9141504959107, 22.624791190318902], [540.4861728969097, 17.316245137809986], [546.0581952979088, 10.333231165238526], [551.6302176989078, 0.07351159157296726], [557.2022400999069, 0]]]], "name": "boot_server_from_volume_snapshot", "created_at": "2017-13-03T05:20:44", "additive_output": [], "sla": [{"criterion": "max_avg_duration", "detail": "Average duration of one iteration 204.54s <= 180.00s - Failed", "success": false}, {"criterion": "failure_rate", "detail": "Failure rate criteria 0.00% <= 10.75% <= 0.00% - Failed", "success": false}, {"criterion": "aborted_on_sla", "detail": "Task was aborted due to SLA failure(s).", "success": false}]}];
+
+      $scope.location = {
+        /* #/path/hash/sub/div */
+        normalize: function(str) {
+          /* Remove unwanted characters from string */
+          if (typeof str !== "string") { return "" }
+          return str.replace(/[^\w\-\.]/g, "")
+        },
+        uri: function(obj) {
+          /* Getter/Setter */
+          if (! obj) {
+            var uri = {path: "", hash: "", sub: "", div: ""};
+            var arr = ["div", "sub", "hash", "path"];
+            angular.forEach($location.url().split("/"), function(value){
+              var v = $scope.location.normalize(value);
+              if (v) { var k = arr.pop(); if (k) { this[k] = v }}
+            }, uri);
+            return uri
+          }
+          var arr = [obj.path, obj.hash, obj.sub, obj.div], res = [];
+          for (var i in arr) { if (! arr[i]) { break }; res.push(arr[i]) }
+          return $location.url("/" + res.join("/"))
+        },
+        path: function(path, hash) {
+          /* Getter/Setter */
+          if (path === "") { return this.uri({}) }
+          path = this.normalize(path);
+          var uri = this.uri();
+          if (! path) { return uri.path }
+          uri.path = path;
+          var _hash = this.normalize(hash);
+          if (_hash || hash === "") { uri.hash = _hash }
+          return this.uri(uri)
+        },
+        hash: function(hash) {
+          /* Getter/Setter */
+          if (hash) { this.uri({path:this.uri().path, hash:hash}) }
+          return this.uri().hash
+        }
+      }
+
+      /* Dispatch */
+
+      $scope.route = function(uri) {
+        if (! $scope.scenarios_map) { return }
+
+        // Expand menu if there is only one menu group
+        if ($scope.nav.length === 1) {
+          $scope.nav_idx = $scope.nav[0].idx;
+        }
+
+        if (uri.path in $scope.scenarios_map) {
+          $scope.view = {is_scenario:true};
+          $scope.scenario = $scope.scenarios_map[uri.path];
+          $scope.nav_idx = $scope.nav_map[uri.path];
+          if ($scope.scenario.iterations.histogram.views.length) {
+            $scope.mainHistogram = $scope.scenario.iterations.histogram.views[0]
+          }
+          if ($scope.scenario.atomic.histogram.views.length) {
+            $scope.atomicHistogram = $scope.scenario.atomic.histogram.views[0]
+          }
+          $scope.outputIteration = 0;
+          $scope.showTab(uri);
+        } else {
+          $scope.scenario = null;
+          if (uri.path === "source") {
+            $scope.view = {is_source:true}
+          } else {
+            $scope.view = {is_main:true}
+          }
+        }
+      }
+
+      $scope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
+        $scope.route($scope.location.uri())
+      });
+
+      $scope.showNav = function(nav_idx) { $scope.nav_idx = nav_idx }
+
+      /* Tabs */
+
+      $scope.tabs = [
+        {
+          id: "overview",
+          name: "Overview",
+          visible: function(){ return !! $scope.scenario.iterations.pie.length }
+        },{
+          id: "details",
+          name: "Details",
+          visible: function(){ return !! $scope.scenario.atomic.pie.length }
+        },{
+          id: "output",
+          name: "Scenario Data",
+          visible: function(){ return $scope.scenario.has_output }
+        },{
+          id: "hooks",
+          name: "Hooks",
+          visible: function(){ return $scope.scenario.hooks.length }
+        },{
+          id: "failures",
+          name: "Failures",
+          visible: function(){ return !! $scope.scenario.errors.length }
+        },{
+          id: "task",
+          name: "Input task",
+          visible: function(){ return !! $scope.scenario.config }
+        }
+      ];
+      $scope.tabs_map = {};
+      angular.forEach($scope.tabs,
+                      function(tab){ this[tab.id] = tab }, $scope.tabs_map);
+
+      $scope.showTab = function(uri) {
+        $scope.tab = uri.hash in $scope.tabs_map ? uri.hash : "overview";
+        if (uri.hash === "output") {
+          if (typeof $scope.scenario.output === "undefined") {
+            var has_additive = !! $scope.scenario.additive_output.length;
+            var has_complete = !! ($scope.scenario.complete_output.length
+                                   && $scope.scenario.complete_output[0].length);
+            $scope.scenario.output = {
+              has_additive: has_additive,
+              has_complete: has_complete,
+              length: has_additive + has_complete,
+              active: has_additive ? "additive" : (has_complete ? "complete" : "")
+            }
+          }
+          if (uri.sub && $scope.scenario.output["has_" + uri.sub]) {
+            $scope.scenario.output.active = uri.sub
+          }
+        }
+        else if (uri.hash === "hooks") {
+          if ($scope.scenario.hooks.length) {
+            var hook_idx = parseInt(uri.sub);
+
+            if (isNaN(hook_idx) || ($scope.scenario.hooks.length - hook_idx) <= 0) {
+              hook_idx = 0
+            }
+
+            if ($scope.scenario.hook_idx === hook_idx) {
+              return
+            }
+
+            $scope.scenario.hooks.cur = $scope.scenario.hooks[hook_idx];
+            $scope.scenario.hook_idx = hook_idx;
+            if (typeof $scope.scenario.hooks.cur.active === "undefined") {
+              if ($scope.scenario.hooks.cur.additive.length) {
+                $scope.scenario.hooks.cur.active = "additive"
+              }
+              if ($scope.scenario.hooks.cur.complete.length) {
+                if (typeof $scope.scenario.hooks.cur.active === "undefined") {
+                  $scope.scenario.hooks.cur.active = "complete"
+                }
+                $scope.set_hook_run()
+              }
+            }
+          }
+        }
+      }
+
+      for (var i in $scope.tabs) {
+        if ($scope.tabs[i].id === $scope.location.hash()) {
+          $scope.tab = $scope.tabs[i].id
+        }
+        $scope.tabs[i].isVisible = function() {
+          if ($scope.scenario) {
+            if (this.visible()) { return true }
+            /* If tab should be hidden but is selected - show another one */
+            if (this.id === $scope.location.hash()) {
+              for (var i in $scope.tabs) {
+                var tab = $scope.tabs[i];
+                if (tab.id != this.id && tab.visible()) {
+                  $scope.tab = tab.id;
+                  return false
+                }
+              }
+            }
+          }
+          return false
+        }
+      }
+
+      $scope.set_hook_run = function(idx) {
+        if (typeof idx !== "undefined") {
+          $scope.scenario.hooks.cur.run_idx = idx
+        }
+        else if (typeof $scope.scenario.hooks.cur.run_idx === "undefined") {
+          $scope.scenario.hooks.cur.run_idx = 0
+        }
+        idx = $scope.scenario.hooks.cur.run_idx;
+        if (($scope.scenario.hooks.cur.complete.length - idx) > 0) {
+          $scope.scenario.hooks.cur.run = $scope.scenario.hooks.cur.complete[idx]
+        }
+      }
+
+      $scope.complete_hooks_as_dropdown = function() {
+        return $scope.scenario.hooks.cur.complete.length > 10
+      }
+
+      /* Other helpers */
+
+      $scope.showError = function(message) {
+          return (function (e) {
+            e.style.display = "block";
+            e.textContent = message
+          })(document.getElementById("page-error"))
+      }
+
+      $scope.compact_atomics = function() {
+        return ($scope.scenario && $scope.scenario.atomic.iter.length < 9)
+      }
+
+      /* Initialization */
+
+      angular.element(document).ready(function(){
+        if (! $scope.scenarios.length) {
+          return $scope.showError("No data...")
+        }
+
+        /* Compose data mapping */
+
+        $scope.nav = [];
+        $scope.nav_map = {};
+        $scope.scenarios_map = {};
+        var met = [], itr = 0, cls_idx = 0;
+        var prev_cls, prev_met;
+
+        for (var idx in $scope.scenarios) {
+          var sc = $scope.scenarios[idx];
+          if (! prev_cls) {
+            prev_cls = sc.cls
+          }
+          else if (prev_cls !== sc.cls) {
+            $scope.nav.push({cls:prev_cls, met:met, idx:cls_idx});
+            prev_cls = sc.cls;
+            met = [];
+            itr = 1;
+            cls_idx += 1
+          }
+
+          if (prev_met !== sc.met) { itr = 1 };
+          sc.ref = $scope.location.normalize(sc.cls+"."+sc.met+(itr > 1 ? "-"+itr : ""));
+          $scope.scenarios_map[sc.ref] = sc;
+          $scope.nav_map[sc.ref] = cls_idx;
+          met.push({name:sc.name, itr:itr, idx:idx, ref:sc.ref});
+          prev_met = sc.met;
+          itr += 1;
+        }
+
+        if (met.length) {
+          $scope.nav.push({cls:prev_cls, met:met, idx:cls_idx})
+        }
+
+        /* Start */
+
+        var uri = $scope.location.uri();
+        uri.path = $scope.location.path();
+        $scope.route(uri);
+        $scope.$digest()
+      })
+    };
+
+    if (typeof angular === "object") {
+      angular.module("App", [])
+        .controller("Controller", ["$scope", "$location", controllerFunction])
+        .directive("widget", widgetDirective)
+    }
+
+
+</script>
+  <style>
+    body { margin:0; padding:0 0 50px; font-size:14px; font-family:Helvetica,Arial,sans-serif }
+    a, a:active, a:focus, a:visited { text-decoration:none; outline:none }
+    p { margin:0; padding:5px 0 }
+    p.thesis { padding:10px 0 }
+    h1 { color:#666; margin:0 0 20px; font-size:30px; font-weight:normal }
+    h2, .h2 { color:#666; margin:24px 0 6px; font-size:25px; font-weight:normal }
+    h3, .h3 { color:#777; margin:12px 0 4px; font-size:18px; font-weight:normal }
+    table { border-collapse:collapse; border-spacing:0; width:100%; font-size:12px; margin:0 0 10px }
+    table th { text-align:left; padding:8px; color:#000; border:2px solid #ddd; border-width:0 0 2px 0 }
+    table th.sortable { cursor:pointer }
+    table td { text-align:left; border-top:1px solid #ddd; padding:8px; color:#333 }
+    table.compact td { padding:4px 8px }
+    table.striped tr:nth-child(odd) td { background:#f9f9f9 }
+    table.linked tbody tr:hover { background:#f9f9f9; cursor:pointer }
+    .pointer { cursor:pointer }
+    .rich, .rich td { font-weight:bold }
+    .code { padding:10px; font-size:13px; color:#333; background:#f6f6f6; border:1px solid #e5e5e5; border-radius:4px }
+
+    .header { text-align:left; background:#333; font-size:18px; padding:13px 0; margin-bottom:20px; color:#fff; background-image:linear-gradient(to bottom, #444 0px, #222 100%) }
+    .header a, .header a:visited, .header a:focus { color:#999 }
+
+    .notify-error { padding:5px 10px; background:#fee; color:red }
+    .status-skip, .status-skip td { color:grey }
+    .status-pass, .status-pass td { color:green }
+    .status-fail, .status-fail td { color:red }
+    .capitalize { text-transform:capitalize }
+    
+    .aside { margin:0 20px 0 0; display:block; width:255px; float:left }
+    .aside > div { margin-bottom: 15px }
+    .aside > div div:first-child { border-top-left-radius:4px; border-top-right-radius:4px }
+    .aside > div div:last-child { border-bottom-left-radius:4px; border-bottom-right-radius:4px }
+    .navcls { color:#678; background:#eee; border:1px solid #ddd; margin-bottom:-1px; display:block; padding:8px 9px; font-weight:bold; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:pointer }
+    .navcls.expanded { color:#469 }
+    .navcls.active { background:#428bca; background-image:linear-gradient(to bottom, #428bca 0px, #3278b3 100%); border-color:#3278b3; color:#fff }
+    .navmet { color:#555; background:#fff; border:1px solid #ddd; font-size:12px; display:block; margin-bottom:-1px; padding:8px 10px; text-align:left; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; cursor:pointer }
+    .navmet:hover { background:#f8f8f8 }
+    .navmet.active, .navmet.active:hover { background:#428bca; background-image:linear-gradient(to bottom, #428bca 0px, #3278b3 100%); border-color:#3278b3; color:#fff }
+
+    .buttn { color:#555; background:#fff; border:1px solid #ddd; border-radius:5px; font-size:12px; margin-bottom:-1px; padding:5px 7px; text-align:left; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; cursor:pointer }
+    .buttn:hover { background:#f8f8f8 }
+    .buttn.active, .bttn.active:hover { background:#428bca; background-image:linear-gradient(to bottom, #428bca 0px, #3278b3 100%); border-color:#3278b3; color:#fff; cursor:default }
+
+    .tabs { list-style:outside none none; margin:0 0 5px; padding:0; border-bottom:1px solid #ddd }
+    .tabs:after { clear:both }
+    .tabs li { float:left; margin-bottom:-1px; display:block; position:relative }
+    .tabs li div { border:1px solid transparent; border-radius:4px 4px 0 0; line-height:20px; margin-right:2px; padding:10px 15px; color:#428bca }
+    .tabs li div:hover { border-color:#eee #eee #ddd; background:#eee; cursor:pointer; }
+    .tabs li.active div { background:#fff; border-color:#ddd #ddd transparent; border-style:solid; border-width:1px; color:#555; cursor:default }
+    .failure-mesg { color:#900 }
+    .failure-trace { color:#333; white-space:pre; overflow:auto }
+
+    .link { color:#428BCA; padding:5px 15px 5px 5px; text-decoration:underline; cursor:pointer }
+    .link.active { color:#333; text-decoration:none; cursor:default }
+
+    .chart { padding:0; margin:0; width:890px }
+    .chart svg { height:300px; padding:0; margin:0; overflow:visible; float:right }
+    .chart.lower svg { height:180px }
+    .chart-label-y { font-size:12px; position:relative; top:5px; padding:0; margin:0 }
+
+    .expandable { cursor:pointer }
+    .clearfix { clear:both }
+    .sortable > .arrow { display:inline-block; width:12px; height:inherit; color:#c90 }
+    .content-main { margin:0 5px; display:block; float:left }
+
+    .content-wrap {  margin:0 auto; padding:0 5px;  }
+    
+    @media only screen and (min-width: 320px)  { .content-wrap { width:900px  } .content-main { width:600px } }
+    @media only screen and (min-width: 900px)  { .content-wrap { width:880px  } .content-main { width:590px } }
+    @media only screen and (min-width: 1000px) { .content-wrap { width:980px  } .content-main { width:690px } }
+    @media only screen and (min-width: 1100px) { .content-wrap { width:1080px } .content-main { width:790px } }
+    @media only screen and (min-width: 1200px) { .content-wrap { width:1180px } .content-main { width:890px } }
+
+  </style>
+</head>
+<body ng-controller="Controller">
+
+  <div class="header" id="page-header">
+    <div class="content-wrap">
+      <a href="https://github.com/openstack/rally">Rally</a>&nbsp;
+      <span>task results</span>
+    </div>
+  </div>
+
+  <div class="content-wrap" id="page-content">
+    
+
+    <p id="page-error" class="notify-error" style="display:none"></p>
+
+    <div id="content-nav" class="aside" ng-show="scenarios.length" ng-cloack>
+      <div>
+        <div class="navcls"
+             ng-class="{active:view.is_main}"
+             ng-click="location.path('')">Task overview</div>
+        <div class="navcls"
+             ng-class="{active:view.is_source}"
+             ng-click="location.path('source', '')">Input file</div>
+      </div>
+      <div>
+        <div class="navcls" title="{{n.cls}}"
+             ng-repeat-start="n in nav track by $index"
+             ng-click="showNav(n.idx)"
+             ng-class="{expanded:n.idx==nav_idx}">
+                <span ng-hide="n.idx==nav_idx">&#9658;</span>
+                <span ng-show="n.idx==nav_idx">&#9660;</span>
+                {{n.cls}}</div>
+        <div class="navmet" title="{{m.name}}"
+             ng-show="n.idx==nav_idx"
+             ng-class="{active:m.ref==scenario.ref}"
+             ng-click="location.path(m.ref)"
+             ng-repeat="m in n.met track by $index"
+             ng-repeat-end>{{m.name}}</div>
+      </div>
+    </div>
+
+    <div id="content-main" class="content-main" ng-show="scenarios.length" ng-cloak>
+
+      <div ng-show="view.is_main">
+        <h1>Task overview</h1>
+        <table class="linked compact"
+               ng-init="ov_srt='ref'; ov_dir=false">
+          <thead>
+            <tr>
+              <th class="sortable"
+                  title="Scenario name, with optional suffix of call number"
+                  ng-click="ov_srt='ref'; ov_dir=!ov_dir">
+                Scenario
+                <span class="arrow">
+                  <b ng-show="ov_srt=='ref' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='ref' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable"
+                  title="How long the scenario run, without context duration"
+                  ng-click="ov_srt='load_duration'; ov_dir=!ov_dir">
+                Load duration (s)
+                <span class="arrow">
+                  <b ng-show="ov_srt=='load_duration' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='load_duration' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable"
+                  title="Scenario duration plus context duration"
+                  ng-click="ov_srt='full_duration'; ov_dir=!ov_dir">
+                Full duration (s)
+                <span class="arrow">
+                  <b ng-show="ov_srt=='full_duration' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='full_duration' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Number of iterations"
+                  ng-click="ov_srt='iterations_count'; ov_dir=!ov_dir">
+                Iterations
+                <span class="arrow">
+                  <b ng-show="ov_srt=='iterations_count' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='iterations_count' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Scenario runner type"
+                  ng-click="ov_srt='runner'; ov_dir=!ov_dir">
+                Runner
+                <span class="arrow">
+                  <b ng-show="ov_srt=='runner' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='runner' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Number of errors occurred"
+                  ng-click="ov_srt='errors.length'; ov_dir=!ov_dir">
+                Errors
+                <span class="arrow">
+                  <b ng-show="ov_srt=='errors.length' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='errors.length' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Number of hooks"
+                  ng-click="ov_srt='hooks.length'; ov_dir=!ov_dir">
+                Hooks
+                <span class="arrow">
+                  <b ng-show="ov_srt=='hooks.length' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='hooks.length' && ov_dir">&#x25be;</b>
+                </span>
+              <th class="sortable" title="Whether SLA check is successful"
+                  ng-click="ov_srt='sla_success'; ov_dir=!ov_dir">
+                Success (SLA)
+                <span class="arrow">
+                  <b ng-show="ov_srt=='sla_success' && !ov_dir">&#x25b4;</b>
+                  <b ng-show="ov_srt=='sla_success' && ov_dir">&#x25be;</b>
+                </span>
+            <tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sc in scenarios | orderBy:ov_srt:ov_dir"
+                ng-click="location.path(sc.ref)">
+              <td>{{sc.ref}}
+              <td>{{sc.load_duration | number:3}}
+              <td>{{sc.full_duration | number:3}}
+              <td>{{sc.iterations_count}}
+              <td>{{sc.runner}}
+              <td>{{sc.errors.length}}
+              <td>{{sc.hooks.length}}
+              <td>
+                <span ng-show="sc.sla_success" class="status-pass">&#x2714;</span>
+                <span ng-hide="sc.sla_success" class="status-fail">&#x2716;</span>
+            <tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div ng-show="view.is_source">
+        <h1>Input file</h1>
+        <pre class="code">{{source}}</pre>
+      </div>
+
+      <div ng-show="view.is_scenario">
+        <h1>{{scenario.cls}}.<wbr>{{scenario.name}} ({{scenario.full_duration | number:3}}s)</h1>
+        <ul class="tabs">
+          <li ng-repeat="t in tabs"
+              ng-show="t.isVisible()"
+              ng-class="{active:t.id == tab}"
+              ng-click="location.hash(t.id)">
+            <div>{{t.name}}</div>
+          </li>
+          <div class="clearfix"></div>
+        </ul>
+        <div ng-include="tab"></div>
+
+        <script type="text/ng-template" id="overview">
+          <p class="thesis">
+            Load duration: <b>{{scenario.load_duration | number:3}} s</b> &nbsp;
+            Full duration: <b>{{scenario.full_duration | number:3}} s</b> &nbsp;
+            Iterations: <b>{{scenario.iterations_count}}</b> &nbsp;
+            Failures: <b>{{scenario.errors.length}}</b> &nbsp;
+            Started at: <b>{{scenario.created_at}}</b>
+          </p>
+
+          <div ng-show="scenario.sla.length">
+            <h2>Service-level agreement</h2>
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>Criterion
+                  <th>Detail
+                  <th>Success
+                <tr>
+              </thead>
+              <tbody>
+                <tr class="rich"
+                    ng-repeat="row in scenario.sla track by $index"
+                    ng-class="{'status-fail':!row.success, 'status-pass':row.success}">
+                  <td>{{row.criterion}}
+                  <td>{{row.detail}}
+                  <td class="capitalize">{{row.success}}
+                <tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div widget="Table"
+               data="scenario.table"
+               lastrow-class="rich"
+               title="Total durations">
+          </div>
+
+          <div widget="StackedArea"
+               data="scenario.iterations.iter"
+               name-x="Iteration sequence number"
+               controls="true"
+               guide="true">
+          </div>
+
+          <div widget="StackedArea"
+               data="scenario.load_profile"
+               title="Load Profile"
+               title-class="h3"
+               name-x="Timeline (seconds)"
+               format-y="d"
+               format-x=",.2f"
+               class="lower">
+          </div>
+
+          <div widget="Pie"
+               data="scenario.iterations.pie"
+               title="Distribution"
+               title-class="h3"
+               style="float:left; width:40%; margin-top:15px">
+          </div>
+
+          <div widget="Histogram"
+               ng-if="scenario.iterations.histogram.data.length"
+               data="scenario.iterations.histogram.data[mainHistogram.id]"
+               style="float:left; width:59%; margin-top:15px; position:relative; top:40px">
+          </div>
+
+          <select ng-model="mainHistogram"
+                  ng-show="scenario.iterations.histogram.data.length"
+                  ng-options="i.name for i in scenario.iterations.histogram.views track by i.id"
+                  style="float:right; margin:45px 35px 0">
+          </select>
+
+          <div class="clearfix"></div>
+
+        </script>
+
+        <script type="text/ng-template" id="details">
+
+          <div widget="StackedArea"
+               data="scenario.atomic.iter"
+               title="Atomic Action Durations"
+               name-x="Iteration sequence number"
+               controls="true"
+               guide="true">
+          </div>
+
+          <div widget="Pie"
+               data="scenario.atomic.pie"
+               title="Distribution"
+               title-class="h3"
+               style="float:left; margin-top:15px"
+               ng-style="compact_atomics() ? {width:'40%'} : {}">
+          </div>
+
+          <div widget="Histogram" data="scenario.atomic.histogram.data[atomicHistogram.id]"
+               ng-if="scenario.atomic.histogram.data.length"
+               style="float:left; position:relative; top:40px"
+               ng-style="compact_atomics() ? {width:'59%', 'margin-top':'15px'} : {}">
+          </div>
+
+          <select ng-show="scenario.atomic.histogram.data.length"
+                  ng-model="atomicHistogram"
+                  ng-options="i.name for i in scenario.atomic.histogram.views track by i.id"
+                  style="float:right; margin:45px 35px 0">
+          </select>
+
+          <div class="clearfix"></div>
+
+        </script>
+
+        <script type="text/ng-template" id="output">
+
+          <div style="padding:10px 0 0">
+            <span class="link"
+                  ng-click="location.hash('output/additive')"
+                  ng-class="{active:scenario.output.active === 'additive'}"
+                  ng-if="scenario.output.has_additive">Aggregated</span>
+            <span class="link"
+                  ng-click="location.hash('output/complete')"
+                  ng-class="{active:scenario.output.active === 'complete'}"
+                  ng-if="scenario.output.has_complete">Per iteration</span>
+          </div>
+
+          <div ng-repeat="chart in scenario.additive_output"
+               ng-if="scenario.output.active === 'additive'">
+            <div widget="{{chart.widget}}"
+                 title="{{chart.title}}"
+                 description="{{chart.description}}"
+                 name-x="{{chart.axis_label}}"
+                 name-y="{{chart.label}}"
+                 data="chart.data">
+            </div>
+          </div>
+
+          <div ng-if="scenario.output.active === 'complete'" style="padding:10px 0 0">
+            <select ng-model="outputIteration">
+              <option ng-repeat="i in scenario.complete_output track by $index"
+                      value="{{$index}}">
+                Iteration {{$index}}
+            </select>
+
+            <div ng-repeat="chart in scenario.complete_output[outputIteration]">
+              <div widget="{{chart.widget}}"
+                   title="{{chart.title}}"
+                   description="{{chart.description}}"
+                   name-x="{{chart.axis_label}}"
+                   name-y="{{chart.label}}"
+                   data="chart.data">
+              </div>
+            </div>
+          </div>
+        </script>
+
+        <script type="text/ng-template" id="hooks">
+
+          <div style="padding:15px 0">
+            <span ng-repeat="h in scenario.hooks track by $index"
+                  class="buttn"
+                  title="{{h.desc}}"
+                  style="margin:0 10px 0 0"
+                  ng-click="location.hash('hooks/'+$index)"
+                  ng-class="{active:scenario.hook_idx===$index}">
+              {{h.name}}
+            </span>
+          </div>
+
+          <table class="striped" style="margin:5px 0 25px">
+            <thead>
+              <tr>
+                <th>Plugin
+                <th>Description
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{scenario.hooks.cur.name}}
+                <td>{{scenario.hooks.cur.desc}}
+            </tbody>
+          </table>
+
+          <div>
+            <span class="link"
+                  ng-click="scenario.hooks.cur.active = 'additive'"
+                  ng-class="{active:scenario.hooks.cur.active === 'additive'}"
+                  ng-if="scenario.hooks.cur.additive.length">Aggregated</span>
+            <span class="link"
+                  ng-click="scenario.hooks.cur.active = 'complete'"
+                  ng-class="{active:scenario.hooks.cur.active === 'complete'}"
+                  ng-if="scenario.hooks.cur.complete.length">Per hook run</span>
+          </div>
+
+          <div ng-repeat="chart in scenario.hooks.cur.additive"
+               ng-if="scenario.hooks.cur.active === 'additive'">
+            <div widget="{{chart.widget}}"
+                 title="{{chart.title}}"
+                 description="{{chart.description}}"
+                 name-x="{{chart.axis_label}}"
+                 name-y="{{chart.label}}"
+                 data="chart.data">
+            </div>
+          </div>
+
+          <div ng-if="scenario.hooks.cur.active === 'complete'" style="padding:10px 0 0">
+
+            <select ng-if="complete_hooks_as_dropdown()"
+                    ng-model="scenario.hooks.cur.run_idx"
+                    ng-change="set_hook_run()">
+              <option ng-repeat="h in scenario.hooks.cur.complete track by $index"
+                      ng-selected="scenario.hooks.cur.run_idx == $index"
+                      value="{{$index}}">
+                {{h.triggered_by}}
+            </select>
+
+            <div ng-if="! complete_hooks_as_dropdown()"
+                 style="border:#ccc solid; border-width:1px 0 0; padding:5px 0 0">
+              <span ng-repeat="h in scenario.hooks.cur.complete track by $index"
+                    class="link"
+                    ng-class="{active:scenario.hooks.cur.run_idx == $index}"
+                    ng-click="set_hook_run($index)">
+                {{h.triggered_by}}
+              </span>
+            </div>
+
+            <table class="striped" style="margin:15px 0 15px">
+              <thead>
+                <tr>
+                  <th>Status
+                  <th>Triggered by
+                  <th>Started at
+                  <th>Finished at
+              </thead>
+              <tbody>
+                <tr>
+                  <td ng-style="scenario.hooks.cur.run.status === 'success' ? {color:'green'} : {color:'red'}">
+                    <b>{{scenario.hooks.cur.run.status}}</b>
+                  <td>{{scenario.hooks.cur.run.triggered_by}}
+                  <td>{{scenario.hooks.cur.run.started_at}}
+                  <td>{{scenario.hooks.cur.run.finished_at}}
+              </tbody>
+            </table>
+
+            <div ng-repeat="chart in scenario.hooks.cur.run.charts">
+              <div widget="{{chart.widget}}"
+                   title="{{chart.title}}"
+                   description="{{chart.description}}"
+                   name-x="{{chart.axis_label}}"
+                   name-y="{{chart.label}}"
+                   data="chart.data">
+              </div>
+            </div>
+          </div>
+        </script>
+
+        <script type="text/ng-template" id="failures">
+          <h2>Task failures (<ng-pluralize
+            count="scenario.errors.length"
+            when="{'1': '1 iteration', 'other': '{} iterations'}"></ng-pluralize> failed)
+          </h2>
+          <table class="striped">
+            <thead>
+              <tr>
+                <th>
+                <th>Iteration
+                <th>Exception type
+                <th>Exception message
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="expandable"
+                  ng-repeat-start="i in scenario.errors track by $index"
+                  ng-click="i.expanded = ! i.expanded">
+                <td>
+                  <span ng-hide="i.expanded">&#9658;</span>
+                  <span ng-show="i.expanded">&#9660;</span>
+                <td>{{i.iteration}}
+                <td>{{i.type}}
+                <td class="failure-mesg">{{i.message}}
+              </tr>
+              <tr ng-show="i.expanded" ng-repeat-end>
+                <td colspan="4" class="failure-trace">{{i.traceback}}
+              </tr>
+            </tbody>
+          </table>
+        </script>
+
+        <script type="text/ng-template" id="task">
+          <h2>Subtask Configuration</h2>
+          <pre class="code">{{scenario.config}}</pre>
+        </script>
+      </div>
+
+    </div>
+    <div class="clearfix"></div>
+
+
+  </div>
+
+  <script type="text/javascript">
+    if (! window.angular) {(function(f){
+      f(document.getElementById("content-nav"), "none");
+      f(document.getElementById("content-main"), "none");
+      f(document.getElementById("page-error"), "block").textContent = "Failed to load AngularJS framework"
+    })(function(e, s){e.style.display = s; return e})}
+</script>
+</body>
+</html>
