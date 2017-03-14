@@ -119,3 +119,73 @@
 - [2017-03-14 20:35:24 NovaServers.snapshot_server rps(300-0.2)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_203524)NovaServers.snapshot_server-rps(300-0.2)_FailRetry(3)-FAILED.html) `59` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-14 20:49:37 NovaServers.snapshot_server rps(300-0.1)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_204937)NovaServers.snapshot_server-rps(300-0.1)_PassRetry(1)-FAILED.html) `24` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+### NovaAggregates.create_aggregate_add_and_remove_host
+
+- [2017-03-14 21:14:25 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_211425)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-14 21:21:00 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_212100)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-14 21:24:57 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_212457)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-14 21:27:37 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-16)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_212737)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-16)-PASSED.html) `15` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-14 21:29:39 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-32)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_212939)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-32)-PASSED.html) `32` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-14 21:31:23 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-64)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_213123)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-64)-PASSED.html) `64` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-14 21:32:58 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-128)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_213258)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-128)-PASSED.html) `128` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-14 21:34:30 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-256)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_213430)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-256)-FAILED.html) `256` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:35:39 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-256)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_213539)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-256)_FailRetry(1)-FAILED.html) `256` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:36:49 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-256)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_213649)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-256)_FailRetry(2)-FAILED.html) `256` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:38:05 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-256)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_213805)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-256)_FailRetry(3)-FAILED.html) `256` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:39:13 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-192)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_213913)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-192)-PASSED.html) `192` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-14 21:40:46 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-224)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_214046)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-224)-FAILED.html) `224` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:42:13 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-224)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_214213)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-224)_FailRetry(1)-FAILED.html) `224` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:43:36 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-224)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_214336)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-224)_FailRetry(2)-FAILED.html) `224` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:45:09 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-224)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_214509)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-224)_FailRetry(3)-FAILED.html) `224` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:46:35 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-208)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_214635)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-208)-PASSED.html) `208` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-14 21:48:10 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-216)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_214810)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-216)-PASSED.html) `216` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-14 21:49:45 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-220)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_214945)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-220)-FAILED.html) `220` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:51:16 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-220)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_215116)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-220)_FailRetry(1)-FAILED.html) `220` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:52:39 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-220)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_215239)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-220)_FailRetry(2)-FAILED.html) `220` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:53:58 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-220)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_215358)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-220)_FailRetry(3)-FAILED.html) `220` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:55:09 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-218)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_215509)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-218)-FAILED.html) `218` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:56:29 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-218)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_215629)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-218)_FailRetry(1)-FAILED.html) `218` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:57:47 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-218)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_215747)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-218)_FailRetry(2)-FAILED.html) `218` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 21:59:06 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-218)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_215906)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-218)_FailRetry(3)-FAILED.html) `218` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 22:00:28 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-217)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_220028)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-217)-FAILED.html) `217` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 22:01:39 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-217)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_220139)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-217)_FailRetry(1)-FAILED.html) `217` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 22:02:53 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-217)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_220253)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-217)_FailRetry(2)-FAILED.html) `217` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 22:04:09 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-217)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_220409)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-217)_FailRetry(3)-FAILED.html) `217` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 22:05:20 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-216)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_220520)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-216)_PassRetry(1)-FAILED.html) `216` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 22:06:34 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-205)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_220634)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-205)_PassRetry(1)-FAILED.html) `205` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 22:08:00 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-194)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_220800)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-194)_PassRetry(1)-FAILED.html) `194` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-14 22:09:38 NovaAggregates.create_aggregate_add_and_remove_host constant(1000-184)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170314_220938)NovaAggregates.create_aggregate_add_and_remove_host-constant(1000-184)_PassRetry(1)-PASSED.html) `184` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
