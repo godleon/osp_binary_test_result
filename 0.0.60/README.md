@@ -755,3 +755,91 @@
 - [2017-03-15 04:26:31 NovaFlavors.create_and_list_flavor_access constant(1000-355)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_042631)NovaFlavors.create_and_list_flavor_access-constant(1000-355)_FailRetry(3)-FAILED.html) `355` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-15 04:27:06 NovaFlavors.create_and_list_flavor_access constant(1000-354)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_042706)NovaFlavors.create_and_list_flavor_access-constant(1000-354)_PassRetry(1)-PASSED.html) `354` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### NovaKeypair.create_and_list_keypairs
+
+- [2017-03-15 04:29:46 NovaKeypair.create_and_list_keypairs constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_042946)NovaKeypair.create_and_list_keypairs-constant(1000-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 04:36:57 NovaKeypair.create_and_list_keypairs constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_043657)NovaKeypair.create_and_list_keypairs-constant(1000-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 04:41:14 NovaKeypair.create_and_list_keypairs constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_044114)NovaKeypair.create_and_list_keypairs-constant(1000-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 04:44:07 NovaKeypair.create_and_list_keypairs constant(1000-16)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_044407)NovaKeypair.create_and_list_keypairs-constant(1000-16)-PASSED.html) `15` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 04:46:19 NovaKeypair.create_and_list_keypairs constant(1000-32)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_044619)NovaKeypair.create_and_list_keypairs-constant(1000-32)-PASSED.html) `32` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 04:48:12 NovaKeypair.create_and_list_keypairs constant(1000-64)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_044812)NovaKeypair.create_and_list_keypairs-constant(1000-64)-PASSED.html) `64` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 04:49:57 NovaKeypair.create_and_list_keypairs constant(1000-128)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_044957)NovaKeypair.create_and_list_keypairs-constant(1000-128)-PASSED.html) `128` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 04:51:39 NovaKeypair.create_and_list_keypairs constant(1000-256)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_045139)NovaKeypair.create_and_list_keypairs-constant(1000-256)-PASSED.html) `256` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 04:53:19 NovaKeypair.create_and_list_keypairs constant(1000-512)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_045319)NovaKeypair.create_and_list_keypairs-constant(1000-512)-FAILED.html) `512` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 04:54:54 NovaKeypair.create_and_list_keypairs constant(1000-512)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_045454)NovaKeypair.create_and_list_keypairs-constant(1000-512)_FailRetry(1)-FAILED.html) `512` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 04:56:30 NovaKeypair.create_and_list_keypairs constant(1000-512)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_045630)NovaKeypair.create_and_list_keypairs-constant(1000-512)_FailRetry(2)-FAILED.html) `512` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 04:58:09 NovaKeypair.create_and_list_keypairs constant(1000-512)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_045809)NovaKeypair.create_and_list_keypairs-constant(1000-512)_FailRetry(3)-FAILED.html) `512` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 04:59:45 NovaKeypair.create_and_list_keypairs constant(1000-384)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_045945)NovaKeypair.create_and_list_keypairs-constant(1000-384)-FAILED.html) `384` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:01:18 NovaKeypair.create_and_list_keypairs constant(1000-384)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_050118)NovaKeypair.create_and_list_keypairs-constant(1000-384)_FailRetry(1)-FAILED.html) `384` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:02:50 NovaKeypair.create_and_list_keypairs constant(1000-384)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_050250)NovaKeypair.create_and_list_keypairs-constant(1000-384)_FailRetry(2)-FAILED.html) `384` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:04:20 NovaKeypair.create_and_list_keypairs constant(1000-384)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_050420)NovaKeypair.create_and_list_keypairs-constant(1000-384)_FailRetry(3)-FAILED.html) `384` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:05:52 NovaKeypair.create_and_list_keypairs constant(1000-320)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_050552)NovaKeypair.create_and_list_keypairs-constant(1000-320)-FAILED.html) `320` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:07:22 NovaKeypair.create_and_list_keypairs constant(1000-320)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_050722)NovaKeypair.create_and_list_keypairs-constant(1000-320)_FailRetry(1)-FAILED.html) `320` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:08:59 NovaKeypair.create_and_list_keypairs constant(1000-320)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_050859)NovaKeypair.create_and_list_keypairs-constant(1000-320)_FailRetry(2)-FAILED.html) `320` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:10:27 NovaKeypair.create_and_list_keypairs constant(1000-320)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_051027)NovaKeypair.create_and_list_keypairs-constant(1000-320)_FailRetry(3)-FAILED.html) `320` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:11:57 NovaKeypair.create_and_list_keypairs constant(1000-288)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_051157)NovaKeypair.create_and_list_keypairs-constant(1000-288)-FAILED.html) `288` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:13:29 NovaKeypair.create_and_list_keypairs constant(1000-288)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_051329)NovaKeypair.create_and_list_keypairs-constant(1000-288)_FailRetry(1)-FAILED.html) `288` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:15:01 NovaKeypair.create_and_list_keypairs constant(1000-288)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_051501)NovaKeypair.create_and_list_keypairs-constant(1000-288)_FailRetry(2)-FAILED.html) `288` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:16:36 NovaKeypair.create_and_list_keypairs constant(1000-288)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_051636)NovaKeypair.create_and_list_keypairs-constant(1000-288)_FailRetry(3)-FAILED.html) `288` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:18:10 NovaKeypair.create_and_list_keypairs constant(1000-272)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_051810)NovaKeypair.create_and_list_keypairs-constant(1000-272)-PASSED.html) `272` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 05:19:51 NovaKeypair.create_and_list_keypairs constant(1000-280)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_051951)NovaKeypair.create_and_list_keypairs-constant(1000-280)-FAILED.html) `280` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:21:26 NovaKeypair.create_and_list_keypairs constant(1000-280)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_052126)NovaKeypair.create_and_list_keypairs-constant(1000-280)_FailRetry(1)-FAILED.html) `280` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:22:59 NovaKeypair.create_and_list_keypairs constant(1000-280)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_052259)NovaKeypair.create_and_list_keypairs-constant(1000-280)_FailRetry(2)-FAILED.html) `280` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:24:39 NovaKeypair.create_and_list_keypairs constant(1000-280)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_052439)NovaKeypair.create_and_list_keypairs-constant(1000-280)_FailRetry(3)-FAILED.html) `280` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:26:07 NovaKeypair.create_and_list_keypairs constant(1000-276)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_052607)NovaKeypair.create_and_list_keypairs-constant(1000-276)-FAILED.html) `276` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:27:47 NovaKeypair.create_and_list_keypairs constant(1000-276)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_052747)NovaKeypair.create_and_list_keypairs-constant(1000-276)_FailRetry(1)-FAILED.html) `276` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:29:18 NovaKeypair.create_and_list_keypairs constant(1000-276)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_052918)NovaKeypair.create_and_list_keypairs-constant(1000-276)_FailRetry(2)-FAILED.html) `276` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:30:59 NovaKeypair.create_and_list_keypairs constant(1000-276)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_053059)NovaKeypair.create_and_list_keypairs-constant(1000-276)_FailRetry(3)-FAILED.html) `276` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:32:39 NovaKeypair.create_and_list_keypairs constant(1000-274)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_053239)NovaKeypair.create_and_list_keypairs-constant(1000-274)-FAILED.html) `274` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:34:20 NovaKeypair.create_and_list_keypairs constant(1000-274)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_053420)NovaKeypair.create_and_list_keypairs-constant(1000-274)_FailRetry(1)-FAILED.html) `274` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:36:03 NovaKeypair.create_and_list_keypairs constant(1000-274)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_053603)NovaKeypair.create_and_list_keypairs-constant(1000-274)_FailRetry(2)-FAILED.html) `274` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:37:35 NovaKeypair.create_and_list_keypairs constant(1000-274)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_053735)NovaKeypair.create_and_list_keypairs-constant(1000-274)_FailRetry(3)-FAILED.html) `274` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:39:03 NovaKeypair.create_and_list_keypairs constant(1000-273)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_053903)NovaKeypair.create_and_list_keypairs-constant(1000-273)-FAILED.html) `273` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:40:37 NovaKeypair.create_and_list_keypairs constant(1000-273)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_054037)NovaKeypair.create_and_list_keypairs-constant(1000-273)_FailRetry(1)-FAILED.html) `273` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:42:20 NovaKeypair.create_and_list_keypairs constant(1000-273)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_054220)NovaKeypair.create_and_list_keypairs-constant(1000-273)_FailRetry(2)-FAILED.html) `273` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:44:02 NovaKeypair.create_and_list_keypairs constant(1000-273)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_054402)NovaKeypair.create_and_list_keypairs-constant(1000-273)_FailRetry(3)-FAILED.html) `273` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:45:37 NovaKeypair.create_and_list_keypairs constant(1000-272)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_054537)NovaKeypair.create_and_list_keypairs-constant(1000-272)_PassRetry(1)-FAILED.html) `272` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 05:47:16 NovaKeypair.create_and_list_keypairs constant(1000-258)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_054716)NovaKeypair.create_and_list_keypairs-constant(1000-258)_PassRetry(1)-PASSED.html) `258` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
