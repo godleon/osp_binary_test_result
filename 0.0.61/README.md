@@ -503,3 +503,81 @@
 - [2017-03-15 14:06:06 NovaHypervisors.list_and_search_hypervisors constant(1000-303)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_140606)NovaHypervisors.list_and_search_hypervisors-constant(1000-303)_PassRetry(1)-FAILED.html) `303` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
 
 - [2017-03-15 14:06:47 NovaHypervisors.list_and_search_hypervisors constant(1000-287)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_140647)NovaHypervisors.list_and_search_hypervisors-constant(1000-287)_PassRetry(1)-PASSED.html) `287` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+### NovaAvailabilityZones.list_availability_zones
+
+- [2017-03-15 14:11:00 NovaAvailabilityZones.list_availability_zones constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_141100)NovaAvailabilityZones.list_availability_zones-constant(1000-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 14:15:52 NovaAvailabilityZones.list_availability_zones constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_141552)NovaAvailabilityZones.list_availability_zones-constant(1000-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 14:18:27 NovaAvailabilityZones.list_availability_zones constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_141827)NovaAvailabilityZones.list_availability_zones-constant(1000-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 14:19:55 NovaAvailabilityZones.list_availability_zones constant(1000-16)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_141955)NovaAvailabilityZones.list_availability_zones-constant(1000-16)-PASSED.html) `15` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 14:20:54 NovaAvailabilityZones.list_availability_zones constant(1000-32)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142054)NovaAvailabilityZones.list_availability_zones-constant(1000-32)-PASSED.html) `32` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 14:21:36 NovaAvailabilityZones.list_availability_zones constant(1000-64)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142136)NovaAvailabilityZones.list_availability_zones-constant(1000-64)-PASSED.html) `64` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 14:22:10 NovaAvailabilityZones.list_availability_zones constant(1000-128)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142210)NovaAvailabilityZones.list_availability_zones-constant(1000-128)-PASSED.html) `128` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 14:22:42 NovaAvailabilityZones.list_availability_zones constant(1000-256)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142242)NovaAvailabilityZones.list_availability_zones-constant(1000-256)-PASSED.html) `256` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 14:23:14 NovaAvailabilityZones.list_availability_zones constant(1000-512)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142314)NovaAvailabilityZones.list_availability_zones-constant(1000-512)-FAILED.html) `511` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:23:46 NovaAvailabilityZones.list_availability_zones constant(1000-512)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142346)NovaAvailabilityZones.list_availability_zones-constant(1000-512)_FailRetry(1)-FAILED.html) `511` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:24:19 NovaAvailabilityZones.list_availability_zones constant(1000-512)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142419)NovaAvailabilityZones.list_availability_zones-constant(1000-512)_FailRetry(2)-FAILED.html) `512` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:24:51 NovaAvailabilityZones.list_availability_zones constant(1000-512)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142451)NovaAvailabilityZones.list_availability_zones-constant(1000-512)_FailRetry(3)-FAILED.html) `512` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:25:23 NovaAvailabilityZones.list_availability_zones constant(1000-384)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142523)NovaAvailabilityZones.list_availability_zones-constant(1000-384)-FAILED.html) `384` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:25:53 NovaAvailabilityZones.list_availability_zones constant(1000-384)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142553)NovaAvailabilityZones.list_availability_zones-constant(1000-384)_FailRetry(1)-FAILED.html) `384` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:26:23 NovaAvailabilityZones.list_availability_zones constant(1000-384)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142623)NovaAvailabilityZones.list_availability_zones-constant(1000-384)_FailRetry(2)-FAILED.html) `384` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:26:53 NovaAvailabilityZones.list_availability_zones constant(1000-384)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142653)NovaAvailabilityZones.list_availability_zones-constant(1000-384)_FailRetry(3)-FAILED.html) `384` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:27:23 NovaAvailabilityZones.list_availability_zones constant(1000-320)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142723)NovaAvailabilityZones.list_availability_zones-constant(1000-320)-FAILED.html) `320` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:27:56 NovaAvailabilityZones.list_availability_zones constant(1000-320)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142756)NovaAvailabilityZones.list_availability_zones-constant(1000-320)_FailRetry(1)-FAILED.html) `320` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:28:26 NovaAvailabilityZones.list_availability_zones constant(1000-320)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142826)NovaAvailabilityZones.list_availability_zones-constant(1000-320)_FailRetry(2)-FAILED.html) `320` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:28:58 NovaAvailabilityZones.list_availability_zones constant(1000-320)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142858)NovaAvailabilityZones.list_availability_zones-constant(1000-320)_FailRetry(3)-FAILED.html) `320` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:29:30 NovaAvailabilityZones.list_availability_zones constant(1000-288)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_142930)NovaAvailabilityZones.list_availability_zones-constant(1000-288)-PASSED.html) `288` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 14:30:02 NovaAvailabilityZones.list_availability_zones constant(1000-304)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143002)NovaAvailabilityZones.list_availability_zones-constant(1000-304)-PASSED.html) `304` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 14:30:35 NovaAvailabilityZones.list_availability_zones constant(1000-312)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143035)NovaAvailabilityZones.list_availability_zones-constant(1000-312)-PASSED.html) `312` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 14:31:07 NovaAvailabilityZones.list_availability_zones constant(1000-316)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143107)NovaAvailabilityZones.list_availability_zones-constant(1000-316)-FAILED.html) `316` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:31:37 NovaAvailabilityZones.list_availability_zones constant(1000-316)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143137)NovaAvailabilityZones.list_availability_zones-constant(1000-316)_FailRetry(1)-FAILED.html) `316` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:32:08 NovaAvailabilityZones.list_availability_zones constant(1000-316)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143208)NovaAvailabilityZones.list_availability_zones-constant(1000-316)_FailRetry(2)-FAILED.html) `316` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:32:41 NovaAvailabilityZones.list_availability_zones constant(1000-316)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143241)NovaAvailabilityZones.list_availability_zones-constant(1000-316)_FailRetry(3)-FAILED.html) `316` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:33:13 NovaAvailabilityZones.list_availability_zones constant(1000-314)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143313)NovaAvailabilityZones.list_availability_zones-constant(1000-314)-FAILED.html) `314` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:33:46 NovaAvailabilityZones.list_availability_zones constant(1000-314)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143346)NovaAvailabilityZones.list_availability_zones-constant(1000-314)_FailRetry(1)-FAILED.html) `314` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:34:16 NovaAvailabilityZones.list_availability_zones constant(1000-314)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143416)NovaAvailabilityZones.list_availability_zones-constant(1000-314)_FailRetry(2)-FAILED.html) `314` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:34:49 NovaAvailabilityZones.list_availability_zones constant(1000-314)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143449)NovaAvailabilityZones.list_availability_zones-constant(1000-314)_FailRetry(3)-FAILED.html) `314` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:35:21 NovaAvailabilityZones.list_availability_zones constant(1000-313)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143521)NovaAvailabilityZones.list_availability_zones-constant(1000-313)-FAILED.html) `313` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:35:54 NovaAvailabilityZones.list_availability_zones constant(1000-313)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143554)NovaAvailabilityZones.list_availability_zones-constant(1000-313)_FailRetry(1)-FAILED.html) `313` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:36:26 NovaAvailabilityZones.list_availability_zones constant(1000-313)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143626)NovaAvailabilityZones.list_availability_zones-constant(1000-313)_FailRetry(2)-FAILED.html) `313` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:36:59 NovaAvailabilityZones.list_availability_zones constant(1000-313)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143659)NovaAvailabilityZones.list_availability_zones-constant(1000-313)_FailRetry(3)-FAILED.html) `313` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:37:27 NovaAvailabilityZones.list_availability_zones constant(1000-312)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143727)NovaAvailabilityZones.list_availability_zones-constant(1000-312)_PassRetry(1)-FAILED.html) `312` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:38:00 NovaAvailabilityZones.list_availability_zones constant(1000-296)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143800)NovaAvailabilityZones.list_availability_zones-constant(1000-296)_PassRetry(1)-FAILED.html) `296` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 14:38:32 NovaAvailabilityZones.list_availability_zones constant(1000-281)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_143832)NovaAvailabilityZones.list_availability_zones-constant(1000-281)_PassRetry(1)-PASSED.html) `281` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
