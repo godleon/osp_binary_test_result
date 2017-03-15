@@ -519,3 +519,65 @@
 - [2017-03-15 01:33:51 NovaAggregates.create_and_get_aggregate_details constant(1000-291)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_013351)NovaAggregates.create_and_get_aggregate_details-constant(1000-291)_PassRetry(1)-FAILED.html) `291` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
 
 - [2017-03-15 01:35:30 NovaAggregates.create_and_get_aggregate_details constant(1000-276)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_013530)NovaAggregates.create_and_get_aggregate_details-constant(1000-276)_PassRetry(1)-PASSED.html) `276` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+### NovaFlavors.create_and_get_flavor
+
+- [2017-03-15 01:39:07 NovaFlavors.create_and_get_flavor constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_013907)NovaFlavors.create_and_get_flavor-constant(1000-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 01:44:50 NovaFlavors.create_and_get_flavor constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_014450)NovaFlavors.create_and_get_flavor-constant(1000-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 01:48:13 NovaFlavors.create_and_get_flavor constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_014813)NovaFlavors.create_and_get_flavor-constant(1000-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 01:50:34 NovaFlavors.create_and_get_flavor constant(1000-16)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_015034)NovaFlavors.create_and_get_flavor-constant(1000-16)-PASSED.html) `15` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 01:52:22 NovaFlavors.create_and_get_flavor constant(1000-32)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_015222)NovaFlavors.create_and_get_flavor-constant(1000-32)-PASSED.html) `32` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 01:53:58 NovaFlavors.create_and_get_flavor constant(1000-64)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_015358)NovaFlavors.create_and_get_flavor-constant(1000-64)-PASSED.html) `64` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 01:55:28 NovaFlavors.create_and_get_flavor constant(1000-128)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_015528)NovaFlavors.create_and_get_flavor-constant(1000-128)-PASSED.html) `128` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 01:56:54 NovaFlavors.create_and_get_flavor constant(1000-256)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_015654)NovaFlavors.create_and_get_flavor-constant(1000-256)-PASSED.html) `255` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 01:58:20 NovaFlavors.create_and_get_flavor constant(1000-512)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_015820)NovaFlavors.create_and_get_flavor-constant(1000-512)-FAILED.html) `511` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 01:59:48 NovaFlavors.create_and_get_flavor constant(1000-512)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_015948)NovaFlavors.create_and_get_flavor-constant(1000-512)_FailRetry(1)-FAILED.html) `511` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:01:17 NovaFlavors.create_and_get_flavor constant(1000-512)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_020117)NovaFlavors.create_and_get_flavor-constant(1000-512)_FailRetry(2)-FAILED.html) `511` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:02:45 NovaFlavors.create_and_get_flavor constant(1000-512)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_020245)NovaFlavors.create_and_get_flavor-constant(1000-512)_FailRetry(3)-FAILED.html) `511` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:04:14 NovaFlavors.create_and_get_flavor constant(1000-384)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_020414)NovaFlavors.create_and_get_flavor-constant(1000-384)-PASSED.html) `383` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 02:05:40 NovaFlavors.create_and_get_flavor constant(1000-448)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_020540)NovaFlavors.create_and_get_flavor-constant(1000-448)-FAILED.html) `447` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:07:09 NovaFlavors.create_and_get_flavor constant(1000-448)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_020709)NovaFlavors.create_and_get_flavor-constant(1000-448)_FailRetry(1)-FAILED.html) `447` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:08:36 NovaFlavors.create_and_get_flavor constant(1000-448)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_020836)NovaFlavors.create_and_get_flavor-constant(1000-448)_FailRetry(2)-FAILED.html) `447` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:10:02 NovaFlavors.create_and_get_flavor constant(1000-448)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_021002)NovaFlavors.create_and_get_flavor-constant(1000-448)_FailRetry(3)-FAILED.html) `447` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:11:31 NovaFlavors.create_and_get_flavor constant(1000-416)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_021131)NovaFlavors.create_and_get_flavor-constant(1000-416)-FAILED.html) `415` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:12:57 NovaFlavors.create_and_get_flavor constant(1000-416)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_021257)NovaFlavors.create_and_get_flavor-constant(1000-416)_FailRetry(1)-FAILED.html) `415` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:14:26 NovaFlavors.create_and_get_flavor constant(1000-416)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_021426)NovaFlavors.create_and_get_flavor-constant(1000-416)_FailRetry(2)-FAILED.html) `415` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:15:54 NovaFlavors.create_and_get_flavor constant(1000-416)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_021554)NovaFlavors.create_and_get_flavor-constant(1000-416)_FailRetry(3)-FAILED.html) `415` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:17:22 NovaFlavors.create_and_get_flavor constant(1000-400)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_021722)NovaFlavors.create_and_get_flavor-constant(1000-400)-PASSED.html) `399` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 02:18:51 NovaFlavors.create_and_get_flavor constant(1000-408)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_021851)NovaFlavors.create_and_get_flavor-constant(1000-408)-FAILED.html) `407` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:20:18 NovaFlavors.create_and_get_flavor constant(1000-408)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_022018)NovaFlavors.create_and_get_flavor-constant(1000-408)_FailRetry(1)-PASSED.html) `407` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 02:21:46 NovaFlavors.create_and_get_flavor constant(1000-412)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_022146)NovaFlavors.create_and_get_flavor-constant(1000-412)-PASSED.html) `411` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 02:23:14 NovaFlavors.create_and_get_flavor constant(1000-414)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_022314)NovaFlavors.create_and_get_flavor-constant(1000-414)-PASSED.html) `413` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 02:24:40 NovaFlavors.create_and_get_flavor constant(1000-415)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_022440)NovaFlavors.create_and_get_flavor-constant(1000-415)-FAILED.html) `414` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:26:08 NovaFlavors.create_and_get_flavor constant(1000-415)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_022608)NovaFlavors.create_and_get_flavor-constant(1000-415)_FailRetry(1)-FAILED.html) `414` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" \/>
+
+- [2017-03-15 02:27:34 NovaFlavors.create_and_get_flavor constant(1000-415)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_022734)NovaFlavors.create_and_get_flavor-constant(1000-415)_FailRetry(2)-PASSED.html) `414` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
+
+- [2017-03-15 02:29:00 NovaFlavors.create_and_get_flavor constant(1000-415)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.60/nova/(20170315_022900)NovaFlavors.create_and_get_flavor-constant(1000-415)_PassRetry(1)-PASSED.html) `414` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" \/>
