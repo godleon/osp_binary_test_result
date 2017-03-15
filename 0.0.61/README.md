@@ -221,3 +221,99 @@
 - [2017-03-15 11:34:23 NovaFlavors.create_flavor constant(1000-445)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_113423)NovaFlavors.create_flavor-constant(1000-445)_FailRetry(1)-PASSED.html) `444` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
 
 - [2017-03-15 11:35:48 NovaFlavors.create_flavor constant(1000-445)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_113548)NovaFlavors.create_flavor-constant(1000-445)_PassRetry(1)-PASSED.html) `444` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+### NovaAggregates.list_aggregates
+
+- [2017-03-15 11:39:26 NovaAggregates.list_aggregates constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_113926)NovaAggregates.list_aggregates-constant(1000-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 11:43:13 NovaAggregates.list_aggregates constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_114313)NovaAggregates.list_aggregates-constant(1000-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 11:45:13 NovaAggregates.list_aggregates constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_114513)NovaAggregates.list_aggregates-constant(1000-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 11:46:24 NovaAggregates.list_aggregates constant(1000-16)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_114624)NovaAggregates.list_aggregates-constant(1000-16)-PASSED.html) `15` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 11:47:11 NovaAggregates.list_aggregates constant(1000-32)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_114711)NovaAggregates.list_aggregates-constant(1000-32)-PASSED.html) `32` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 11:47:46 NovaAggregates.list_aggregates constant(1000-64)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_114746)NovaAggregates.list_aggregates-constant(1000-64)-PASSED.html) `64` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 11:48:16 NovaAggregates.list_aggregates constant(1000-128)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_114816)NovaAggregates.list_aggregates-constant(1000-128)-PASSED.html) `128` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 11:48:42 NovaAggregates.list_aggregates constant(1000-256)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_114842)NovaAggregates.list_aggregates-constant(1000-256)-PASSED.html) `256` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 11:49:09 NovaAggregates.list_aggregates constant(1000-512)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_114909)NovaAggregates.list_aggregates-constant(1000-512)-PASSED.html) `511` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 11:49:38 NovaAggregates.list_aggregates constant(1000-1000)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_114938)NovaAggregates.list_aggregates-constant(1000-1000)-FAILED.html) `998` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:50:07 NovaAggregates.list_aggregates constant(1000-1000)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115007)NovaAggregates.list_aggregates-constant(1000-1000)_FailRetry(1)-FAILED.html) `1000` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:50:33 NovaAggregates.list_aggregates constant(1000-1000)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115033)NovaAggregates.list_aggregates-constant(1000-1000)_FailRetry(2)-FAILED.html) `993` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:51:00 NovaAggregates.list_aggregates constant(1000-1000)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115100)NovaAggregates.list_aggregates-constant(1000-1000)_FailRetry(3)-FAILED.html) `999` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:51:29 NovaAggregates.list_aggregates constant(1000-756)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115129)NovaAggregates.list_aggregates-constant(1000-756)-FAILED.html) `756` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:51:56 NovaAggregates.list_aggregates constant(1000-756)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115156)NovaAggregates.list_aggregates-constant(1000-756)_FailRetry(1)-FAILED.html) `756` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:52:22 NovaAggregates.list_aggregates constant(1000-756)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115222)NovaAggregates.list_aggregates-constant(1000-756)_FailRetry(2)-FAILED.html) `756` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:52:49 NovaAggregates.list_aggregates constant(1000-756)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115249)NovaAggregates.list_aggregates-constant(1000-756)_FailRetry(3)-FAILED.html) `756` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:53:16 NovaAggregates.list_aggregates constant(1000-634)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115316)NovaAggregates.list_aggregates-constant(1000-634)-FAILED.html) `634` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:53:42 NovaAggregates.list_aggregates constant(1000-634)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115342)NovaAggregates.list_aggregates-constant(1000-634)_FailRetry(1)-FAILED.html) `633` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:54:09 NovaAggregates.list_aggregates constant(1000-634)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115409)NovaAggregates.list_aggregates-constant(1000-634)_FailRetry(2)-FAILED.html) `633` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:54:36 NovaAggregates.list_aggregates constant(1000-634)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115436)NovaAggregates.list_aggregates-constant(1000-634)_FailRetry(3)-FAILED.html) `634` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:55:03 NovaAggregates.list_aggregates constant(1000-573)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115503)NovaAggregates.list_aggregates-constant(1000-573)-FAILED.html) `572` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:55:30 NovaAggregates.list_aggregates constant(1000-573)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115530)NovaAggregates.list_aggregates-constant(1000-573)_FailRetry(1)-FAILED.html) `573` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:55:56 NovaAggregates.list_aggregates constant(1000-573)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115556)NovaAggregates.list_aggregates-constant(1000-573)_FailRetry(2)-FAILED.html) `573` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:56:23 NovaAggregates.list_aggregates constant(1000-573)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115623)NovaAggregates.list_aggregates-constant(1000-573)_FailRetry(3)-FAILED.html) `573` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:56:50 NovaAggregates.list_aggregates constant(1000-542)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115650)NovaAggregates.list_aggregates-constant(1000-542)-FAILED.html) `542` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:57:17 NovaAggregates.list_aggregates constant(1000-542)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115717)NovaAggregates.list_aggregates-constant(1000-542)_FailRetry(1)-FAILED.html) `541` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:57:44 NovaAggregates.list_aggregates constant(1000-542)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115744)NovaAggregates.list_aggregates-constant(1000-542)_FailRetry(2)-FAILED.html) `542` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:58:11 NovaAggregates.list_aggregates constant(1000-542)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115811)NovaAggregates.list_aggregates-constant(1000-542)_FailRetry(3)-FAILED.html) `541` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:58:37 NovaAggregates.list_aggregates constant(1000-527)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115837)NovaAggregates.list_aggregates-constant(1000-527)-FAILED.html) `527` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:59:05 NovaAggregates.list_aggregates constant(1000-527)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115905)NovaAggregates.list_aggregates-constant(1000-527)_FailRetry(1)-FAILED.html) `527` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:59:32 NovaAggregates.list_aggregates constant(1000-527)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115932)NovaAggregates.list_aggregates-constant(1000-527)_FailRetry(2)-FAILED.html) `526` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 11:59:58 NovaAggregates.list_aggregates constant(1000-527)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_115958)NovaAggregates.list_aggregates-constant(1000-527)_FailRetry(3)-FAILED.html) `527` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:00:25 NovaAggregates.list_aggregates constant(1000-519)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120025)NovaAggregates.list_aggregates-constant(1000-519)-FAILED.html) `518` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:00:52 NovaAggregates.list_aggregates constant(1000-519)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120052)NovaAggregates.list_aggregates-constant(1000-519)_FailRetry(1)-FAILED.html) `518` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:01:18 NovaAggregates.list_aggregates constant(1000-519)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120118)NovaAggregates.list_aggregates-constant(1000-519)_FailRetry(2)-FAILED.html) `519` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:01:45 NovaAggregates.list_aggregates constant(1000-519)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120145)NovaAggregates.list_aggregates-constant(1000-519)_FailRetry(3)-FAILED.html) `519` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:02:13 NovaAggregates.list_aggregates constant(1000-515)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120213)NovaAggregates.list_aggregates-constant(1000-515)-FAILED.html) `515` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:02:39 NovaAggregates.list_aggregates constant(1000-515)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120239)NovaAggregates.list_aggregates-constant(1000-515)_FailRetry(1)-FAILED.html) `514` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:03:06 NovaAggregates.list_aggregates constant(1000-515)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120306)NovaAggregates.list_aggregates-constant(1000-515)_FailRetry(2)-FAILED.html) `515` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:03:33 NovaAggregates.list_aggregates constant(1000-515)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120333)NovaAggregates.list_aggregates-constant(1000-515)_FailRetry(3)-FAILED.html) `515` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:04:00 NovaAggregates.list_aggregates constant(1000-513)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120400)NovaAggregates.list_aggregates-constant(1000-513)-FAILED.html) `513` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:04:27 NovaAggregates.list_aggregates constant(1000-513)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120427)NovaAggregates.list_aggregates-constant(1000-513)_FailRetry(1)-FAILED.html) `512` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:04:54 NovaAggregates.list_aggregates constant(1000-513)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120454)NovaAggregates.list_aggregates-constant(1000-513)_FailRetry(2)-FAILED.html) `512` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:05:20 NovaAggregates.list_aggregates constant(1000-513)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120520)NovaAggregates.list_aggregates-constant(1000-513)_FailRetry(3)-FAILED.html) `513` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:05:47 NovaAggregates.list_aggregates constant(1000-512)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120547)NovaAggregates.list_aggregates-constant(1000-512)_PassRetry(1)-FAILED.html) `511` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 12:06:15 NovaAggregates.list_aggregates constant(1000-486)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_120615)NovaAggregates.list_aggregates-constant(1000-486)_PassRetry(1)-PASSED.html) `486` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
