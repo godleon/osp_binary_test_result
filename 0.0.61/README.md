@@ -409,3 +409,27 @@
 - [2017-03-15 12:42:53 NovaHypervisors.list_and_get_hypervisors constant(1000-288)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_124253)NovaHypervisors.list_and_get_hypervisors-constant(1000-288)_PassRetry(1)-FAILED.html) `288` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
 
 - [2017-03-15 12:43:34 NovaHypervisors.list_and_get_hypervisors constant(1000-273)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_124334)NovaHypervisors.list_and_get_hypervisors-constant(1000-273)_PassRetry(1)-PASSED.html) `273` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+### NovaHypervisors.list_and_get_uptime_hypervisors
+
+- [2017-03-15 12:46:38 NovaHypervisors.list_and_get_uptime_hypervisors constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_124638)NovaHypervisors.list_and_get_uptime_hypervisors-constant(1000-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 12:57:38 NovaHypervisors.list_and_get_uptime_hypervisors constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_125738)NovaHypervisors.list_and_get_uptime_hypervisors-constant(1000-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 13:06:18 NovaHypervisors.list_and_get_uptime_hypervisors constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_130618)NovaHypervisors.list_and_get_uptime_hypervisors-constant(1000-8)-FAILED.html) `8` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 13:06:55 NovaHypervisors.list_and_get_uptime_hypervisors constant(1000-8)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_130655)NovaHypervisors.list_and_get_uptime_hypervisors-constant(1000-8)_FailRetry(1)-FAILED.html) `8` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 13:07:34 NovaHypervisors.list_and_get_uptime_hypervisors constant(1000-8)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_130734)NovaHypervisors.list_and_get_uptime_hypervisors-constant(1000-8)_FailRetry(2)-FAILED.html) `8` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 13:08:14 NovaHypervisors.list_and_get_uptime_hypervisors constant(1000-8)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_130814)NovaHypervisors.list_and_get_uptime_hypervisors-constant(1000-8)_FailRetry(3)-FAILED.html) `8` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 13:08:53 NovaHypervisors.list_and_get_uptime_hypervisors constant(1000-6)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_130853)NovaHypervisors.list_and_get_uptime_hypervisors-constant(1000-6)-PASSED.html) `5` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 13:16:39 NovaHypervisors.list_and_get_uptime_hypervisors constant(1000-7)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_131639)NovaHypervisors.list_and_get_uptime_hypervisors-constant(1000-7)-FAILED.html) `7` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 13:17:36 NovaHypervisors.list_and_get_uptime_hypervisors constant(1000-7)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_131736)NovaHypervisors.list_and_get_uptime_hypervisors-constant(1000-7)_FailRetry(1)-PASSED.html) `6` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 13:25:09 NovaHypervisors.list_and_get_uptime_hypervisors constant(1000-7)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_132509)NovaHypervisors.list_and_get_uptime_hypervisors-constant(1000-7)_PassRetry(1)-FAILED.html) `7` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 13:25:56 NovaHypervisors.list_and_get_uptime_hypervisors constant(1000-6)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_132556)NovaHypervisors.list_and_get_uptime_hypervisors-constant(1000-6)_PassRetry(1)-PASSED.html) `5` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
