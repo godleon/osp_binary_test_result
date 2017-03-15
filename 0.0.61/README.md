@@ -921,3 +921,83 @@
 - [2017-03-15 17:37:07 NovaServers.list_servers constant(1000-124)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_173707)NovaServers.list_servers-constant(1000-124)_PassRetry(1)-FAILED.html) `124` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
 
 - [2017-03-15 17:38:02 NovaServers.list_servers constant(1000-117)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_173802)NovaServers.list_servers-constant(1000-117)_PassRetry(1)-PASSED.html) `117` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+### NovaServices.list_services
+
+- [2017-03-15 17:41:38 NovaServices.list_services constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_174138)NovaServices.list_services-constant(1000-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 17:46:22 NovaServices.list_services constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_174622)NovaServices.list_services-constant(1000-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 17:48:56 NovaServices.list_services constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_174856)NovaServices.list_services-constant(1000-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 17:50:24 NovaServices.list_services constant(1000-16)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175024)NovaServices.list_services-constant(1000-16)-PASSED.html) `15` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 17:51:21 NovaServices.list_services constant(1000-32)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175121)NovaServices.list_services-constant(1000-32)-PASSED.html) `32` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 17:52:04 NovaServices.list_services constant(1000-64)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175204)NovaServices.list_services-constant(1000-64)-PASSED.html) `64` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 17:52:41 NovaServices.list_services constant(1000-128)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175241)NovaServices.list_services-constant(1000-128)-PASSED.html) `128` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 17:53:15 NovaServices.list_services constant(1000-256)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175315)NovaServices.list_services-constant(1000-256)-PASSED.html) `256` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 17:53:47 NovaServices.list_services constant(1000-512)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175347)NovaServices.list_services-constant(1000-512)-FAILED.html) `511` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 17:54:22 NovaServices.list_services constant(1000-512)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175422)NovaServices.list_services-constant(1000-512)_FailRetry(1)-FAILED.html) `512` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 17:54:55 NovaServices.list_services constant(1000-512)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175455)NovaServices.list_services-constant(1000-512)_FailRetry(2)-FAILED.html) `512` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 17:55:27 NovaServices.list_services constant(1000-512)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175527)NovaServices.list_services-constant(1000-512)_FailRetry(3)-FAILED.html) `512` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 17:55:59 NovaServices.list_services constant(1000-384)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175559)NovaServices.list_services-constant(1000-384)-FAILED.html) `384` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 17:56:30 NovaServices.list_services constant(1000-384)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175630)NovaServices.list_services-constant(1000-384)_FailRetry(1)-FAILED.html) `384` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 17:57:00 NovaServices.list_services constant(1000-384)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175700)NovaServices.list_services-constant(1000-384)_FailRetry(2)-FAILED.html) `384` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 17:57:31 NovaServices.list_services constant(1000-384)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175731)NovaServices.list_services-constant(1000-384)_FailRetry(3)-FAILED.html) `384` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 17:58:03 NovaServices.list_services constant(1000-320)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175803)NovaServices.list_services-constant(1000-320)-FAILED.html) `320` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 17:58:36 NovaServices.list_services constant(1000-320)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175836)NovaServices.list_services-constant(1000-320)_FailRetry(1)-PASSED.html) `320` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 17:59:09 NovaServices.list_services constant(1000-352)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175909)NovaServices.list_services-constant(1000-352)-FAILED.html) `352` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 17:59:42 NovaServices.list_services constant(1000-352)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_175942)NovaServices.list_services-constant(1000-352)_FailRetry(1)-FAILED.html) `352` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:00:15 NovaServices.list_services constant(1000-352)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180015)NovaServices.list_services-constant(1000-352)_FailRetry(2)-FAILED.html) `352` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:00:46 NovaServices.list_services constant(1000-352)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180046)NovaServices.list_services-constant(1000-352)_FailRetry(3)-FAILED.html) `352` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:01:19 NovaServices.list_services constant(1000-336)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180119)NovaServices.list_services-constant(1000-336)-FAILED.html) `336` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:01:49 NovaServices.list_services constant(1000-336)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180149)NovaServices.list_services-constant(1000-336)_FailRetry(1)-FAILED.html) `336` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:02:22 NovaServices.list_services constant(1000-336)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180222)NovaServices.list_services-constant(1000-336)_FailRetry(2)-FAILED.html) `336` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:02:55 NovaServices.list_services constant(1000-336)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180255)NovaServices.list_services-constant(1000-336)_FailRetry(3)-FAILED.html) `336` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:03:26 NovaServices.list_services constant(1000-328)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180326)NovaServices.list_services-constant(1000-328)-FAILED.html) `328` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:03:59 NovaServices.list_services constant(1000-328)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180359)NovaServices.list_services-constant(1000-328)_FailRetry(1)-FAILED.html) `328` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:04:31 NovaServices.list_services constant(1000-328)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180431)NovaServices.list_services-constant(1000-328)_FailRetry(2)-FAILED.html) `328` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:05:04 NovaServices.list_services constant(1000-328)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180504)NovaServices.list_services-constant(1000-328)_FailRetry(3)-PASSED.html) `328` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 18:05:37 NovaServices.list_services constant(1000-332)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180537)NovaServices.list_services-constant(1000-332)-FAILED.html) `332` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:06:10 NovaServices.list_services constant(1000-332)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180610)NovaServices.list_services-constant(1000-332)_FailRetry(1)-PASSED.html) `332` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 18:06:43 NovaServices.list_services constant(1000-334)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180643)NovaServices.list_services-constant(1000-334)-FAILED.html) `334` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:07:16 NovaServices.list_services constant(1000-334)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180716)NovaServices.list_services-constant(1000-334)_FailRetry(1)-FAILED.html) `334` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:07:49 NovaServices.list_services constant(1000-334)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180749)NovaServices.list_services-constant(1000-334)_FailRetry(2)-FAILED.html) `334` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:08:22 NovaServices.list_services constant(1000-334)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180822)NovaServices.list_services-constant(1000-334)_FailRetry(3)-FAILED.html) `334` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:08:55 NovaServices.list_services constant(1000-333)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180855)NovaServices.list_services-constant(1000-333)-FAILED.html) `333` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-15 18:09:28 NovaServices.list_services constant(1000-333)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_180928)NovaServices.list_services-constant(1000-333)_FailRetry(1)-PASSED.html) `333` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-15 18:10:02 NovaServices.list_services constant(1000-333)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.61/nova/(20170315_181002)NovaServices.list_services-constant(1000-333)_PassRetry(1)-PASSED.html) `333` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
