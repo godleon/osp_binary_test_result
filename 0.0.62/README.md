@@ -179,3 +179,61 @@
 - [2017-03-16 19:10:38 NovaServers.suspend_and_resume_server rps(300-3.4)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.62/nova/(20170316_191038)NovaServers.suspend_and_resume_server-rps(300-3.4)_PassRetry(1)-FAILED.html) `168` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
 
 - [2017-03-16 19:18:54 NovaServers.suspend_and_resume_server rps(300-3.2)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.62/nova/(20170316_191854)NovaServers.suspend_and_resume_server-rps(300-3.2)_PassRetry(1)-PASSED.html) `149` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+## swift
+
+### SwiftObjects.create_container_and_object_then_delete_all
+
+- [2017-03-16 19:24:31 SwiftObjects.create_container_and_object_then_delete_all constant(1000-2)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_192431)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-2)-PASSED.html) `1` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-16 19:30:05 SwiftObjects.create_container_and_object_then_delete_all constant(1000-4)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_193005)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-4)-PASSED.html) `3` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-16 19:33:11 SwiftObjects.create_container_and_object_then_delete_all constant(1000-8)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_193311)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-8)-PASSED.html) `7` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-16 19:35:13 SwiftObjects.create_container_and_object_then_delete_all constant(1000-16)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_193513)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-16)-PASSED.html) `15` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-16 19:36:40 SwiftObjects.create_container_and_object_then_delete_all constant(1000-32)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_193640)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-32)-PASSED.html) `32` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-16 19:37:51 SwiftObjects.create_container_and_object_then_delete_all constant(1000-64)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_193751)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-64)-FAILED.html) `64` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:38:17 SwiftObjects.create_container_and_object_then_delete_all constant(1000-64)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_193817)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-64)_FailRetry(1)-FAILED.html) `64` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:38:44 SwiftObjects.create_container_and_object_then_delete_all constant(1000-64)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_193844)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-64)_FailRetry(2)-FAILED.html) `64` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:39:10 SwiftObjects.create_container_and_object_then_delete_all constant(1000-64)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_193910)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-64)_FailRetry(3)-FAILED.html) `64` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:39:34 SwiftObjects.create_container_and_object_then_delete_all constant(1000-48)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_193934)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-48)-FAILED.html) `48` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:40:01 SwiftObjects.create_container_and_object_then_delete_all constant(1000-48)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194001)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-48)_FailRetry(1)-PASSED.html) `48` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-16 19:41:11 SwiftObjects.create_container_and_object_then_delete_all constant(1000-56)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194111)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-56)-FAILED.html) `56` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:41:35 SwiftObjects.create_container_and_object_then_delete_all constant(1000-56)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194135)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-56)_FailRetry(1)-FAILED.html) `56` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:42:01 SwiftObjects.create_container_and_object_then_delete_all constant(1000-56)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194201)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-56)_FailRetry(2)-FAILED.html) `56` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:42:25 SwiftObjects.create_container_and_object_then_delete_all constant(1000-56)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194225)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-56)_FailRetry(3)-FAILED.html) `56` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:42:52 SwiftObjects.create_container_and_object_then_delete_all constant(1000-52)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194252)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-52)-FAILED.html) `52` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:43:18 SwiftObjects.create_container_and_object_then_delete_all constant(1000-52)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194318)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-52)_FailRetry(1)-FAILED.html) `52` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:43:45 SwiftObjects.create_container_and_object_then_delete_all constant(1000-52)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194345)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-52)_FailRetry(2)-FAILED.html) `52` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:44:11 SwiftObjects.create_container_and_object_then_delete_all constant(1000-52)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194411)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-52)_FailRetry(3)-FAILED.html) `52` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:44:38 SwiftObjects.create_container_and_object_then_delete_all constant(1000-50)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194438)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-50)-FAILED.html) `50` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:45:04 SwiftObjects.create_container_and_object_then_delete_all constant(1000-50)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194504)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-50)_FailRetry(1)-FAILED.html) `50` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:45:31 SwiftObjects.create_container_and_object_then_delete_all constant(1000-50)_FailRetry(2)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194531)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-50)_FailRetry(2)-FAILED.html) `50` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:45:58 SwiftObjects.create_container_and_object_then_delete_all constant(1000-50)_FailRetry(3)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194558)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-50)_FailRetry(3)-FAILED.html) `50` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:46:24 SwiftObjects.create_container_and_object_then_delete_all constant(1000-49)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194624)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-49)-FAILED.html) `49` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:46:51 SwiftObjects.create_container_and_object_then_delete_all constant(1000-49)_FailRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194651)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-49)_FailRetry(1)-PASSED.html) `49` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
+
+- [2017-03-16 19:48:01 SwiftObjects.create_container_and_object_then_delete_all constant(1000-49)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194801)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-49)_PassRetry(1)-FAILED.html) `49` <img src="https://foreverbcn-wpengine.netdna-ssl.com/wp-content/uploads/2014/12/Alarm-Error-icon.png" width="16" height="16" />
+
+- [2017-03-16 19:48:28 SwiftObjects.create_container_and_object_then_delete_all constant(1000-46)_PassRetry(1)](https://godleon.github.io/osp_binary_test_result/0.0.62/swift/(20170316_194828)SwiftObjects.create_container_and_object_then_delete_all-constant(1000-46)_PassRetry(1)-PASSED.html) `46` <img src="http://www.bridging-the-gap.com/wp-content/uploads/2015/04/ok-128x128.png" width="16" height="16" />
